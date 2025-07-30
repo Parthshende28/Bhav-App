@@ -31,12 +31,14 @@
       "expo-router",
       "expo-web-browser",
       "expo-font",
-      "expo-build-properties",
-      {
-        "ios": {
-          "useModularHeaders": true
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useModularHeaders": true
+          }
         }
-      }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
