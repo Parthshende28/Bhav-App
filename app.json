@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.jpg",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/splash-icon.jpg",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.vipinsoni.bhav"
@@ -35,7 +35,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "2004c603-ba08-41bd-a502-57f6c36657cf"
+        "projectId": "e1977750-9bf0-4481-82a9-9e7c19b5c409"
       }
     }
   }
