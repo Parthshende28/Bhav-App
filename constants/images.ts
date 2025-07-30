@@ -1,6 +1,6 @@
 // Using online image URLs instead of local assets
 export const images = {
-  logo: require("../assets/images/logo.png"),
+  logo: require("../assets/images/logo.jpg"),
   bhavLogo: require("../assets/images/Bhav_logo.png"),
 
   goldCoins: "https://png.pngtree.com/png-clipart/20190520/original/pngtree-gold-coin-png-image_3779125.jpg",
