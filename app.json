@@ -17,7 +17,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.vipinsoni.bhav",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to allow you to select profile pictures."
       }
     },
     "android": {
