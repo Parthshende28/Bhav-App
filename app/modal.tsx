@@ -318,7 +318,7 @@ export default function ModalScreen() {
                 style={styles.input}
                 value={editBuyPremium}
                 onChangeText={setEditBuyPremium}
-                keyboardType="numeric"
+                keyboardType="default"
                 placeholder="Enter buy premium"
               />
             </View>
@@ -328,7 +328,7 @@ export default function ModalScreen() {
                 style={styles.input}
                 value={editSellPremium}
                 onChangeText={setEditSellPremium}
-                keyboardType="numeric"
+                keyboardType="default"
                 placeholder="Enter sell premium"
               />
             </View>

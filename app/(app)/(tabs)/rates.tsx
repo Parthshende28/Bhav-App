@@ -294,27 +294,51 @@ export default function RatesScreen() {
     }).then(() => setFontsLoaded(true));
   }, []);
 
-  // Fetch the list of sellers only when the user changes
-  useEffect(() => {
-    async function fetchAddedSellers() {
-      if (user && (isCustomer || isAdmin)) {
-        try {
-          const referralsRes = await userAPI.getSellerReferrals();
-          const sellers: User[] = (referralsRes.data?.sellerReferrals || []).map((seller: any) => ({
-            ...seller,
-            id: seller._id || seller.id,
-            _id: seller._id || seller.id,
-          }));
-          setAddedSellers(sellers);
-        } catch (err) {
-          setAddedSellers([]);
+  // Define fetchAddedSellers function outside useEffect so it can be reused
+  const fetchAddedSellers = async () => {
+    if (user && (isCustomer || isAdmin)) {
+      try {
+        const referralsRes = await userAPI.getSellerReferrals();
+        const sellers: User[] = (referralsRes.data?.sellerReferrals || []).map((seller: any) => ({
+          ...seller,
+          id: seller._id || seller.id,
+          _id: seller._id || seller.id,
+        }));
+        setAddedSellers(sellers);
+
+        // Clear selected seller if it's no longer in the added sellers list
+        if (selectedSeller && !sellers.some(seller => seller.id === selectedSeller.id || seller._id === selectedSeller._id)) {
+          setSelectedSeller(null);
         }
-      } else {
+      } catch (err) {
         setAddedSellers([]);
+        // Clear selected seller if there's an error fetching sellers
+        if (selectedSeller) {
+          setSelectedSeller(null);
+        }
+      }
+    } else {
+      setAddedSellers([]);
+      // Clear selected seller if user is not customer or admin
+      if (selectedSeller) {
+        setSelectedSeller(null);
       }
     }
+  };
+
+  // Fetch the list of sellers only when the user changes
+  useEffect(() => {
     fetchAddedSellers();
-  }, [user]);
+  }, [user, selectedSeller]);
+
+  // Add focus effect to refresh sellers when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user && (isCustomer || isAdmin)) {
+        fetchAddedSellers();
+      }
+    }, [user])
+  );
 
   // Replace the fetchSellerProducts useEffect with the following:
   useEffect(() => {

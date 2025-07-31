@@ -485,7 +485,7 @@ export default function InventoryScreen() {
                       style={styles.input}
                       placeholder="Enter buy premium (can be negative)"
                       placeholderTextColor="#9e9e9e"
-                      keyboardType="numeric"
+                      keyboardType="default"
                       value={buyPremium}
                       onChangeText={(text) => {
                         if (validatePremiumInput(text)) {
@@ -515,7 +515,7 @@ export default function InventoryScreen() {
                       style={styles.input}
                       placeholder="Enter sell premium (can be negative)"
                       placeholderTextColor="#9e9e9e"
-                      keyboardType="numeric"
+                      keyboardType="default"
                       value={sellPremium}
                       onChangeText={(text) => {
                         if (validatePremiumInput(text)) {

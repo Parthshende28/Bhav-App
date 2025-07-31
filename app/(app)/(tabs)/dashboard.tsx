@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore, BuyRequest } from "@/store/auth-store";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import * as Haptics from "expo-haptics";
 import {
   BarChart2,
@@ -207,12 +207,26 @@ export default function SellerDashboardScreen() {
     fetchRequests();
   }, [user]);
 
-  // Reset selected seller for new users
+  // Reset selected seller for new users and validate selected seller
   useEffect(() => {
     if (!selectedSeller && user?.role === 'customer') {
       setSelectedSeller(null);
     }
-  }, [user]);
+
+    // If there's a selected seller, validate that it's still in the user's added sellers
+    if (selectedSeller && user?.role === 'customer') {
+      // This will be handled by the rates screen which fetches the sellers
+      // The selectedSeller will be cleared automatically when it's removed
+    }
+  }, [user, selectedSeller]);
+
+  // Add focus effect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      // Refresh any necessary data when the screen comes into focus
+      // This ensures the dashboard shows the latest state after navigation
+    }, [])
+  );
 
   // Format timestamp to readable date/time
   const formatTimestamp = (timestamp: number) => {

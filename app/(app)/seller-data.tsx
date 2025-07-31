@@ -147,7 +147,16 @@ const SellerData = () => {
         // Show success message
         Alert.alert(
           'Seller Added!',
-          `${seller.brandName || seller.fullName || seller.name} has been added successfully. You can now see their products.`
+          `${seller.brandName || seller.fullName || seller.name} has been added successfully. You can now see their products.`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Navigate back to rates screen to show the updated seller list
+                router.push('/(app)/(tabs)/rates');
+              }
+            }
+          ]
         );
         // Trigger haptic feedback on success
         if (Platform.OS !== 'web') {
@@ -172,38 +181,76 @@ const SellerData = () => {
   const handleRemoveSeller = async (sellerId: string) => {
     if (!user) return;
 
-    // Trigger haptic feedback
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
+    // Show confirmation dialog
+    Alert.alert(
+      'Remove Seller',
+      'Do you really want to remove this seller?',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            // Trigger haptic feedback
+            if (Platform.OS !== 'web') {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            }
 
-    // Find the referral to remove
-    const referrals = getSellerReferralsForCustomer(user.id);
-    const referralToRemove = referrals.find(ref => ref.sellerId === sellerId);
+            try {
+              // Remove the seller directly using the seller ID
+              // The backend will remove this seller ID from the customer's sellerReferrals array
+              const removeResult = await userAPI.removeSellerReferral(sellerId);
 
-    if (referralToRemove) {
-      // Remove the referral
-      const result = await removeSellerReferral(referralToRemove.id);
+              if (removeResult.status === 200 || removeResult.data?.success) {
+                // Remove seller from local state
+                setAddedSellers(prev => prev.filter(seller => seller.id !== sellerId));
 
-      if (result.success) {
-        // Remove seller from local state
-        setAddedSellers(prev => prev.filter(seller => seller.id !== sellerId));
+                // Remove seller products from state
+                setSellerProducts(prev => {
+                  const updated = { ...prev };
+                  delete updated[sellerId];
+                  return updated;
+                });
 
-        // Remove seller products from state
-        setSellerProducts(prev => {
-          const updated = { ...prev };
-          delete updated[sellerId];
-          return updated;
-        });
+                // If this was the expanded seller, collapse it
+                if (expandedSeller === sellerId) {
+                  setExpandedSeller(null);
+                }
 
-        // If this was the expanded seller, collapse it
-        if (expandedSeller === sellerId) {
-          setExpandedSeller(null);
-        }
-      } else {
-        Alert.alert('Error', result.error || 'Failed to remove seller');
-      }
-    }
+                // Clear selected seller from auth store if it matches the removed seller
+                const { setSelectedSeller } = useAuthStore.getState();
+                if (setSelectedSeller) {
+                  setSelectedSeller(null);
+                }
+
+                // Show success message
+                Alert.alert(
+                  'Success',
+                  'Seller removed successfully',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        // Navigate back to rates screen to show the updated seller list
+                        router.push('/(app)/(tabs)/rates');
+                      }
+                    }
+                  ]
+                );
+              } else {
+                Alert.alert('Error', 'Failed to remove seller from backend');
+              }
+            } catch (error: any) {
+              console.error('Error removing seller:', error);
+              Alert.alert('Error', error?.response?.data?.message || 'Failed to remove seller');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const toggleSellerExpansion = async (sellerId: string) => {
@@ -328,12 +375,13 @@ const SellerData = () => {
                 </TouchableOpacity>
 
                 <View style={styles.sellerActions}>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={() => navigateToSellerProfile(item.id)}
                     style={styles.viewProfileButton}
                   >
                     <ExternalLink size={16} color="#007AFF" />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
+
 
                   <TouchableOpacity
                     onPress={() => handleRemoveSeller(item.id)}
@@ -390,15 +438,6 @@ const SellerData = () => {
                   <Text style={styles.noProductsText}>No products available</Text>
                 )}
               </View>
-
-              <TouchableOpacity
-                style={styles.expandButton}
-                onPress={() => toggleSellerExpansion(item.id)}
-              >
-                <Text style={styles.expandButtonText}>
-                  {expandedSeller === item.id ? "Hide Products" : "View Products"}
-                </Text>
-              </TouchableOpacity>
             </View>
           )}
         />
