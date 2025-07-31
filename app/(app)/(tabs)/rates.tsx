@@ -43,6 +43,8 @@ export default function RatesScreen() {
     contactDealer,
     createRequestAPI,
     getInventoryItemsForSellerAPI: getInventoryItemsAPI,
+    inventoryItems, // Use global state instead of local state
+    setInventoryItems, // Use global state setter
   } = useAuthStore();
 
   const [showSellerModal, setShowSellerModal] = useState(false);
@@ -52,7 +54,6 @@ export default function RatesScreen() {
   const [quantity, setQuantity] = useState('1');
   const [message, setMessage] = useState('');
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -62,7 +63,7 @@ export default function RatesScreen() {
   // Use addedSellers for seller selection
   const customerSellers = addedSellers;
 
-  // Get inventory for the selected seller
+  // Get inventory for the selected seller - use global state
   const selectedSellerInventory = selectedSeller && (selectedSeller.id || selectedSeller._id)
     ? inventoryItems.filter(item => (item.sellerId === selectedSeller.id || item.sellerId === selectedSeller._id) && item.isVisible)
     : [];
@@ -108,9 +109,6 @@ export default function RatesScreen() {
   };
 
   const closeSellerSelection = () => setShowSellerModal(false);
-
-  // Load inventory items
-  // Remove the loadInventoryItems function and its useEffect
 
   // Handle buy/sell request
   const handleRequest = async (item: InventoryItem, type: 'buy' | 'sell') => {
@@ -356,6 +354,7 @@ export default function RatesScreen() {
             productsRes = await inventoryAPI.getPublicInventory(sellerId);
           }
           const products = productsRes.data?.items?.filter((item: InventoryItem) => item.isVisible) || [];
+          // Update global state instead of local state
           setInventoryItems(products);
         } catch (err) {
           console.error('Error fetching seller products:', err);
@@ -372,6 +371,48 @@ export default function RatesScreen() {
 
     fetchSellerProducts();
   }, [selectedSeller?.id, selectedSeller?._id, user?.role, user?.id, user?._id]);
+
+  // Add focus effect to refresh inventory when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.role === 'seller') {
+        // For sellers, refresh their own inventory
+        const fetchSellerInventory = async () => {
+          setIsLoadingInventory(true);
+          try {
+            const result = await getInventoryItemsForSellerAPI(user.id);
+            if (result.success && result.items) {
+              setInventoryItems(result.items);
+            } else {
+              setInventoryItems([]);
+            }
+          } catch (err) {
+            console.error('Error fetching seller inventory:', err);
+            setInventoryItems([]);
+          } finally {
+            setIsLoadingInventory(false);
+          }
+        };
+        fetchSellerInventory();
+      } else if (selectedSeller) {
+        // For customers/admins, refresh selected seller's inventory
+        const fetchSelectedSellerInventory = async () => {
+          setIsLoadingInventory(true);
+          try {
+            const productsRes = await inventoryAPI.getPublicInventory(selectedSeller.id);
+            const products = productsRes.data?.items?.filter((item: InventoryItem) => item.isVisible) || [];
+            setInventoryItems(products);
+          } catch (err) {
+            console.error('Error fetching selected seller inventory:', err);
+            setInventoryItems([]);
+          } finally {
+            setIsLoadingInventory(false);
+          }
+        };
+        fetchSelectedSellerInventory();
+      }
+    }, [user, selectedSeller])
+  );
 
   useEffect(() => {
     // Gold Buy Price

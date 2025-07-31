@@ -92,7 +92,7 @@ export default function SellerDashboardScreen() {
   const [requestDetails, setRequestDetails] = useState<{ [key: string]: { product: any, customer: any } }>({});
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
-  // Load inventory count
+  // Load inventory count and other metrics
   useEffect(() => {
     const loadInventoryCount = async () => {
       if (user?.role === 'seller') {
@@ -109,6 +109,25 @@ export default function SellerDashboardScreen() {
     loadInventoryCount();
   }, [user]);
 
+  // Add focus effect to refresh metrics when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const loadInventoryCount = async () => {
+        if (user?.role === 'seller') {
+          try {
+            const result = await getInventoryItemsForSellerAPI(user.id);
+            if (result.success && result.items) {
+              setInventoryCount(result.items.length);
+            }
+          } catch (error) {
+            console.error('Error loading inventory count:', error);
+          }
+        }
+      };
+      loadInventoryCount();
+    }, [user])
+  );
+
   // Get notifications for the current seller
   const sellerNotifications = user ? getNotificationsForUser(user.id).filter(n =>
     n.type === 'contact_request' ||
@@ -121,6 +140,12 @@ export default function SellerDashboardScreen() {
     n.type === 'sell_request_declined' ||
     n.type === 'referral'
   ) : [];
+
+  // Calculate sales count (accepted requests)
+  const salesCount = buyRequests.filter(request => request.status === 'accepted').length;
+
+  // Calculate total requests count
+  const totalRequestsCount = buyRequests.length;
 
   // Fetch buy requests for the current seller
   useEffect(() => {
@@ -1317,7 +1342,7 @@ export default function SellerDashboardScreen() {
                 <View style={[styles.statIconContainer, { backgroundColor: "#FFF8E1" }]}>
                   <IndianRupee size={24} color="#F3B26B" />
                 </View>
-                <Text style={styles.statValue}>{buyRequests.filter(req => req.status === 'accepted').length}</Text>
+                <Text style={styles.statValue}>{salesCount}</Text>
                 <Text style={styles.statLabel}>Sales</Text>
               </View>
 
@@ -1325,7 +1350,7 @@ export default function SellerDashboardScreen() {
                 <View style={[styles.statIconContainer, { backgroundColor: "#E8F5E9" }]}>
                   <BarChart2 size={24} color="#43A047" />
                 </View>
-                <Text style={styles.statValue}>{buyRequests.length}</Text>
+                <Text style={styles.statValue}>{totalRequestsCount}</Text>
                 <Text style={styles.statLabel}>Total Requests</Text>
               </View>
             </View>

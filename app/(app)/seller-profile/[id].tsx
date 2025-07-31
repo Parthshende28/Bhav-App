@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore, InventoryItem, MAX_BUY_REQUESTS } from "@/store/auth-store";
 import * as Haptics from "expo-haptics";
@@ -33,18 +33,22 @@ export default function SellerProfileScreen() {
   const sellerId = Array.isArray(id) ? id[0] : id;
 
   const {
-    getUserById,
     user,
+    getBuyRequestsForSeller,
+    getInventoryItemsForSellerAPI,
+    getUserById,
     createBuyRequest,
-    contactDealer,
+    acceptBuyRequest,
+    declineBuyRequest,
     getUserBuyRequestCount,
-    hasReachedBuyRequestLimit
+    hasReachedBuyRequestLimit,
+    inventoryItems, // Use global state
+    setInventoryItems // Use global state setter
   } = useAuthStore();
 
   const router = useRouter();
 
   const [seller, setSeller] = useState<any>(null);
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBuyLoading, setIsBuyLoading] = useState(false);
 
@@ -77,6 +81,24 @@ export default function SellerProfileScreen() {
       fetchInventory();
     }
   }, [sellerId]);
+
+  // Add focus effect to refresh inventory when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (sellerId) {
+        const fetchInventory = async () => {
+          const result = await useAuthStore.getState().getInventoryItemsForSellerAPI(sellerId);
+          if (result.success && Array.isArray(result.items)) {
+            const filtered = result.items.filter((item: InventoryItem) => item.isSellPremiumEnabled && item.isVisible);
+            setInventoryItems(filtered);
+          } else {
+            setInventoryItems([]);
+          }
+        };
+        fetchInventory();
+      }
+    }, [sellerId])
+  );
 
 
   // Handle buy request
@@ -192,7 +214,7 @@ export default function SellerProfileScreen() {
     }
 
     // Contact dealer
-    contactDealer(sellerId);
+    // contactDealer(sellerId); // This function is no longer available in useAuthStore
 
     // Show success alert with seller contact info
     Alert.alert(

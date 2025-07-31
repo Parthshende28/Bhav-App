@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -73,54 +73,59 @@ export default function InventoryScreen() {
     }
   }, [user]);
 
-  // Fetch inventory items from backend
+  // Fetch inventory items
   const fetchInventoryItems = async () => {
-    if (user && user.role === "seller") {
+    if (user?.role === 'seller') {
       setIsLoading(true);
       try {
-        const sellerId = (user.id || user._id) ?? '';
-        if (typeof sellerId === 'string' && sellerId.length > 0) {
-          const result = await getInventoryItemsForSellerAPI(sellerId);
-          if (result.success && result.items) {
-            setInventoryItems(result.items);
-          } else {
-            // console.error("Failed to fetch inventory:", result.error);
-          }
+        const result = await getInventoryItemsForSellerAPI(user.id);
+        if (result.success && result.items) {
+          setInventoryItems(result.items);
         } else {
           setInventoryItems([]);
         }
       } catch (error) {
-        // console.error("Error fetching inventory:", error);
+        console.error('Error fetching inventory items:', error);
+        setInventoryItems([]);
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  useEffect(() => {
-    if (user && user.role === "seller") {
-      fetchInventoryItems();
-    }
-  }, [user]);
-
+  // Add focus effect to refresh inventory when screen comes into focus
   useFocusEffect(
-    React.useCallback(() => {
-      if (user && user.role === "seller") {
+    useCallback(() => {
+      if (user?.role === 'seller') {
         fetchInventoryItems();
       }
     }, [user])
   );
 
-  // Handle form animation
+  // Load inventory items on component mount
+  useEffect(() => {
+    fetchInventoryItems();
+  }, [user]);
+
   const animateForm = (show: boolean) => {
-    Animated.timing(formAnimation, {
-      toValue: show ? 1 : 0,
-      duration: 300,
-      useNativeDriver: false
-    }).start();
+    if (show) {
+      setShowAddForm(true);
+      Animated.timing(formAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false
+      }).start();
+    } else {
+      Animated.timing(formAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false
+      }).start(() => {
+        setShowAddForm(false);
+      });
+    }
   };
 
-  // Show add form
   const handleShowAddForm = () => {
     // Check subscription before allowing add
     if (!hasActiveSubscription) {
@@ -138,16 +143,17 @@ export default function InventoryScreen() {
       );
       return;
     }
-    // Reset form state
-    setProductName("");
-    setBuyPremium("");
-    setSellPremium("");
+    // Reset form fields
+    setProductName('');
+    setProductType('');
+    setBuyPremium('');
+    setSellPremium('');
     setIsBuyPremiumEnabled(true);
     setIsSellPremiumEnabled(true);
     setEditingItemId(null);
-    setProductType("");
+    // setFormErrors({}); // This state was removed, so this line is removed.
 
-    setShowAddForm(true);
+    // Show form
     animateForm(true);
 
     // Trigger haptic feedback
@@ -156,27 +162,20 @@ export default function InventoryScreen() {
     }
   };
 
-  // Hide add form
   const handleHideAddForm = () => {
     animateForm(false);
-    setTimeout(() => {
-      setShowAddForm(false);
-    }, 300);
   };
 
-  // Handle edit item
   const handleEditItem = (item: InventoryItem) => {
     setProductName(item.productName);
-    setBuyPremium(item.buyPremium.toString());
-    setSellPremium(item.sellPremium.toString());
-    setIsBuyPremiumEnabled(Boolean(item.isBuyPremiumEnabled));
-    setIsSellPremiumEnabled(Boolean(item.isSellPremiumEnabled));
+    setProductType(item.productType as "Gold" | "Silver" | "");
+    setBuyPremium(item.buyPremium?.toString() || '');
+    setSellPremium(item.sellPremium?.toString() || '');
+    setIsBuyPremiumEnabled(item.isBuyPremiumEnabled);
+    setIsSellPremiumEnabled(item.isSellPremiumEnabled);
     setEditingItemId(item.id);
-    setProductType(
-      item.productType === "Gold" || item.productType === "Silver" ? item.productType : ""
-    );
+    // setFormErrors({}); // This state was removed, so this line is removed.
 
-    setShowAddForm(true);
     animateForm(true);
 
     // Trigger haptic feedback
@@ -185,7 +184,6 @@ export default function InventoryScreen() {
     }
   };
 
-  // Add input validation function
   const validatePremiumInput = (value: string): boolean => {
     // Allow empty string, numbers, negative numbers, and decimal points
     const regex = /^-?\d*\.?\d*$/;
@@ -236,7 +234,7 @@ export default function InventoryScreen() {
         });
 
         if (result.success && result.item) {
-          // Update local state by fetching fresh data
+          // Update global state by fetching fresh data
           await fetchInventoryItems();
           handleHideAddForm();
           Alert.alert("Success", "Product updated successfully!", [{ text: "OK" }]);
@@ -257,6 +255,7 @@ export default function InventoryScreen() {
 
         if (result.success) {
           handleHideAddForm();
+          // Update global state by fetching fresh data
           await fetchInventoryItems();
           Alert.alert("Success", "Product added successfully!", [{ text: "OK" }]);
         } else {
@@ -289,19 +288,15 @@ export default function InventoryScreen() {
 
             try {
               const result = await deleteInventoryItemAPI(itemId);
-
               if (result.success) {
-                // Refresh inventory from backend
+                // Update global state by fetching fresh data
                 await fetchInventoryItems();
-                if (Platform.OS !== "web") {
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                }
                 Alert.alert("Success", "Product deleted successfully!", [{ text: "OK" }]);
               } else {
                 Alert.alert("Error", result.error || "Failed to delete product.");
               }
             } catch (error) {
-              // console.error("Error deleting product:", error);
+              console.error("Error deleting product:", error);
               Alert.alert("Error", "Failed to delete product. Please try again.");
             } finally {
               setIsDeleting(false);
@@ -312,23 +307,23 @@ export default function InventoryScreen() {
     );
   };
 
-  // Handle toggle item visibility
+  // Handle toggle visibility
   const handleToggleVisibility = async (itemId: string, currentVisibility: boolean) => {
     try {
       const result = await toggleInventoryItemVisibilityAPI(itemId);
-
       if (result.success) {
-        // Refresh inventory from backend
+        // Update global state by fetching fresh data
         await fetchInventoryItems();
-        if (Platform.OS !== "web") {
-          Haptics.selectionAsync();
-        }
-        Alert.alert("Success", `Product ${currentVisibility ? "hidden" : "visible"} successfully!`, [{ text: "OK" }]);
+        Alert.alert(
+          "Success",
+          `Product ${currentVisibility ? 'hidden' : 'made visible'} successfully!`,
+          [{ text: "OK" }]
+        );
       } else {
         Alert.alert("Error", result.error || "Failed to update product visibility.");
       }
     } catch (error) {
-      // console.error("Error toggling product visibility:", error);
+      console.error("Error toggling product visibility:", error);
       Alert.alert("Error", "Failed to update product visibility. Please try again.");
     }
   };
@@ -399,7 +394,7 @@ export default function InventoryScreen() {
 
           {/* Add/Edit Product Form */}
           {showAddForm && (
-            <Animated.View style={[styles.formContainer]}>
+            <Animated.View style={[styles.formContainer, { opacity: formAnimation, transform: [{ translateY: formAnimation }] }]}>
               <View style={styles.formHeader}>
                 <Text style={styles.formTitle}>
                   {editingItemId ? "Edit Product" : "Add New Product"}
