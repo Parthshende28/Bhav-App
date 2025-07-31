@@ -45,6 +45,7 @@ export default function RatesScreen() {
     getInventoryItemsForSellerAPI: getInventoryItemsAPI,
     inventoryItems, // Use global state instead of local state
     setInventoryItems, // Use global state setter
+    sellerReferrals, // Use global sellerReferrals instead of local state
   } = useAuthStore();
 
   const [showSellerModal, setShowSellerModal] = useState(false);
@@ -57,11 +58,36 @@ export default function RatesScreen() {
   const [isLoadingInventory, setIsLoadingInventory] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Shared state for added sellers
-  const [addedSellers, setAddedSellers] = useState<User[]>([]);
+  // Use global sellerReferrals for seller selection
+  const customerSellers = sellerReferrals.map((ref: any) => {
+    // Try to get user from global users array first
+    const userFromGlobal = getUserById(ref.sellerId);
+    if (userFromGlobal) {
+      return userFromGlobal;
+    }
 
-  // Use addedSellers for seller selection
-  const customerSellers = addedSellers;
+    // If not found in global users, return the seller data from the referral
+    // This happens when the seller data is populated by the backend
+    if (ref.sellerId && typeof ref.sellerId === 'object') {
+      const sellerData = ref.sellerId as any;
+      return {
+        ...sellerData,
+        id: sellerData._id || sellerData.id,
+        _id: sellerData._id || sellerData.id,
+      } as User;
+    }
+
+    // If the referral itself contains seller data (backend returns full seller objects)
+    if (typeof ref === 'object' && ref._id && ref.email) {
+      return {
+        ...ref,
+        id: ref._id || ref.id,
+        _id: ref._id || ref.id,
+      } as User;
+    }
+
+    return null;
+  }).filter(Boolean) as User[];
 
   // Get inventory for the selected seller - use global state
   const selectedSellerInventory = selectedSeller && (selectedSeller.id || selectedSeller._id)
@@ -292,51 +318,8 @@ export default function RatesScreen() {
     }).then(() => setFontsLoaded(true));
   }, []);
 
-  // Define fetchAddedSellers function outside useEffect so it can be reused
-  const fetchAddedSellers = async () => {
-    if (user && (isCustomer || isAdmin)) {
-      try {
-        const referralsRes = await userAPI.getSellerReferrals();
-        const sellers: User[] = (referralsRes.data?.sellerReferrals || []).map((seller: any) => ({
-          ...seller,
-          id: seller._id || seller.id,
-          _id: seller._id || seller.id,
-        }));
-        setAddedSellers(sellers);
-
-        // Clear selected seller if it's no longer in the added sellers list
-        if (selectedSeller && !sellers.some(seller => seller.id === selectedSeller.id || seller._id === selectedSeller._id)) {
-          setSelectedSeller(null);
-        }
-      } catch (err) {
-        setAddedSellers([]);
-        // Clear selected seller if there's an error fetching sellers
-        if (selectedSeller) {
-          setSelectedSeller(null);
-        }
-      }
-    } else {
-      setAddedSellers([]);
-      // Clear selected seller if user is not customer or admin
-      if (selectedSeller) {
-        setSelectedSeller(null);
-      }
-    }
-  };
-
-  // Fetch the list of sellers only when the user changes
-  useEffect(() => {
-    fetchAddedSellers();
-  }, [user, selectedSeller]);
-
-  // Add focus effect to refresh sellers when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      if (user && (isCustomer || isAdmin)) {
-        fetchAddedSellers();
-      }
-    }, [user])
-  );
+  // No need to fetch added sellers since we're using global state
+  // The sellerReferrals are already managed globally
 
   // Replace the fetchSellerProducts useEffect with the following:
   useEffect(() => {
@@ -363,7 +346,7 @@ export default function RatesScreen() {
           setIsLoadingInventory(false);
         }
       } else {
-        console.log('No seller ID available for inventory fetch');
+        // console.log('No seller ID available for inventory fetch');
         setInventoryItems([]);
         setIsLoadingInventory(false);
       }

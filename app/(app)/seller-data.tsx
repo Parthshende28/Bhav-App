@@ -17,28 +17,74 @@ const SellerData = () => {
     getSellerReferralsForCustomer,
     hasReachedSellerReferralLimit,
     removeSellerReferral,
-    getUserById
+    getUserById,
+    sellerReferrals, // Use global sellerReferrals instead of local state
   } = useAuthStore();
 
   const [referralCode, setReferralCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [addedSellers, setAddedSellers] = useState<User[]>([]);
   const [sellerProducts, setSellerProducts] = useState<{ [key: string]: InventoryItem[] }>({});
   const [expandedSeller, setExpandedSeller] = useState<string | null>(null);
+
+  // Use global sellerReferrals for added sellers
+  const addedSellers = sellerReferrals.map((ref: any) => {
+
+    // Try to get user from global users array first
+    const userFromGlobal = getUserById(ref.sellerId);
+    if (userFromGlobal) {
+      return userFromGlobal;
+    }
+
+    // If not found in global users, return the seller data from the referral
+    // This happens when the seller data is populated by the backend
+    if (ref.sellerId && typeof ref.sellerId === 'object') {
+      const sellerData = ref.sellerId as any;
+      return {
+        ...sellerData,
+        id: sellerData._id || sellerData.id,
+        _id: sellerData._id || sellerData.id,
+      } as User;
+    }
+
+    // If the referral itself contains seller data (backend returns full seller objects)
+    if (typeof ref === 'object' && ref._id && ref.email) {
+      return {
+        ...ref,
+        id: ref._id || ref.id,
+        _id: ref._id || ref.id,
+      } as User;
+    }
+
+    return null;
+  }).filter(Boolean) as User[];
+
 
   // Add this useEffect to always fetch the seller list from backend
   useEffect(() => {
     async function fetchAddedSellersAndProducts() {
       if (user) {
         try {
+
           const referralsRes = await userAPI.getSellerReferrals();
-          const sellers: User[] = (referralsRes.data?.sellerReferrals || []).map((seller: any) => ({
+
+          // Check different possible data structures
+          const referrals = referralsRes.data?.sellerReferrals ||
+            referralsRes.data?.referrals ||
+            referralsRes.data?.data?.sellerReferrals ||
+            referralsRes.data?.data?.referrals ||
+            [];
+
+          // Update global state with the fetched referrals
+          const { setSellerReferrals } = useAuthStore.getState();
+          setSellerReferrals(referrals);
+
+          const sellers: User[] = referrals.map((seller: any) => ({
             ...seller,
             id: seller._id || seller.id,
             _id: seller._id || seller.id,
           }));
-          setAddedSellers(sellers);
+
 
           // Fetch public inventory for each seller
           const productsMap: { [key: string]: InventoryItem[] } = {};
@@ -55,45 +101,40 @@ const SellerData = () => {
             })
           );
           setSellerProducts(productsMap);
-        } catch (err) {
-          setAddedSellers([]);
+        } catch (err: any) {
+          console.error('Error fetching seller referrals:', err);
+          console.error('Error details:', err.response?.data);
+          console.error('Error status:', err.response?.status);
+
+          // Try a fallback approach - maybe the API structure is different
+          try {
+            const fallbackRes = await fetch('https://bhav-backend.onrender.com/api/users/referrals', {
+              headers: {
+                'Authorization': `Bearer ${useAuthStore.getState().token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            const fallbackData = await fallbackRes.json();
+
+            if (fallbackData.sellerReferrals) {
+              const { setSellerReferrals } = useAuthStore.getState();
+              setSellerReferrals(fallbackData.sellerReferrals);
+            }
+          } catch (fallbackErr) {
+            console.error('Fallback also failed:', fallbackErr);
+          }
+
           setSellerProducts({});
+          const { setSellerReferrals } = useAuthStore.getState();
+          setSellerReferrals([]);
         }
       }
     }
     fetchAddedSellersAndProducts();
   }, [user]);
 
-  // Load existing sellers that the customer has added
-  const loadExistingSellers = async () => {
-    if (!user) return;
-
-    try {
-      // 1. Fetch all seller referrals for this user from backend
-      const referralsRes = await userAPI.getSellerReferrals();
-      // referrals is now an array of user objects (populated)
-      const sellers: User[] = referralsRes.data?.referrals || [];
-      setAddedSellers(sellers);
-
-      // 2. Fetch products for each seller using public inventory API
-      const productsMap: { [key: string]: InventoryItem[] } = {};
-      await Promise.all(
-        sellers.map(async seller => {
-          try {
-            const productsRes = await inventoryAPI.getPublicInventory(seller.id);
-            const products = productsRes.data?.items || [];
-            productsMap[seller.id] = products;
-          } catch (err) {
-            productsMap[seller.id] = [];
-          }
-        })
-      );
-      setSellerProducts(productsMap);
-    } catch (err) {
-      setAddedSellers([]);
-      setSellerProducts({});
-    }
-  };
+  // No need for loadExistingSellers function since we're using global state
+  // The sellerReferrals are already managed globally
 
   const handleAddSeller = async () => {
     if (!user) {
@@ -140,8 +181,16 @@ const SellerData = () => {
       const addResult = await userAPI.addSellerReferral(seller._id);
 
       if (addResult.data?.success) {
-        // Refresh the seller list from backend to ensure consistency
-        await loadExistingSellers();
+        // Refresh the seller referrals from backend
+        try {
+          const refreshRes = await userAPI.getSellerReferrals();
+          const refreshedReferrals = refreshRes.data?.sellerReferrals || [];
+          const { setSellerReferrals } = useAuthStore.getState();
+          setSellerReferrals(refreshedReferrals);
+        } catch (refreshErr) {
+          console.error('Error refreshing seller referrals:', refreshErr);
+        }
+
         // Clear input
         setReferralCode('');
         // Show success message
@@ -205,8 +254,15 @@ const SellerData = () => {
               const removeResult = await userAPI.removeSellerReferral(sellerId);
 
               if (removeResult.status === 200 || removeResult.data?.success) {
-                // Remove seller from local state
-                setAddedSellers(prev => prev.filter(seller => seller.id !== sellerId));
+                // Refresh the seller referrals from backend
+                try {
+                  const refreshRes = await userAPI.getSellerReferrals();
+                  const refreshedReferrals = refreshRes.data?.sellerReferrals || [];
+                  const { setSellerReferrals } = useAuthStore.getState();
+                  setSellerReferrals(refreshedReferrals);
+                } catch (refreshErr) {
+                  console.error('Error refreshing seller referrals:', refreshErr);
+                }
 
                 // Remove seller products from state
                 setSellerProducts(prev => {

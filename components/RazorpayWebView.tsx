@@ -43,7 +43,16 @@ export default function RazorpayWebView({
 
   // Parse amount to number
   const parsedAmount = parseAmount(amount);
-  const durationMonths = planId === 'yearly' ? 12 : 1;
+
+  // Calculate duration months based on plan type
+  let durationMonths: number; // Default to 1 month
+  if (planId === 'half-yearly') {
+    durationMonths = 6;
+  } else if (planId === 'yearly') {
+    durationMonths = 12;
+  } else if (planId === 'super-seller') {
+    durationMonths = 12; // Super seller is also 12 months
+  }
 
   // Create order when component mounts
   useEffect(() => {

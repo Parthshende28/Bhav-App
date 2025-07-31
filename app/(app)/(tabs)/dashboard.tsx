@@ -74,7 +74,10 @@ export default function SellerDashboardScreen() {
     getUserById,
     acceptBuyRequest,
     declineBuyRequest,
-    logout, notifications, unreadNotificationsCount, markAllNotificationsAsRead, users, getSellerCount, getCustomerCount, selectedSeller, setSelectedSeller
+    logout, notifications, unreadNotificationsCount, markAllNotificationsAsRead, users, getSellerCount, getCustomerCount, selectedSeller, setSelectedSeller,
+    buyRequests, // Use global buyRequests instead of local state
+    setBuyRequests, // Use global setter
+    inventoryItems, // Use global inventoryItems
   } = useAuthStore();
 
   const isAdmin = user?.role === 'admin';
@@ -83,50 +86,23 @@ export default function SellerDashboardScreen() {
 
   const router = useRouter();
   const [showAllNotifications, setShowAllNotifications] = useState(false);
-  const [buyRequests, setBuyRequests] = useState<BuyRequest[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
-  const [inventoryCount, setInventoryCount] = useState(0);
 
   // States for async data fetching
-  const [requestDetails, setRequestDetails] = useState<{ [key: string]: { product: any, customer: any } }>({});
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [requestDetails, setRequestDetails] = useState<{ [key: string]: { product: any, customer: any } }>({});
 
-  // Load inventory count and other metrics
-  useEffect(() => {
-    const loadInventoryCount = async () => {
-      if (user?.role === 'seller') {
-        try {
-          const result = await getInventoryItemsForSellerAPI(user.id);
-          if (result.success && result.items) {
-            setInventoryCount(result.items.length);
-          }
-        } catch (error) {
-          console.error('Error loading inventory count:', error);
-        }
-      }
-    };
-    loadInventoryCount();
-  }, [user]);
+  // Calculate inventory count from global state
+  const inventoryCount = user?.role === 'seller'
+    ? inventoryItems.filter(item => item.sellerId === user?.id).length
+    : 0;
 
-  // Add focus effect to refresh metrics when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      const loadInventoryCount = async () => {
-        if (user?.role === 'seller') {
-          try {
-            const result = await getInventoryItemsForSellerAPI(user.id);
-            if (result.success && result.items) {
-              setInventoryCount(result.items.length);
-            }
-          } catch (error) {
-            console.error('Error loading inventory count:', error);
-          }
-        }
-      };
-      loadInventoryCount();
-    }, [user])
-  );
+  // Calculate sales count (accepted requests) from global state
+  const salesCount = buyRequests.filter(request => request.status === 'accepted').length;
+
+  // Calculate total requests count from global state
+  const totalRequestsCount = buyRequests.length;
 
   // Get notifications for the current seller
   const sellerNotifications = user ? getNotificationsForUser(user.id).filter(n =>
@@ -141,12 +117,6 @@ export default function SellerDashboardScreen() {
     n.type === 'referral'
   ) : [];
 
-  // Calculate sales count (accepted requests)
-  const salesCount = buyRequests.filter(request => request.status === 'accepted').length;
-
-  // Calculate total requests count
-  const totalRequestsCount = buyRequests.length;
-
   // Fetch buy requests for the current seller
   useEffect(() => {
     const fetchRequests = async () => {
@@ -155,7 +125,6 @@ export default function SellerDashboardScreen() {
           const result = await useAuthStore.getState().getSellerRequestsAPI();
 
           if (result.success && result.requests) {
-
             // Convert backend format to frontend format and extract populated data
             const convertedRequests = result.requests.map((req: any) => {
               const converted = {
@@ -173,7 +142,18 @@ export default function SellerDashboardScreen() {
                 message: req.message
               };
 
-              // Extract populated data for immediate use
+              return converted;
+            });
+
+            // Update global state instead of local state
+            setBuyRequests(convertedRequests);
+
+            // Now cache all the details in one go
+            const detailsToCache: { [key: string]: { product: any, customer: any } } = {};
+
+            result.requests.forEach((req: any, index: number) => {
+              const requestId = req._id ? req._id.toString() : req.id;
+
               if (req.customerId && typeof req.customerId === 'object') {
                 const customerData = {
                   id: req.customerId._id ? req.customerId._id.toString() : req.customerId.id,
@@ -185,14 +165,10 @@ export default function SellerDashboardScreen() {
                   state: req.customerId.state
                 };
 
-                // Cache customer data immediately
-                setRequestDetails(prev => ({
-                  ...prev,
-                  [converted.id]: {
-                    ...prev[converted.id],
-                    customer: customerData
-                  }
-                }));
+                detailsToCache[requestId] = {
+                  ...detailsToCache[requestId],
+                  customer: customerData
+                };
               }
 
               if (req.itemId && typeof req.itemId === 'object') {
@@ -206,20 +182,15 @@ export default function SellerDashboardScreen() {
                   capturedAt: req.capturedAt
                 };
 
-                // Cache product data immediately
-                setRequestDetails(prev => ({
-                  ...prev,
-                  [converted.id]: {
-                    ...prev[converted.id],
-                    product: productData
-                  }
-                }));
+                detailsToCache[requestId] = {
+                  ...detailsToCache[requestId],
+                  product: productData
+                };
               }
-
-              return converted;
             });
 
-            setBuyRequests(convertedRequests);
+            // Update all details at once
+            setRequestDetails(detailsToCache);
           } else {
             setBuyRequests([]);
           }
@@ -229,8 +200,89 @@ export default function SellerDashboardScreen() {
         }
       }
     };
+
     fetchRequests();
   }, [user]);
+
+  // Add focus effect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.role === 'seller') {
+        const fetchRequests = async () => {
+          try {
+            const result = await useAuthStore.getState().getSellerRequestsAPI();
+            if (result.success && result.requests) {
+              const convertedRequests = result.requests.map((req: any) => ({
+                id: req._id ? req._id.toString() : req.id,
+                itemId: typeof req.itemId === 'object' ? (req.itemId._id ? req.itemId._id.toString() : req.itemId.id) : req.itemId,
+                customerId: typeof req.customerId === 'object' ? (req.customerId._id ? req.customerId._id.toString() : req.customerId.id) : req.customerId,
+                sellerId: typeof req.sellerId === 'object' ? (req.sellerId._id ? req.sellerId._id.toString() : req.sellerId.id) : req.sellerId,
+                status: req.status,
+                createdAt: req.createdAt ? new Date(req.createdAt).getTime() : Date.now(),
+                updatedAt: req.updatedAt ? new Date(req.updatedAt).getTime() : Date.now(),
+                requestType: req.requestType,
+                capturedAmount: req.capturedAmount,
+                capturedAt: req.capturedAt,
+                quantity: req.quantity,
+                message: req.message
+              }));
+              setBuyRequests(convertedRequests);
+
+              // Cache all details at once
+              const detailsToCache: { [key: string]: { product: any, customer: any } } = {};
+
+              result.requests.forEach((req: any) => {
+                const requestId = req._id ? req._id.toString() : req.id;
+
+                if (req.customerId && typeof req.customerId === 'object') {
+                  const customerData = {
+                    id: req.customerId._id ? req.customerId._id.toString() : req.customerId.id,
+                    fullName: req.customerId.fullName,
+                    name: req.customerId.fullName,
+                    email: req.customerId.email,
+                    phone: req.customerId.phone,
+                    city: req.customerId.city,
+                    state: req.customerId.state
+                  };
+
+                  detailsToCache[requestId] = {
+                    ...detailsToCache[requestId],
+                    customer: customerData
+                  };
+                }
+
+                if (req.itemId && typeof req.itemId === 'object') {
+                  const productData = {
+                    id: req.itemId._id ? req.itemId._id.toString() : req.itemId.id,
+                    productName: req.itemId.productName,
+                    productType: req.itemId.productType,
+                    buyPremium: req.itemId.buyPremium,
+                    sellPremium: req.itemId.sellPremium,
+                    capturedAmount: req.capturedAmount,
+                    capturedAt: req.capturedAt
+                  };
+
+                  detailsToCache[requestId] = {
+                    ...detailsToCache[requestId],
+                    product: productData
+                  };
+                }
+              });
+
+              // Update all details at once
+              setRequestDetails(detailsToCache);
+            }
+          } catch (error) {
+            console.error('Error refreshing requests:', error);
+          }
+        };
+        fetchRequests();
+      }
+    }, [user])
+  );
+
+  // Monitor requestDetails state changes
+  useEffect(() => { }, [requestDetails]);
 
   // Reset selected seller for new users and validate selected seller
   useEffect(() => {
@@ -244,14 +296,6 @@ export default function SellerDashboardScreen() {
       // The selectedSeller will be cleared automatically when it's removed
     }
   }, [user, selectedSeller]);
-
-  // Add focus effect to refresh data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      // Refresh any necessary data when the screen comes into focus
-      // This ensures the dashboard shows the latest state after navigation
-    }, [])
-  );
 
   // Format timestamp to readable date/time
   const formatTimestamp = (timestamp: number) => {
@@ -306,12 +350,11 @@ export default function SellerDashboardScreen() {
       const result = await useAuthStore.getState().acceptRequestAPI(requestId);
 
       if (result.success) {
-        // Update local state
-        setBuyRequests(prevRequests =>
-          prevRequests.map(req =>
-            req.id === requestId ? { ...req, status: 'accepted', updatedAt: Date.now() } : req
-          )
+        // Update global state
+        const updatedRequests = buyRequests.map(req =>
+          req.id === requestId ? { ...req, status: 'accepted' as const, updatedAt: Date.now() } : req
         );
+        setBuyRequests(updatedRequests);
 
         // Show success message
         Alert.alert(
@@ -351,12 +394,11 @@ export default function SellerDashboardScreen() {
       const result = await useAuthStore.getState().declineRequestAPI(requestId);
 
       if (result.success) {
-        // Update local state
-        setBuyRequests(prevRequests =>
-          prevRequests.map(req =>
-            req.id === requestId ? { ...req, status: 'declined', updatedAt: Date.now() } : req
-          )
+        // Update global state
+        const updatedRequests = buyRequests.map(req =>
+          req.id === requestId ? { ...req, status: 'declined' as const, updatedAt: Date.now() } : req
         );
+        setBuyRequests(updatedRequests);
 
         // Show success message
         Alert.alert(

@@ -192,10 +192,12 @@ export default function PaymentScreen() {
 
       // Calculate duration months based on plan type
       let durationMonths = 1; // Default to 1 month
-      if (planIdStr === 'monthly') {
-        durationMonths = 1;
+      if (planIdStr === 'half-yearly') {
+        durationMonths = 6;
       } else if (planIdStr === 'yearly') {
         durationMonths = 12;
+      } else if (planIdStr === 'super-seller') {
+        durationMonths = 12; // Super seller is also 12 months
       }
 
       // Get the current user's ID as fallback

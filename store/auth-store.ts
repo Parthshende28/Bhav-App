@@ -208,6 +208,8 @@ export type AuthState = {
   buyRequestStatuses: BuyRequestStatus;
   selectedSeller?: User | null;
   setSelectedSeller: (seller: User | null) => void;
+  setBuyRequests: (requests: BuyRequest[]) => void; // Added setter for buy requests
+  setSellerReferrals: (referrals: SellerReferral[]) => void; // Added setter for seller referrals
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; token?: string; user?: User }>;
   signup: (userData: Partial<User>, password: string) => Promise<{ success: boolean; error?: string; userId?: string; message?: string }>;
   logout: () => void;
@@ -364,6 +366,7 @@ export const useAuthStore = create<AuthState>()(
       buyRequestStatuses: {} as BuyRequestStatus,
       selectedSeller: null,
       setSelectedSeller: (seller: User | null) => set({ selectedSeller: seller }),
+      setBuyRequests: (requests: BuyRequest[]) => set({ buyRequests: requests }),
 
       isAdminUsername: (username: string) => {
         return username === ADMIN_USERNAME;
@@ -2057,6 +2060,10 @@ export const useAuthStore = create<AuthState>()(
 
       setInventoryItems: (items: InventoryItem[]) => {
         set({ inventoryItems: items });
+      },
+
+      setSellerReferrals: (referrals: SellerReferral[]) => {
+        set({ sellerReferrals: referrals });
       },
 
       getPublicInventoryForSellerAPI: async (sellerId) => {
