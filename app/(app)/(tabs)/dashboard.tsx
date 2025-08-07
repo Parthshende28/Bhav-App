@@ -126,24 +126,26 @@ export default function SellerDashboardScreen() {
 
           if (result.success && result.requests) {
             // Convert backend format to frontend format and extract populated data
-            const convertedRequests = result.requests.map((req: any) => {
-              const converted = {
-                id: req._id ? req._id.toString() : req.id,
-                itemId: typeof req.itemId === 'object' ? (req.itemId._id ? req.itemId._id.toString() : req.itemId.id) : req.itemId,
-                customerId: typeof req.customerId === 'object' ? (req.customerId._id ? req.customerId._id.toString() : req.customerId.id) : req.customerId,
-                sellerId: typeof req.sellerId === 'object' ? (req.sellerId._id ? req.sellerId._id.toString() : req.sellerId.id) : req.sellerId,
-                status: req.status,
-                createdAt: req.createdAt ? new Date(req.createdAt).getTime() : Date.now(),
-                updatedAt: req.updatedAt ? new Date(req.updatedAt).getTime() : Date.now(),
-                requestType: req.requestType,
-                capturedAmount: req.capturedAmount,
-                capturedAt: req.capturedAt,
-                quantity: req.quantity,
-                message: req.message
-              };
+            const convertedRequests = result.requests
+              .filter((req: any) => req && req._id) // Filter out null/undefined requests
+              .map((req: any) => {
+                const converted = {
+                  id: req._id ? req._id.toString() : req.id,
+                  itemId: req.itemId && typeof req.itemId === 'object' ? (req.itemId._id ? req.itemId._id.toString() : req.itemId.id) : req.itemId,
+                  customerId: req.customerId && typeof req.customerId === 'object' ? (req.customerId._id ? req.customerId._id.toString() : req.customerId.id) : req.customerId,
+                  sellerId: req.sellerId && typeof req.sellerId === 'object' ? (req.sellerId._id ? req.sellerId._id.toString() : req.sellerId.id) : req.sellerId,
+                  status: req.status,
+                  createdAt: req.createdAt ? new Date(req.createdAt).getTime() : Date.now(),
+                  updatedAt: req.updatedAt ? new Date(req.updatedAt).getTime() : Date.now(),
+                  requestType: req.requestType,
+                  capturedAmount: req.capturedAmount,
+                  capturedAt: req.capturedAt,
+                  quantity: req.quantity,
+                  message: req.message
+                };
 
-              return converted;
-            });
+                return converted;
+              });
 
             // Update global state instead of local state
             setBuyRequests(convertedRequests);
@@ -151,87 +153,9 @@ export default function SellerDashboardScreen() {
             // Now cache all the details in one go
             const detailsToCache: { [key: string]: { product: any, customer: any } } = {};
 
-            result.requests.forEach((req: any, index: number) => {
-              const requestId = req._id ? req._id.toString() : req.id;
-
-              if (req.customerId && typeof req.customerId === 'object') {
-                const customerData = {
-                  id: req.customerId._id ? req.customerId._id.toString() : req.customerId.id,
-                  fullName: req.customerId.fullName,
-                  name: req.customerId.fullName,
-                  email: req.customerId.email,
-                  phone: req.customerId.phone,
-                  city: req.customerId.city,
-                  state: req.customerId.state
-                };
-
-                detailsToCache[requestId] = {
-                  ...detailsToCache[requestId],
-                  customer: customerData
-                };
-              }
-
-              if (req.itemId && typeof req.itemId === 'object') {
-                const productData = {
-                  id: req.itemId._id ? req.itemId._id.toString() : req.itemId.id,
-                  productName: req.itemId.productName,
-                  productType: req.itemId.productType,
-                  buyPremium: req.itemId.buyPremium,
-                  sellPremium: req.itemId.sellPremium,
-                  capturedAmount: req.capturedAmount,
-                  capturedAt: req.capturedAt
-                };
-
-                detailsToCache[requestId] = {
-                  ...detailsToCache[requestId],
-                  product: productData
-                };
-              }
-            });
-
-            // Update all details at once
-            setRequestDetails(detailsToCache);
-          } else {
-            setBuyRequests([]);
-          }
-        } catch (error) {
-          console.error('Error fetching requests:', error);
-          setBuyRequests([]);
-        }
-      }
-    };
-
-    fetchRequests();
-  }, [user]);
-
-  // Add focus effect to refresh data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      if (user?.role === 'seller') {
-        const fetchRequests = async () => {
-          try {
-            const result = await useAuthStore.getState().getSellerRequestsAPI();
-            if (result.success && result.requests) {
-              const convertedRequests = result.requests.map((req: any) => ({
-                id: req._id ? req._id.toString() : req.id,
-                itemId: typeof req.itemId === 'object' ? (req.itemId._id ? req.itemId._id.toString() : req.itemId.id) : req.itemId,
-                customerId: typeof req.customerId === 'object' ? (req.customerId._id ? req.customerId._id.toString() : req.customerId.id) : req.customerId,
-                sellerId: typeof req.sellerId === 'object' ? (req.sellerId._id ? req.sellerId._id.toString() : req.sellerId.id) : req.sellerId,
-                status: req.status,
-                createdAt: req.createdAt ? new Date(req.createdAt).getTime() : Date.now(),
-                updatedAt: req.updatedAt ? new Date(req.updatedAt).getTime() : Date.now(),
-                requestType: req.requestType,
-                capturedAmount: req.capturedAmount,
-                capturedAt: req.capturedAt,
-                quantity: req.quantity,
-                message: req.message
-              }));
-              setBuyRequests(convertedRequests);
-
-              // Cache all details at once
-              const detailsToCache: { [key: string]: { product: any, customer: any } } = {};
-
-              result.requests.forEach((req: any) => {
+            result.requests
+              .filter((req: any) => req && req._id) // Filter out null/undefined requests
+              .forEach((req: any, index: number) => {
                 const requestId = req._id ? req._id.toString() : req.id;
 
                 if (req.customerId && typeof req.customerId === 'object') {
@@ -268,6 +192,90 @@ export default function SellerDashboardScreen() {
                   };
                 }
               });
+
+            // Update all details at once
+            setRequestDetails(detailsToCache);
+          } else {
+            setBuyRequests([]);
+          }
+        } catch (error) {
+          console.error('Error fetching requests:', error);
+          setBuyRequests([]);
+        }
+      }
+    };
+
+    fetchRequests();
+  }, [user]);
+
+  // Add focus effect to refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.role === 'seller') {
+        const fetchRequests = async () => {
+          try {
+            const result = await useAuthStore.getState().getSellerRequestsAPI();
+            if (result.success && result.requests) {
+              const convertedRequests = result.requests
+                .filter((req: any) => req && req._id) // Filter out null/undefined requests
+                .map((req: any) => ({
+                  id: req._id ? req._id.toString() : req.id,
+                  itemId: req.itemId && typeof req.itemId === 'object' ? (req.itemId._id ? req.itemId._id.toString() : req.itemId.id) : req.itemId,
+                  customerId: req.customerId && typeof req.customerId === 'object' ? (req.customerId._id ? req.customerId._id.toString() : req.customerId.id) : req.customerId,
+                  sellerId: req.sellerId && typeof req.sellerId === 'object' ? (req.sellerId._id ? req.sellerId._id.toString() : req.sellerId.id) : req.sellerId,
+                  status: req.status,
+                  createdAt: req.createdAt ? new Date(req.createdAt).getTime() : Date.now(),
+                  updatedAt: req.updatedAt ? new Date(req.updatedAt).getTime() : Date.now(),
+                  requestType: req.requestType,
+                  capturedAmount: req.capturedAmount,
+                  capturedAt: req.capturedAt,
+                  quantity: req.quantity,
+                  message: req.message
+                }));
+              setBuyRequests(convertedRequests);
+
+              // Cache all details at once
+              const detailsToCache: { [key: string]: { product: any, customer: any } } = {};
+
+              result.requests
+                .filter((req: any) => req && req._id) // Filter out null/undefined requests
+                .forEach((req: any) => {
+                  const requestId = req._id ? req._id.toString() : req.id;
+
+                  if (req.customerId && typeof req.customerId === 'object') {
+                    const customerData = {
+                      id: req.customerId._id ? req.customerId._id.toString() : req.customerId.id,
+                      fullName: req.customerId.fullName,
+                      name: req.customerId.fullName,
+                      email: req.customerId.email,
+                      phone: req.customerId.phone,
+                      city: req.customerId.city,
+                      state: req.customerId.state
+                    };
+
+                    detailsToCache[requestId] = {
+                      ...detailsToCache[requestId],
+                      customer: customerData
+                    };
+                  }
+
+                  if (req.itemId && typeof req.itemId === 'object') {
+                    const productData = {
+                      id: req.itemId._id ? req.itemId._id.toString() : req.itemId.id,
+                      productName: req.itemId.productName,
+                      productType: req.itemId.productType,
+                      buyPremium: req.itemId.buyPremium,
+                      sellPremium: req.itemId.sellPremium,
+                      capturedAmount: req.capturedAmount,
+                      capturedAt: req.capturedAt
+                    };
+
+                    detailsToCache[requestId] = {
+                      ...detailsToCache[requestId],
+                      product: productData
+                    };
+                  }
+                });
 
               // Update all details at once
               setRequestDetails(detailsToCache);
@@ -559,13 +567,6 @@ export default function SellerDashboardScreen() {
   };
 
 
-  const handleSellerClick = () => {
-    if (selectedSeller) {
-      router.push(`/seller-profile/${selectedSeller.id}`);
-    }
-  };
-
-
   // handle contact
   const handlePhoneClick = () => {
     if (selectedSeller?.phone) {
@@ -797,7 +798,7 @@ export default function SellerDashboardScreen() {
         </View>
 
         <View style={styles.customerDetailsContainer}>
-          <Text style={styles.customerDetailsTitle}>Loading user details...</Text>
+          <Text style={styles.customerDetailsTitle}>User Details:</Text>
         </View>
 
         <View style={styles.buyRequestActions}>
@@ -1490,7 +1491,7 @@ export default function SellerDashboardScreen() {
 
             {/* Brand/logo section */}
             {(isCustomer) ? (
-              <TouchableOpacity style={styles.headerCustomer} onPress={handleSellerClick}>
+              <TouchableOpacity style={styles.headerCustomer}>
 
                 {selectedSeller?.brandImage ? (
                   <Image source={{ uri: selectedSeller.brandImage }} style={styles.brandCoverImage} />

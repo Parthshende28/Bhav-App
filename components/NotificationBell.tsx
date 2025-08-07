@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl, Linking } from "react-native";
 import { Bell, X, Check, User, DollarSign, Settings, AlertCircle, Mail, Phone, MapPin, Clock, ShoppingBag, Package, ThumbsUp, ThumbsDown } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { useAuthStore, Notification, BuyRequest } from "@/store/auth-store";
@@ -253,6 +253,20 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     }
   };
 
+  // Handle phone call to seller
+  const handleContactSeller = (item: any) => {
+    // Try to get seller phone from notification data
+    const sellerPhone = item.data?.seller?.phone || item.data?.sellerPhone || item.sellerPhone;
+
+    if (sellerPhone) {
+      // Clean the phone number (remove spaces, dashes, etc.)
+      const cleanNumber = sellerPhone.replace(/[\s\-\(\)]/g, '');
+      Linking.openURL(`tel:${cleanNumber}`);
+    } else {
+      Alert.alert("Phone Number Not Available", "The seller's phone number is not available.");
+    }
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -405,41 +419,14 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
                           <Text style={styles.buyResponseMessage}>{item.message}</Text>
 
-                          {/* {item.data?.seller && item.data?.item && (
-                            <View style={styles.buyResponseDetailsContainer}>
-                              <View style={styles.buyResponseDetailRow}>
-                                <Package size={16} color="#666666" style={styles.buyResponseDetailIcon} />
-                                <Text style={styles.buyResponseDetailLabel}>Product:</Text>
-                                <Text style={styles.buyResponseDetailValue}>{item.data.item.productName}</Text>
-                              </View>
 
-                              {item.type === 'buy_request_accepted' && item.data.seller && (
-                                <>
-                                  <Text style={styles.sellerDetailsTitle}>Seller Contact Details:</Text>
-
-                                  {item.data.seller.phone && (
-                                    <View style={styles.sellerDetailRow}>
-                                      <Phone size={16} color="#666666" style={styles.sellerDetailIcon} />
-                                      <Text style={styles.sellerDetailLabel}>Phone:</Text>
-                                      <Text style={styles.sellerDetailValue}>{item.data.seller.phone}</Text>
-                                    </View>
-                                  )}
-
-                                  {item.data.seller.email && (
-                                    <View style={styles.sellerDetailRow}>
-                                      <Mail size={16} color="#666666" style={styles.sellerDetailIcon} />
-                                      <Text style={styles.sellerDetailLabel}>Email:</Text>
-                                      <Text style={styles.sellerDetailValue}>{item.data.seller.email}</Text>
-                                    </View>
-                                  )}
-                                </>
-                              )}
-                            </View>
-                          )} */}
 
                           {item.type === 'buy_request_accepted' && (
                             <View style={styles.buyResponseActions}>
-                              <TouchableOpacity style={styles.contactSellerButton}>
+                              <TouchableOpacity
+                                style={styles.contactSellerButton}
+                                onPress={() => handleContactSeller(item)}
+                              >
                                 <Phone size={16} color="#ffffff" />
                                 <Text style={styles.contactSellerText}>Contact Seller</Text>
                               </TouchableOpacity>

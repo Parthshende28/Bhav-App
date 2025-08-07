@@ -344,19 +344,6 @@ export default function ProfileScreen() {
                 </Text>
               </View>
             )}
-
-            {/* Display upgrade to seller button if user is not a seller */}
-            {user?.role === 'customer' && (
-              <TouchableOpacity
-                style={styles.upgradeButton}
-                onPress={handleUpgradeToSeller}
-              >
-                <ArrowUpCircle size={16} color="#F3B62B" style={styles.upgradeIcon} />
-                <Text style={styles.upgradeButtonText}>
-                  Upgrade to Seller
-                </Text>
-              </TouchableOpacity>
-            )}
           </View>
 
 
@@ -622,24 +609,6 @@ export default function ProfileScreen() {
               </>
             )}
 
-
-            {/* Upgrade to Seller button - larger version above Save Changes */}
-            {user?.role === 'customer' && (
-              <TouchableOpacity
-                style={styles.largeUpgradeButton}
-                onPress={handleUpgradeToSeller}
-              >
-                <LinearGradient
-                  colors={["#F5D76E", "#F3B62B"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.largeUpgradeButtonInner}
-                >
-                  <ArrowUpCircle size={20} color="#fff" style={styles.largeUpgradeIcon} />
-                  <Text style={styles.largeUpgradeText}>Upgrade to Seller</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            )}
 
             <TouchableOpacity
               style={styles.buttonContainer}

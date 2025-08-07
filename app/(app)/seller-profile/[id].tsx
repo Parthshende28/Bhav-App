@@ -32,6 +32,21 @@ export default function SellerProfileScreen() {
   const { id } = useLocalSearchParams();
   const sellerId = Array.isArray(id) ? id[0] : id;
 
+  // Validate seller ID
+  if (!sellerId || typeof sellerId !== 'string' || sellerId.trim() === '') {
+    return (
+      <SafeAreaView style={styles.errorContainer}>
+        <Text style={styles.errorText}>Invalid seller ID</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
   const {
     user,
     getBuyRequestsForSeller,
@@ -43,7 +58,9 @@ export default function SellerProfileScreen() {
     getUserBuyRequestCount,
     hasReachedBuyRequestLimit,
     inventoryItems, // Use global state
-    setInventoryItems // Use global state setter
+    setInventoryItems, // Use global state setter
+    getUsers, // Add this to fetch users from backend
+    fetchSellerData // Add this to fetch specific seller data
   } = useAuthStore();
 
   const router = useRouter();
@@ -51,6 +68,8 @@ export default function SellerProfileScreen() {
   const [seller, setSeller] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isBuyLoading, setIsBuyLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Check if user is premium
   const isPremiumUser = user?.isPremium || false;
@@ -62,40 +81,89 @@ export default function SellerProfileScreen() {
   // Fetch seller details and inventory items
   useEffect(() => {
     if (sellerId) {
-      const sellerData = getUserById(sellerId);
-      setSeller(sellerData);
+      const fetchSellerAndInventory = async () => {
+        try {
+          setIsLoading(true);
+          setError(null);
 
-      // Fetch inventory items for seller asynchronously
-      const fetchInventory = async () => {
-        if (sellerId) {
-          const result = await useAuthStore.getState().getInventoryItemsForSellerAPI(sellerId);
-          if (result.success && Array.isArray(result.items)) {
-            const filtered = result.items.filter((item: InventoryItem) => item.isSellPremiumEnabled && item.isVisible);
-            setInventoryItems(filtered);
-          } else {
-            setInventoryItems([]);
+          // First try to get seller from local store
+          let sellerData = getUserById(sellerId);
+
+          // If not found locally, fetch from backend
+          if (!sellerData) {
+            console.log('Seller not found in local store, fetching from backend...');
+            const result = await fetchSellerData(sellerId);
+            if (result.success && result.seller) {
+              sellerData = result.seller;
+            } else {
+              console.error('Failed to fetch seller data:', result.error);
+              setError(result.error || 'Failed to fetch seller data');
+              setSeller(null);
+              setIsLoading(false);
+              return;
+            }
           }
+
+          setSeller(sellerData);
+
+          // Fetch inventory items for seller
+          if (sellerData) {
+            const result = await useAuthStore.getState().getInventoryItemsForSellerAPI(sellerId);
+            if (result.success && Array.isArray(result.items)) {
+              const filtered = result.items.filter((item: InventoryItem) => item.isSellPremiumEnabled && item.isVisible);
+              setInventoryItems(filtered);
+            } else {
+              console.error('Failed to fetch inventory items:', result.error);
+              setError(result.error || 'Failed to fetch inventory items');
+              setInventoryItems([]);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching seller data:', error);
+          setError('Network error. Please check your connection and try again.');
+          setSeller(null);
+          setInventoryItems([]);
+        } finally {
+          setIsLoading(false);
         }
-        setIsLoading(false);
       };
-      fetchInventory();
+
+      fetchSellerAndInventory();
     }
-  }, [sellerId]);
+  }, [sellerId, retryCount]);
 
   // Add focus effect to refresh inventory when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       if (sellerId) {
-        const fetchInventory = async () => {
-          const result = await useAuthStore.getState().getInventoryItemsForSellerAPI(sellerId);
-          if (result.success && Array.isArray(result.items)) {
-            const filtered = result.items.filter((item: InventoryItem) => item.isSellPremiumEnabled && item.isVisible);
-            setInventoryItems(filtered);
-          } else {
-            setInventoryItems([]);
+        const refreshData = async () => {
+          try {
+            // Refresh seller data if needed
+            let sellerData = getUserById(sellerId);
+            if (!sellerData) {
+              const result = await fetchSellerData(sellerId);
+              if (result.success && result.seller) {
+                sellerData = result.seller;
+                setSeller(sellerData);
+              }
+            }
+
+            // Refresh inventory items
+            if (sellerData) {
+              const result = await useAuthStore.getState().getInventoryItemsForSellerAPI(sellerId);
+              if (result.success && Array.isArray(result.items)) {
+                const filtered = result.items.filter((item: InventoryItem) => item.isSellPremiumEnabled && item.isVisible);
+                setInventoryItems(filtered);
+              } else {
+                console.error('Failed to refresh inventory items:', result.error);
+                setInventoryItems([]);
+              }
+            }
+          } catch (error) {
+            console.error('Error refreshing data:', error);
           }
         };
-        fetchInventory();
+        refreshData();
       }
     }, [sellerId])
   );
@@ -236,16 +304,26 @@ Email: ${seller.email}`,
     );
   }
 
-  if (!seller) {
+  if (!seller && !isLoading) {
     return (
       <SafeAreaView style={styles.errorContainer}>
-        <Text style={styles.errorText}>Seller not found</Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
+        <Text style={styles.errorText}>
+          {error || 'Seller not found'}
+        </Text>
+        <View style={styles.errorButtons}>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => setRetryCount(prev => prev + 1)}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -529,6 +607,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#E53935",
     marginBottom: 16,
+  },
+  errorButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  retryButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   backButton: {
     backgroundColor: "#1976D2",

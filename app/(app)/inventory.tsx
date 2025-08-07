@@ -163,6 +163,14 @@ export default function InventoryScreen() {
   };
 
   const handleHideAddForm = () => {
+    // Reset form fields when hiding
+    setProductName('');
+    setProductType('');
+    setBuyPremium('');
+    setSellPremium('');
+    setIsBuyPremiumEnabled(true);
+    setIsSellPremiumEnabled(true);
+    setEditingItemId(null);
     animateForm(false);
   };
 
@@ -173,7 +181,7 @@ export default function InventoryScreen() {
     setSellPremium(item.sellPremium?.toString() || '');
     setIsBuyPremiumEnabled(item.isBuyPremiumEnabled);
     setIsSellPremiumEnabled(item.isSellPremiumEnabled);
-    setEditingItemId(item.id);
+    setEditingItemId(item._id || item.id);
     // setFormErrors({}); // This state was removed, so this line is removed.
 
     animateForm(true);
@@ -226,6 +234,7 @@ export default function InventoryScreen() {
         // Update existing item
         const result = await updateInventoryItemAPI(editingItemId, {
           productName,
+          productType,
           buyPremium: isBuyPremiumEnabled ? parseFloat(buyPremium) : 0,
           sellPremium: isSellPremiumEnabled ? parseFloat(sellPremium) : 0,
           isBuyPremiumEnabled,
