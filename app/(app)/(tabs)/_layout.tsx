@@ -2,7 +2,18 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Platform, View, StyleSheet, TouchableOpacity } from "react-native";
 import { BlurView } from "expo-blur";
-import { Home, TrendingUp, Calculator, Phone, CreditCard, Menu, Users, Newspaper, User, Bell } from "lucide-react-native";
+import {
+  Home,
+  TrendingUp,
+  Calculator,
+  Phone,
+  CreditCard,
+  Menu,
+  Users,
+  Newspaper,
+  User,
+  Bell
+} from "lucide-react-native";
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 

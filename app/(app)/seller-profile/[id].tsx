@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { useAuthStore, InventoryItem, MAX_BUY_REQUESTS } from "@/store/auth-store";
+import { useAuthStore, InventoryItem } from "@/store/auth-store";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import {
@@ -76,7 +76,7 @@ export default function SellerProfileScreen() {
 
   // Get user's buy request count
   const buyRequestCount = user ? getUserBuyRequestCount(user.id) : 0;
-  const hasReachedLimit = user ? hasReachedBuyRequestLimit(user.id) : false;
+  // Request limits removed - users can make unlimited requests
 
   // Fetch seller details and inventory items
   useEffect(() => {
@@ -228,25 +228,7 @@ export default function SellerProfileScreen() {
           [{ text: "OK" }]
         );
       } else {
-        if (result.limitReached) {
-          // Redirect to premium upgrade page
-          Alert.alert(
-            "Buy Limit Reached",
-            "You have reached your free buy request limit. Would you like to upgrade to premium for unlimited requests?",
-            [
-              {
-                text: "Not Now",
-                style: "cancel"
-              },
-              {
-                text: "Upgrade to Premium",
-                onPress: () => router.push("/auth/premium-subscription")
-              }
-            ]
-          );
-        } else {
-          Alert.alert("Error", result.error || "Failed to send buy request. Please try again.");
-        }
+        Alert.alert("Error", result.error || "Failed to send buy request. Please try again.");
       }
     } catch (error) {
       console.error("Error sending buy request:", error);
@@ -400,7 +382,7 @@ Email: ${seller.email}`,
               <Text style={styles.buyLimitText}>
                 {hasReachedLimit
                   ? "Upgrade to premium for unlimited buy requests"
-                  : `${buyRequestCount}/${MAX_BUY_REQUESTS} free buy requests used`}
+                  : `${buyRequestCount} buy requests made`}
               </Text>
             </View>
             {hasReachedLimit && (
@@ -460,7 +442,7 @@ Email: ${seller.email}`,
 
             {inventoryItems.map((item) => {
               // Check if user has reached buy limit and is not premium
-              const isBuyDisabled = !isPremiumUser && hasReachedLimit;
+              const isBuyDisabled = false; // Request limits removed
 
               return (
                 <View key={item.id} style={styles.productCard}>
@@ -522,7 +504,7 @@ Email: ${seller.email}`,
                   {!isPremiumUser && !hasReachedLimit && (
                     <View style={styles.buyLimitIndicator}>
                       <Text style={styles.buyLimitIndicatorText}>
-                        {buyRequestCount}/{MAX_BUY_REQUESTS} used
+                        {buyRequestCount} requests made
                       </Text>
                     </View>
                   )}

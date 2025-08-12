@@ -436,18 +436,7 @@ export default function ModalScreen() {
                         [{ text: "OK", onPress: () => router.back() }]
                       );
                     } else {
-                      if (result.limitReached) {
-                        Alert.alert(
-                          "Request Limit Reached",
-                          "You have reached your free request limit. Would you like to upgrade to premium for unlimited requests?",
-                          [
-                            { text: "Not Now", style: "cancel" },
-                            { text: "Upgrade to Premium", onPress: () => router.push("/auth/premium-subscription") }
-                          ]
-                        );
-                      } else {
-                        Alert.alert("Error", result.error || "Failed to send buy request.");
-                      }
+                      Alert.alert("Error", result.error || "Failed to send buy request.");
                     }
                   } catch (error) {
                     console.error("Error sending buy request:", error);
@@ -489,18 +478,7 @@ export default function ModalScreen() {
                         [{ text: "OK", onPress: () => router.back() }]
                       );
                     } else {
-                      if (result.limitReached) {
-                        Alert.alert(
-                          "Request Limit Reached",
-                          "You have reached your free request limit. Would you like to upgrade to premium for unlimited requests?",
-                          [
-                            { text: "Not Now", style: "cancel" },
-                            { text: "Upgrade to Premium", onPress: () => router.push("/auth/premium-subscription") }
-                          ]
-                        );
-                      } else {
-                        Alert.alert("Error", result.error || "Failed to send sell request.");
-                      }
+                      Alert.alert("Error", result.error || "Failed to send sell request.");
                     }
                   } catch (error) {
                     console.error("Error sending sell request:", error);

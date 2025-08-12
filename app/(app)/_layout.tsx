@@ -113,7 +113,17 @@ export default function AppLayout() {
               backgroundColor: "#ffffff",
             },
           }}
-
+        />
+        <Stack.Screen
+          name="history"
+          options={{
+            headerTitle: "History",
+            headerShown: false,
+            headerTintColor: "#333333",
+            headerStyle: {
+              backgroundColor: "#ffffff",
+            },
+          }}
         />
         <Stack.Screen
           name="share"

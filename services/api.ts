@@ -116,6 +116,9 @@ export const requestAPI = {
     getCustomerRequests: (status?: string) =>
         API.get('/requests/customer', { params: { status } }),
 
+    getRequestHistory: (params?: any) =>
+        API.get('/requests/history', { params }),
+
     getRequestById: (requestId: string) =>
         API.get(`/requests/${requestId}`),
 

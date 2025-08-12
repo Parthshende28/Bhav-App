@@ -21,7 +21,7 @@ import * as Haptics from "expo-haptics";
 import { Platform, Dimensions } from "react-native";
 import * as Font from "expo-font";
 import { useMetalPrices } from "@/hooks/useMetalPrices";
-import { useAuthStore, InventoryItem, MAX_BUY_REQUESTS, User } from "@/store/auth-store";
+import { useAuthStore, InventoryItem, User } from "@/store/auth-store";
 import { images } from "@/constants/images";
 import { router, useFocusEffect } from "expo-router";
 import colors from "@/constants/colors";
@@ -39,7 +39,7 @@ export default function RatesScreen() {
     setSelectedSeller,
     selectedSeller,
     getUserBuyRequestCount,
-    hasReachedBuyRequestLimit,
+
     contactDealer,
     createRequestAPI,
     getInventoryItemsForSellerAPI: getInventoryItemsAPI,
@@ -156,12 +156,7 @@ export default function RatesScreen() {
       return;
     }
 
-    // Check if user has reached the buy limit and is not premium
-    if (!user.isPremium && hasReachedBuyRequestLimit(user.id)) {
-      // Redirect to premium upgrade page
-      router.push("/auth/premium-subscription");
-      return;
-    }
+    // Request limits removed - users can make unlimited requests
 
     setSelectedItem(item);
     setRequestType(type);
@@ -221,25 +216,7 @@ export default function RatesScreen() {
         );
         setShowRequestModal(false);
       } else {
-        if (result.limitReached) {
-          // Redirect to premium upgrade page
-          Alert.alert(
-            "Request Limit Reached",
-            "You have reached your free request limit. Would you like to upgrade to premium for unlimited requests?",
-            [
-              {
-                text: "Not Now",
-                style: "cancel"
-              },
-              {
-                text: "Upgrade to Premium",
-                onPress: () => router.push("/auth/premium-subscription")
-              }
-            ]
-          );
-        } else {
-          Alert.alert("Error", result.error || "Failed to send request. Please try again.");
-        }
+        Alert.alert("Error", result.error || "Failed to send request. Please try again.");
       }
     } catch (error) {
       console.error("Error sending request:", error);
@@ -273,7 +250,7 @@ export default function RatesScreen() {
 
   // Get user's buy request count
   const buyRequestCount = user ? getUserBuyRequestCount(user.id) : 0;
-  const hasReachedLimit = user ? hasReachedBuyRequestLimit(user.id) : false;
+  // Request limits removed - users can make unlimited requests
 
   const isPremiumUser = user?.isPremium || false;
 
@@ -1014,13 +991,12 @@ export default function RatesScreen() {
   );
 }
 
-function createBuyRequest(itemId: string, id: string, sellerId: string): { success: boolean; limitReached?: boolean; error?: string } {
+function createBuyRequest(itemId: string, id: string, sellerId: string): { success: boolean; error?: string } {
   // TODO: Implement actual buy request logic here.
   // This is a mock implementation for demonstration.
   // Replace with real API call or logic as needed.
   return {
     success: true,
-    limitReached: false,
     error: undefined,
   };
 }

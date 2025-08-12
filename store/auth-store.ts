@@ -8,9 +8,6 @@ import { userAPI, requestAPI, notificationAPI } from '@/services/api';
 // Reserved admin username - this is the username that only admin can use
 export const ADMIN_USERNAME = "vipin_bullion";
 
-// Maximum number of buy requests for non-premium users
-export const MAX_BUY_REQUESTS = 15;
-
 // Maximum number of sellers a customer can add via referral codes
 export const MAX_SELLER_REFERRALS = 15;
 
@@ -26,6 +23,13 @@ export interface User {
   phone?: string;
   address?: string;
   profileImage?: string;
+  isPremium: boolean;
+  premiumPlan?: string;
+  subscriptionStatus: "active" | "expired" | "cancelled";
+  subscriptionStartDate?: string;
+  subscriptionEndDate?: string;
+  sellerPlan?: string;
+  sellerVerified: any;
   brandName?: string;
   about?: string;
   whatsappNumber?: string;
@@ -35,19 +39,21 @@ export interface User {
   referralCode?: string;
   sellerId?: string;
   catalogue: ReactNode;
-  sellerVerified: any;
-  isPremium: any;
+  referredBy?: string;
+  referralCount: number;
+  referralEarnings: number;
+  // Request tracking fields
+  totalBuyRequests?: number;
+  totalSellRequests?: number;
+  totalRequestsAccepted?: number;
+  totalRequestsDeclined?: number;
   buyRequestCount: number;
   isActive: boolean;
   createdAt: number | string;
-  premiumPlan?: string;
   username?: string;
   brandImage?: string;
-  sellerPlan?: string;
   isEmailVerified?: boolean;
-  subscriptionStatus?: 'active' | 'expired' | 'cancelled';
-  subscriptionStartDate?: string;
-  subscriptionEndDate?: string;
+  updatedAt?: number;
 }
 
 
@@ -235,7 +241,7 @@ export type AuthState = {
   getCustomersForSeller: (sellerId: string) => ContactedSeller[];
 
   // Buy request functions
-  createBuyRequest: (itemId: string, customerId: string, sellerId: string) => Promise<{ success: boolean; error?: string; requestId?: string; limitReached?: boolean }>;
+  createBuyRequest: (itemId: string, customerId: string, sellerId: string) => Promise<{ success: boolean; error?: string; requestId?: string }>;
   acceptBuyRequest: (requestId: string) => Promise<{ success: boolean; error?: string }>;
   declineBuyRequest: (requestId: string) => Promise<{ success: boolean; error?: string }>;
   getBuyRequestsForSeller: (sellerId: string) => BuyRequest[];
@@ -269,7 +275,7 @@ export type AuthState = {
   getPublicInventoryForSellerAPI: (sellerId: string) => Promise<{ success: boolean; error?: string; items?: any[] }>;
 
   // Request API functions
-  createRequestAPI: (itemId: string, requestType: 'buy' | 'sell', quantity: string, message: string, capturedAmount: number) => Promise<{ success: boolean; error?: string; request?: any; limitReached?: boolean }>;
+  createRequestAPI: (itemId: string, requestType: 'buy' | 'sell', quantity: string, message: string, capturedAmount: number) => Promise<{ success: boolean; error?: string; request?: any }>;
   getSellerRequestsAPI: (status?: string) => Promise<{ success: boolean; error?: string; requests?: any[] }>;
   getCustomerRequestsAPI: (status?: string) => Promise<{ success: boolean; error?: string; requests?: any[] }>;
   acceptRequestAPI: (requestId: string) => Promise<{ success: boolean; error?: string; request?: any }>;
@@ -286,29 +292,7 @@ export type AuthState = {
 
 
 // Initial mock user data for testing
-const initialMockUsers: MockUser[] = [
-  {
-    id: '1',
-    name: 'Vipin Soni',
-    fullName: 'Vipin Soni',
-    email: 'vipin@gmail.com',
-    password: 'password@123',
-    role: 'admin',
-    city: 'Noida',
-    state: 'Uttar Pradesh',
-    phone: '+91 9876543214',
-    address: 'Sector 62, Noida',
-    username: 'vipin_bullion',
-    isEmailVerified: true,
-    buyRequestCount: 0,
-    isPremium: undefined,
-    sellerTier: undefined,
-    isActive: false,
-    createdAt: 0,
-    sellerVerified: undefined,
-    catalogue: undefined
-  },
-];
+const initialMockUsers: MockUser[] = [];
 
 // Initial notifications
 const initialNotifications: Notification[] = [
@@ -1179,14 +1163,7 @@ export const useAuthStore = create<AuthState>()(
             };
           }
 
-          // If user is not premium and has reached the limit, return error with limitReached flag
-          if (!user.isPremium && get().hasReachedBuyRequestLimit(customerId)) {
-            return {
-              success: false,
-              error: "You have reached your free buy request limit. Please upgrade to premium for unlimited requests.",
-              limitReached: true
-            };
-          }
+          // Request limits removed - users can make unlimited requests
 
           const newRequest: BuyRequest = {
             id: Date.now().toString(),
@@ -1401,8 +1378,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       hasReachedBuyRequestLimit: (userId) => {
-        const count = get().getUserBuyRequestCount(userId);
-        return count >= MAX_BUY_REQUESTS;
+        // Always return false since we removed request limits
+        return false;
       },
 
       incrementUserBuyRequestCount: async (userId) => {

@@ -17,7 +17,8 @@ import {
   X,
   Users as UsersIcon,
   BarChart2,
-  Package
+  Package,
+  History
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
@@ -301,6 +302,16 @@ export default function DrawerScreen() {
 
                   <TouchableOpacity
                     style={styles.menuItem}
+                    onPress={() => handleNavigation("/(app)/history")}
+                  >
+                    <View style={styles.menuIconContainer}>
+                      <History size={22} color="#333333" />
+                    </View>
+                    <Text style={styles.menuText}>History</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.menuItem}
                     onPress={() => handleNavigation("/(app)/share")}
                   >
                     <View style={styles.menuIconContainer}>
@@ -380,6 +391,16 @@ export default function DrawerScreen() {
                       <User size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>My Profile</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => handleNavigation("/(app)/history")}
+                  >
+                    <View style={styles.menuIconContainer}>
+                      <User size={22} color="#333333" />
+                    </View>
+                    <Text style={styles.menuText}>History</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
