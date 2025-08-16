@@ -39,13 +39,6 @@
         {
           "ios": {
             "useModularHeaders": true
-          },
-          "android": {
-            "productFlavors": {
-              "play": {
-                "dimension": "store"
-              }
-            }
           }
         }
       ]
