@@ -518,10 +518,9 @@ export default function PaymentScreen() {
                   // iOS In-App Purchase UI
                   <View style={styles.paymentMethodContainer}>
                     <View style={styles.iosInfo}>
-                      <Apple size={24} color="#000000" style={styles.iosIcon} />
                       <Text style={styles.iosTitle}>iOS In-App Purchase</Text>
                       <Text style={styles.iosSubtitle}>
-                        Secure payment through Apple's App Store
+                        Secure payment through Apple Pay
                       </Text>
                     </View>
 
@@ -563,7 +562,7 @@ export default function PaymentScreen() {
                           <ActivityIndicator color="#ffffff" />
                         ) : (
                           <Text style={styles.buttonText}>
-                            Purchase with Apple
+                            Proceed to Payment
                           </Text>
                         )}
                       </LinearGradient>
