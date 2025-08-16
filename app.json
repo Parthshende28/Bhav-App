@@ -39,12 +39,13 @@
         {
           "ios": {
             "useModularHeaders": true
-          }
-        },
-        "react-native-iap",
-        {
+          },
           "android": {
-            "store": "play"
+            "productFlavors": {
+              "play": {
+                "dimension": "store"
+              }
+            }
           }
         }
       ]
