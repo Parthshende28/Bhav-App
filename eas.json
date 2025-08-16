@@ -23,7 +23,7 @@
       "autoIncrement": true,
       "android": {
         "gradleCommand": ":app:bundleRelease",
-        "buildType": "aab"
+        "buildType": "app-bundle"
       }
     }
   },
