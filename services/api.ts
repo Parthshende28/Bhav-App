@@ -98,11 +98,17 @@ export const inventoryAPI = {
     deleteInventoryItem: (id: string) =>
         API.delete(`/inventory/${id}`),
 
-    getPublicInventory: (sellerId: string) =>
-        API.get(`/inventory/public/${sellerId}`),
-
-    toggleVisibility: (id: string) =>
+    toggleInventoryItemVisibility: (id: string) =>
         API.patch(`/inventory/${id}/toggle-visibility`),
+
+    getPublicInventoryForSeller: (sellerId: string) =>
+        API.get(`/inventory/public/${sellerId}`),
+};
+
+// iOS In-App Purchase API
+export const iosIAPAPI = {
+    validateReceipt: (receiptData: any) =>
+        API.post('/subscription/ios-validate', receiptData),
 };
 
 // Request API

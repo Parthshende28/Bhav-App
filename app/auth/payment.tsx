@@ -12,18 +12,20 @@ import {
   Animated,
   Image,
   Modal,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, CreditCard, Calendar, Lock, CheckCircle, User, QrCode, Copy, Smartphone, Shield } from "lucide-react-native";
+import { ArrowLeft, CreditCard, Calendar, Lock, CheckCircle, User, QrCode, Copy, Smartphone, Shield, Apple } from "lucide-react-native";
 import { useAuthStore } from "@/store/auth-store";
 import * as Clipboard from 'expo-clipboard';
-import { paymentAPI } from "@/services/api";
+import { paymentAPI, iosIAPAPI } from "@/services/api";
 import { images } from "@/constants/images";
 import RazorpayWebView from "@/components/RazorpayWebView";
+import AppleIAPService, { SUBSCRIPTION_PRODUCTS } from "@/services/apple-iap";
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -31,8 +33,12 @@ export default function PaymentScreen() {
   const { userId, planId, planTitle, planPrice, planPeriod, brandName } = params;
   const { updateUser, addNotification, getUserById } = useAuthStore();
 
-  // Payment method state - Only Razorpay available
-  const [paymentMethod, setPaymentMethod] = useState<'razorpay'>('razorpay');
+  // Platform detection
+  const isIOS = Platform.OS === 'ios';
+  const isAndroid = Platform.OS === 'android';
+
+  // Payment method state - Platform specific
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'ios_iap'>(isIOS ? 'ios_iap' : 'razorpay');
 
   // Card payment states
   const [cardNumber, setCardNumber] = useState("");
@@ -50,6 +56,10 @@ export default function PaymentScreen() {
   const [error, setError] = useState("");
   const [showRazorpayModal, setShowRazorpayModal] = useState(false);
 
+  // iOS IAP states
+  const [iosProducts, setIosProducts] = useState<any[]>([]);
+  const [selectedIosProduct, setSelectedIosProduct] = useState<any>(null);
+
   // Animation values
   const successScale = React.useRef(new Animated.Value(0)).current;
   const successOpacity = React.useRef(new Animated.Value(0)).current;
@@ -64,6 +74,143 @@ export default function PaymentScreen() {
   console.log("Payment screen - userIdStr:", userIdStr);
   console.log("Payment screen - Current user from store:", useAuthStore.getState().user);
   const upiReference = `BHAV${userIdStr.substring(0, 4)}${planIdStr.substring(0, 2)}${Date.now().toString().substring(8, 13)}`;
+
+  // Initialize iOS IAP on component mount
+  useEffect(() => {
+    if (isIOS) {
+      initializeIOSIAP();
+    }
+  }, [isIOS]);
+
+  // Initialize iOS IAP service
+  const initializeIOSIAP = async () => {
+    try {
+      const iapService = AppleIAPService.getInstance();
+      const initialized = await iapService.initialize();
+
+      if (initialized) {
+        const products = await iapService.getProducts();
+        setIosProducts(products);
+
+        // Find the product that matches the selected plan
+        const matchingProduct = products.find(product => product.planId === planIdStr);
+        if (matchingProduct) {
+          setSelectedIosProduct(matchingProduct);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to initialize iOS IAP:', error);
+    }
+  };
+
+  // Handle iOS In-App Purchase
+  const handleIOSPurchase = async () => {
+    if (!selectedIosProduct) {
+      Alert.alert('Error', 'No product selected for purchase');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const iapService = AppleIAPService.getInstance();
+      const purchaseResult = await iapService.purchaseProduct(selectedIosProduct.id);
+
+      if (purchaseResult.success && purchaseResult.receipt) {
+        // Validate receipt with backend
+        const validationResult = await iosIAPAPI.validateReceipt({
+          receiptData: purchaseResult.receipt,
+          productId: selectedIosProduct.id,
+          userId: userIdStr,
+          brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : ''
+        });
+
+        if (validationResult.data.success) {
+          // Finish the transaction
+          await iapService.finishTransaction(purchaseResult.transactionId!);
+
+          // Update user profile
+          await updateUser({
+            id: userIdStr,
+            role: "seller",
+            sellerPlan: selectedIosProduct.planId,
+            sellerVerified: true,
+            isPremium: true,
+            subscriptionStatus: "active",
+            brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : undefined,
+          });
+
+          // Get user details for notification
+          const user = getUserById(userIdStr);
+
+          // Send payment success notification to admin
+          await addNotification({
+            title: "iOS Seller Subscription Payment",
+            message: `${user?.fullName || user?.name} has completed payment for ${selectedIosProduct.title} plan using iOS In-App Purchase.`,
+            type: "payment_success",
+            data: {
+              user: {
+                id: userIdStr,
+                name: user?.fullName || user?.name,
+                email: user?.email,
+                phone: user?.phone,
+                brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : user?.brandName
+              },
+              plan: {
+                id: selectedIosProduct.planId,
+                title: selectedIosProduct.title,
+                price: selectedIosProduct.price,
+                period: selectedIosProduct.period
+              },
+              paymentMethod: 'ios_in_app_purchase'
+            }
+          });
+
+          // Show success animation
+          setIsSuccess(true);
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          // Animate success message
+          Animated.parallel([
+            Animated.spring(successScale, {
+              toValue: 1,
+              friction: 5,
+              tension: 40,
+              useNativeDriver: true,
+            }),
+            Animated.timing(successOpacity, {
+              toValue: 1,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]).start();
+
+          // Redirect to home after a short delay
+          setTimeout(() => {
+            router.push("/(app)/(tabs)/rates");
+          }, 2000);
+
+        } else {
+          throw new Error(validationResult.data.message || 'Receipt validation failed');
+        }
+      } else {
+        throw new Error(purchaseResult.error || 'Purchase failed');
+      }
+    } catch (error: any) {
+      console.error('iOS purchase error:', error);
+      setError(error.message || 'iOS purchase failed. Please try again.');
+
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatCardNumber = (text: string) => {
     // Remove all non-digit characters
@@ -366,35 +513,70 @@ export default function PaymentScreen() {
                   <Text style={styles.planPeriod}>{planPeriod}</Text>
                 </View>
 
-                {/* Payment Method Selector - Only Razorpay Available */}
-                {/* <View style={styles.paymentMethodContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.paymentMethodTab,
-                      styles.paymentMethodTabActive
-                    ]}
-                    disabled={true}
-                  >
-                    <Shield
-                      size={20}
-                      color="#F3B62B"
-                      style={styles.paymentMethodIcon}
-                    />
-                    <Text
-                      style={[
-                        styles.paymentMethodText,
-                        styles.paymentMethodTextActive
-                      ]}
+                {/* Platform-specific payment methods */}
+                {isIOS ? (
+                  // iOS In-App Purchase UI
+                  <View style={styles.paymentMethodContainer}>
+                    <View style={styles.iosInfo}>
+                      <Apple size={24} color="#000000" style={styles.iosIcon} />
+                      <Text style={styles.iosTitle}>iOS In-App Purchase</Text>
+                      <Text style={styles.iosSubtitle}>
+                        Secure payment through Apple's App Store
+                      </Text>
+                    </View>
+
+                    {selectedIosProduct && (
+                      <View style={styles.iosProductDetails}>
+                        <Text style={styles.iosProductTitle}>{selectedIosProduct.title}</Text>
+                        <Text style={styles.iosProductPrice}>{selectedIosProduct.price}</Text>
+                        <Text style={styles.iosProductPeriod}>{selectedIosProduct.period}</Text>
+                      </View>
+                    )}
+
+                    <View style={styles.iosFeatures}>
+                      <View style={styles.featureItem}>
+                        <CheckCircle size={16} color="#43A047" />
+                        <Text style={styles.featureText}>Secure Apple payment processing</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <CheckCircle size={16} color="#43A047" />
+                        <Text style={styles.featureText}>Instant subscription activation</Text>
+                      </View>
+                      <View style={styles.featureItem}>
+                        <CheckCircle size={16} color="#43A047" />
+                        <Text style={styles.featureText}>Automatic receipt validation</Text>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={handleIOSPurchase}
+                      disabled={isLoading || !selectedIosProduct}
+                      style={styles.iosButton}
                     >
-                      Secure Payment
+                      <LinearGradient
+                        colors={["#000000", "#333333"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.button}
+                      >
+                        {isLoading ? (
+                          <ActivityIndicator color="#ffffff" />
+                        ) : (
+                          <Text style={styles.buttonText}>
+                            Purchase with Apple
+                          </Text>
+                        )}
+                      </LinearGradient>
+                    </TouchableOpacity>
+
+                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+                    <Text style={styles.secureText}>
+                      <Lock size={12} color="#666666" /> Secure payment processing
                     </Text>
-                  </TouchableOpacity>
-                </View> */}
-
-                {/* {error ? <Text style={styles.errorText}>{error}</Text> : null} */}
-
-                {paymentMethod === 'razorpay' ? (
-                  // Razorpay Payment UI
+                  </View>
+                ) : (
+                  // Android Razorpay Payment UI
                   <View style={styles.paymentMethodContainer}>
                     <View style={styles.razorpayInfo}>
                       <Shield size={24} color="#F3B62B" style={styles.razorpayIcon} />
@@ -443,69 +625,38 @@ export default function PaymentScreen() {
                       <Lock size={12} color="#666666" /> Secure payment processing
                     </Text>
 
-                    {paymentMethod === 'razorpay' && (
-                      <View style={styles.razorpayBadgeContainer}>
-                        <Image
-                          source={{ uri: "https://badges.razorpay.com/badge-light.png" }}
-                          resizeMode="contain"
-                          style={styles.razorpayBadge}
-                        />
-                      </View>
-                    )}
+                    <View style={styles.razorpayBadgeContainer}>
+                      <Image
+                        source={{ uri: "https://badges.razorpay.com/badge-light.png" }}
+                        resizeMode="contain"
+                        style={styles.razorpayBadge}
+                      />
+                    </View>
                   </View>
-
-
-                ) : null}
-
-
-                {/* Legacy payment button commented out - Only Razorpay available
-                {paymentMethod !== 'razorpay' && (
-                  <TouchableOpacity
-                    onPress={handlePayment}
-                    disabled={isLoading}
-                    style={[
-                      styles.buttonContainer,
-                      isLoading && styles.buttonDisabled
-                    ]}
-                  >
-                    <LinearGradient
-                      colors={["#F3B62B", "#F5D76E"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.button}
-                    >
-                      {isLoading ? (
-                        <ActivityIndicator color="#ffffff" />
-                      ) : (
-                        <Text style={styles.buttonText}>
-                          {paymentMethod === 'card' ? `Pay ${planPrice}` : 'Verify & Complete Payment'}
-                        </Text>
-                      )}
-                    </LinearGradient>
-                  </TouchableOpacity>
                 )}
-                */}
               </>
             )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Razorpay Modal */}
-      <Modal
-        visible={showRazorpayModal}
-        animationType="slide"
-        presentationStyle="fullScreen"
-      >
-        <RazorpayWebView
-          amount={typeof planPrice === 'string' ? planPrice : Array.isArray(planPrice) ? planPrice[0] : ''}
-          planId={typeof planIdStr === 'string' ? planIdStr : Array.isArray(planIdStr) ? planIdStr[0] : ''}
-          planTitle={typeof planTitle === 'string' ? planTitle : Array.isArray(planTitle) ? planTitle[0] : ''}
-          planPeriod={typeof planPeriod === 'string' ? planPeriod : Array.isArray(planPeriod) ? planPeriod[0] : ''}
-          brandName={typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : ''}
-          onClose={() => setShowRazorpayModal(false)}
-        />
-      </Modal>
+      {/* Razorpay Modal - Only for Android */}
+      {isAndroid && (
+        <Modal
+          visible={showRazorpayModal}
+          animationType="slide"
+          presentationStyle="fullScreen"
+        >
+          <RazorpayWebView
+            amount={typeof planPrice === 'string' ? planPrice : Array.isArray(planPrice) ? planPrice[0] : ''}
+            planId={typeof planIdStr === 'string' ? planIdStr : Array.isArray(planIdStr) ? planIdStr[0] : ''}
+            planTitle={typeof planTitle === 'string' ? planTitle : Array.isArray(planTitle) ? planTitle[0] : ''}
+            planPeriod={typeof planPeriod === 'string' ? planPeriod : Array.isArray(planPeriod) ? planPeriod[0] : ''}
+            brandName={typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : ''}
+            onClose={() => setShowRazorpayModal(false)}
+          />
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -584,7 +735,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-
   },
   paymentMethodTab: {
     flex: 1,
@@ -614,6 +764,7 @@ const styles = StyleSheet.create({
     color: "#ff3b30",
     marginBottom: 16,
     fontSize: 14,
+    textAlign: "center",
   },
   cardContainer: {
     height: 200,
@@ -887,5 +1038,62 @@ const styles = StyleSheet.create({
   razorpayBadge: {
     height: 50,
     width: 200,
+  },
+  // iOS Specific Styles
+  iosInfo: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  iosIcon: {
+    marginBottom: 12,
+  },
+  iosTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333333",
+    marginBottom: 8,
+  },
+  iosSubtitle: {
+    fontSize: 14,
+    color: "#666666",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  iosProductDetails: {
+    alignItems: "center",
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  iosProductTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333333",
+    marginBottom: 4,
+  },
+  iosProductPrice: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#F3B62B",
+    marginBottom: 4,
+  },
+  iosProductPeriod: {
+    fontSize: 14,
+    color: "#666666",
+  },
+  iosFeatures: {
+    marginBottom: 16,
+  },
+  iosButton: {
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 3,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
 });

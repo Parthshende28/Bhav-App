@@ -12,8 +12,6 @@ export default function AuthLayout() {
         <Stack.Screen name="forgotpassword" options={{ headerShown: false }} />
         <Stack.Screen name="subscription" options={{ headerShown: false }} />
         <Stack.Screen name="payment" options={{ headerShown: false }} />
-        <Stack.Screen name="premium-subscription" options={{ headerShown: false }} />
-        <Stack.Screen name="premium-payment" options={{ headerShown: false }} />
       </Stack>
     </>
   );
