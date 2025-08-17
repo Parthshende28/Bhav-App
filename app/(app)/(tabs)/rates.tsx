@@ -311,7 +311,7 @@ export default function RatesScreen() {
             productsRes = await inventoryAPI.getSellerInventory(sellerId);
           } else {
             // For customers, admins, or sellers viewing other sellers, use the public endpoint
-            productsRes = await inventoryAPI.getPublicInventory(sellerId);
+            productsRes = await inventoryAPI.getPublicInventoryForSeller(sellerId);
           }
           const products = productsRes.data?.items?.filter((item: InventoryItem) => item.isVisible) || [];
           // Update global state instead of local state
@@ -359,7 +359,7 @@ export default function RatesScreen() {
         const fetchSelectedSellerInventory = async () => {
           setIsLoadingInventory(true);
           try {
-            const productsRes = await inventoryAPI.getPublicInventory(selectedSeller.id);
+            const productsRes = await inventoryAPI.getPublicInventoryForSeller(selectedSeller.id);
             const products = productsRes.data?.items?.filter((item: InventoryItem) => item.isVisible) || [];
             setInventoryItems(products);
           } catch (err) {

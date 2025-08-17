@@ -92,7 +92,7 @@ const SellerData = () => {
             sellers.map(async seller => {
               try {
                 // Fetch only public (visible) products for each seller
-                const productsRes = await inventoryAPI.getPublicInventory(seller.id);
+                const productsRes = await inventoryAPI.getPublicInventoryForSeller(seller.id);
                 const products = productsRes.data?.items || [];
                 productsMap[seller.id] = products;
               } catch (err) {
@@ -322,7 +322,7 @@ const SellerData = () => {
         // Fetch latest products for this seller
         (async () => {
           try {
-            const productsRes = await inventoryAPI.getPublicInventory(sellerId);
+            const productsRes = await inventoryAPI.getPublicInventoryForSeller(sellerId);
             const products = productsRes.data?.items || [];
             setSellerProducts(prevProducts => ({
               ...prevProducts,
@@ -353,7 +353,7 @@ const SellerData = () => {
           await Promise.all(
             addedSellers.map(async seller => {
               try {
-                const productsRes = await inventoryAPI.getPublicInventory(seller.id);
+                const productsRes = await inventoryAPI.getPublicInventoryForSeller(seller.id);
                 const products = productsRes.data?.items || [];
                 updatedProducts[seller.id] = products;
               } catch (err) {
