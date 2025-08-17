@@ -93,7 +93,7 @@ export default function PaymentScreen() {
         setIosProducts(products);
 
         // Find the product that matches the selected plan
-        const matchingProduct = products.find(product => product.planId === planIdStr);
+        const matchingProduct = iapService.getProductByPlanId(planIdStr);
         if (matchingProduct) {
           setSelectedIosProduct(matchingProduct);
         }
@@ -115,20 +115,22 @@ export default function PaymentScreen() {
 
     try {
       const iapService = AppleIAPService.getInstance();
-      const purchaseResult = await iapService.purchaseProduct(selectedIosProduct.id);
+      const purchase = await iapService.purchaseProduct(selectedIosProduct.productId);
 
-      if (purchaseResult.success && purchaseResult.receipt) {
+      if (purchase && purchase.transactionReceipt) {
         // Validate receipt with backend
         const validationResult = await iosIAPAPI.validateReceipt({
-          receiptData: purchaseResult.receipt,
-          productId: selectedIosProduct.id,
+          receiptData: purchase.transactionReceipt,
+          productId: selectedIosProduct.productId,
           userId: userIdStr,
-          brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : ''
+          planId: selectedIosProduct.planId,
+          purchaseDate: new Date().toISOString(),
+          transactionId: purchase.transactionId
         });
 
         if (validationResult.data.success) {
           // Finish the transaction
-          await iapService.finishTransaction(purchaseResult.transactionId!);
+          await iapService.finishTransaction(purchase);
 
           // Update user profile
           await updateUser({
@@ -146,7 +148,7 @@ export default function PaymentScreen() {
 
           // Send payment success notification to admin
           await addNotification({
-            title: "iOS Seller Subscription Payment",
+            title: "iOS Seller Plan Purchase",
             message: `${user?.fullName || user?.name} has completed payment for ${selectedIosProduct.title} plan using iOS In-App Purchase.`,
             type: "payment_success",
             data: {
@@ -155,7 +157,7 @@ export default function PaymentScreen() {
                 name: user?.fullName || user?.name,
                 email: user?.email,
                 phone: user?.phone,
-                brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : user?.brandName
+                brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? user?.brandName : undefined
               },
               plan: {
                 id: selectedIosProduct.planId,
@@ -189,24 +191,19 @@ export default function PaymentScreen() {
             }),
           ]).start();
 
-          // Redirect to home after a short delay
+          // Redirect to dashboard after delay
           setTimeout(() => {
-            router.push("/(app)/(tabs)/rates");
+            router.replace('/(app)/(tabs)/dashboard');
           }, 2000);
-
         } else {
-          throw new Error(validationResult.data.message || 'Receipt validation failed');
+          setError('Receipt validation failed. Please contact support.');
         }
       } else {
-        throw new Error(purchaseResult.error || 'Purchase failed');
+        setError('Purchase failed. Please try again.');
       }
     } catch (error: any) {
-      console.error('iOS purchase error:', error);
-      setError(error.message || 'iOS purchase failed. Please try again.');
-
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
+      console.error('iOS Purchase error:', error);
+      setError(error.message || 'Purchase failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -539,7 +536,7 @@ export default function PaymentScreen() {
                       </View>
                       <View style={styles.featureItem}>
                         <CheckCircle size={16} color="#43A047" />
-                        <Text style={styles.featureText}>Instant subscription activation</Text>
+                        <Text style={styles.featureText}>Instant plan activation</Text>
                       </View>
                       <View style={styles.featureItem}>
                         <CheckCircle size={16} color="#43A047" />

@@ -108,7 +108,7 @@ export const inventoryAPI = {
 // iOS In-App Purchase API
 export const iosIAPAPI = {
     validateReceipt: (receiptData: any) =>
-        API.post('/subscription/ios-validate', receiptData),
+        API.post('/subscriptions/ios-validate', receiptData),
 };
 
 // Request API

@@ -2,16 +2,14 @@ import { Platform } from 'react-native';
 import {
   initConnection,
   getProducts,
+  requestPurchase,
   purchaseErrorListener,
   purchaseUpdatedListener,
   finishTransaction,
+  getAvailablePurchases,
   Product,
   Purchase,
-  PurchaseError,
-  SubscriptionPurchase,
-  ProductPurchase,
-  requestSubscription,
-  getAvailablePurchases
+  PurchaseError
 } from 'react-native-iap';
 
 // Product IDs from your App Store Connect
@@ -64,6 +62,7 @@ export class AppleIAPService {
   private isInitialized = false;
   private purchaseUpdateSubscription: any;
   private purchaseErrorSubscription: any;
+  private products: Product[] = [];
 
   static getInstance(): AppleIAPService {
     if (!AppleIAPService.instance) {
@@ -100,13 +99,13 @@ export class AppleIAPService {
   private setupPurchaseListeners() {
     // Listen for successful purchases
     this.purchaseUpdateSubscription = purchaseUpdatedListener(
-      async (purchase: ProductPurchase | SubscriptionPurchase) => {
+      async (purchase: Purchase) => {
         console.log('Purchase updated:', purchase);
 
         // Finish the transaction
         if (purchase.transactionId) {
           try {
-            await finishTransaction({ purchase, isConsumable: false });
+            await finishTransaction({ purchase });
             console.log('Transaction finished successfully');
           } catch (error) {
             console.error('Error finishing transaction:', error);
@@ -123,112 +122,68 @@ export class AppleIAPService {
     );
   }
 
-  async getProducts(): Promise<AppleIAPProduct[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
+  async getProducts(): Promise<Product[]> {
     try {
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+
       const productIds = Object.keys(SUBSCRIPTION_PRODUCTS);
-      console.log('Fetching products for IDs:', productIds);
-
       const products = await getProducts({ skus: productIds });
-      console.log('Products fetched successfully:', products);
-
-      // Return our mapped products (since we know the details)
-      return Object.values(SUBSCRIPTION_PRODUCTS);
+      this.products = products;
+      return products;
     } catch (error) {
       console.error('Error fetching products:', error);
-      return [];
-    }
-  }
-
-  async purchaseProduct(productId: string): Promise<PurchaseResult> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    try {
-      console.log(`Starting purchase for product: ${productId}`);
-
-      // For subscriptions, we need to use requestSubscription
-      const purchase = await this.requestSubscription(productId);
-
-      if (purchase) {
-        console.log('Purchase successful:', purchase);
-
-        return {
-          success: true,
-          transactionId: purchase.transactionId,
-          receipt: purchase.transactionReceipt,
-          productId: purchase.productId
-        };
-      } else {
-        throw new Error('Purchase failed - no purchase object returned');
-      }
-    } catch (error) {
-      console.error('Error during purchase:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
-      };
-    }
-  }
-
-  private async requestSubscription(productId: string): Promise<SubscriptionPurchase | null> {
-    try {
-      // Request subscription purchase
-      const purchase = await requestSubscription({
-        sku: productId,
-        andDangerouslyFinishTransactionAutomaticallyIOS: false
-      });
-
-      console.log('Subscription purchase result:', purchase);
-
-      // Handle the return type properly - requestSubscription can return an array
-      if (Array.isArray(purchase)) {
-        return purchase[0] || null;
-      }
-
-      return purchase || null;
-    } catch (error) {
-      console.error('Subscription request failed:', error);
       throw error;
     }
   }
 
-  async finishTransaction(transactionId: string): Promise<boolean> {
+  async purchaseProduct(productId: string): Promise<any> {
     try {
-      // For react-native-iap, transactions are finished automatically
-      // But we can acknowledge the purchase if needed
-      console.log('Transaction finished automatically:', transactionId);
-      return true;
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+
+      const purchase = await requestPurchase({ sku: productId });
+
+      // Handle single purchase or array of purchases
+      if (Array.isArray(purchase)) {
+        return purchase[0] || null;
+      }
+
+      return purchase;
     } catch (error) {
-      console.error('Error finishing transaction:', error);
-      return false;
+      console.error('Error purchasing product:', error);
+      throw error;
     }
   }
 
-  async restorePurchases(): Promise<PurchaseResult[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
+  private async requestSubscription(productId: string): Promise<any> {
+    // For non-renewing subscriptions, use purchase instead
+    const result = await this.purchaseProduct(productId);
+    return result;
+  }
 
+  async finishTransaction(purchase: Purchase): Promise<void> {
     try {
-      // Get available purchases (non-consumable items and subscriptions)
+      await finishTransaction({ purchase });
+    } catch (error) {
+      console.error('Error finishing transaction:', error);
+      throw error;
+    }
+  }
+
+  async restorePurchases(): Promise<Purchase[]> {
+    try {
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+
       const purchases = await getAvailablePurchases();
-
-      console.log('Available purchases restored:', purchases);
-
-      return purchases.map((purchase: SubscriptionPurchase) => ({
-        success: true,
-        transactionId: purchase.transactionId,
-        receipt: purchase.transactionReceipt,
-        productId: purchase.productId
-      }));
+      return purchases;
     } catch (error) {
       console.error('Error restoring purchases:', error);
-      return [];
+      throw error;
     }
   }
 
