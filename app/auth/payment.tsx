@@ -22,10 +22,10 @@ import * as Haptics from "expo-haptics";
 import { ArrowLeft, CreditCard, Calendar, Lock, CheckCircle, User, QrCode, Copy, Smartphone, Shield, Apple } from "lucide-react-native";
 import { useAuthStore } from "@/store/auth-store";
 import * as Clipboard from 'expo-clipboard';
-import { paymentAPI, iosIAPAPI } from "@/services/api";
+import { paymentAPI } from "@/services/api";
 import { images } from "@/constants/images";
 import RazorpayWebView from "@/components/RazorpayWebView";
-import AppleIAPService, { SUBSCRIPTION_PRODUCTS } from "@/services/apple-iap";
+import { paymentManager, isIOSPlatform, isAndroidPlatform } from "@/services/payment-manager";
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -33,9 +33,9 @@ export default function PaymentScreen() {
   const { userId, planId, planTitle, planPrice, planPeriod, brandName } = params;
   const { updateUser, addNotification, getUserById } = useAuthStore();
 
-  // Platform detection
-  const isIOS = Platform.OS === 'ios';
-  const isAndroid = Platform.OS === 'android';
+  // Platform detection using unified service
+  const isIOS = isIOSPlatform();
+  const isAndroid = isAndroidPlatform();
 
   // Payment method state - Platform specific
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'ios_iap'>(isIOS ? 'ios_iap' : 'razorpay');
@@ -56,9 +56,9 @@ export default function PaymentScreen() {
   const [error, setError] = useState("");
   const [showRazorpayModal, setShowRazorpayModal] = useState(false);
 
-  // iOS IAP states
-  const [iosProducts, setIosProducts] = useState<any[]>([]);
-  const [selectedIosProduct, setSelectedIosProduct] = useState<any>(null);
+  // Unified payment states
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   // Animation values
   const successScale = React.useRef(new Animated.Value(0)).current;
@@ -68,44 +68,44 @@ export default function PaymentScreen() {
   const merchantUpiId = "bhavApp@ybl";
   // Fix for TypeScript error - ensure userId and planId are strings before using substring
   const userIdStr = typeof userId === 'string' ? userId : Array.isArray(userId) ? userId[0] : '';
-  const planIdStr = typeof planId === 'string' ? planId : Array.isArray(planId) ? planId[0] : '';
+  const planIdStr = typeof planId === 'string' ? planId : Array.isArray(planId) ? userId[0] : '';
 
   console.log("Payment screen - userId from params:", userId);
   console.log("Payment screen - userIdStr:", userIdStr);
   console.log("Payment screen - Current user from store:", useAuthStore.getState().user);
   const upiReference = `BHAV${userIdStr.substring(0, 4)}${planIdStr.substring(0, 2)}${Date.now().toString().substring(8, 13)}`;
 
-  // Initialize iOS IAP on component mount
+  // Initialize unified payment service on component mount
   useEffect(() => {
-    if (isIOS) {
-      initializeIOSIAP();
-    }
-  }, [isIOS]);
+    initializePaymentService();
+  }, []);
 
-  // Initialize iOS IAP service
-  const initializeIOSIAP = async () => {
+  // Initialize unified payment service
+  const initializePaymentService = async () => {
     try {
-      const iapService = AppleIAPService.getInstance();
-      const initialized = await iapService.initialize();
+      const initialized = await paymentManager.initialize();
 
       if (initialized) {
-        const products = await iapService.getProducts();
-        setIosProducts(products);
+        const availableProducts = await paymentManager.getProducts();
+        setProducts(availableProducts);
 
         // Find the product that matches the selected plan
-        const matchingProduct = iapService.getProductByPlanId(planIdStr);
+        const matchingProduct = availableProducts.find(product => product.planId === planIdStr);
         if (matchingProduct) {
-          setSelectedIosProduct(matchingProduct);
+          setSelectedProduct(matchingProduct);
         }
+
+        console.log('Payment service initialized:', paymentManager.getServiceName());
+        console.log('Available products:', availableProducts);
       }
     } catch (error) {
-      console.error('Failed to initialize iOS IAP:', error);
+      console.error('Failed to initialize payment service:', error);
     }
   };
 
-  // Handle iOS In-App Purchase
-  const handleIOSPurchase = async () => {
-    if (!selectedIosProduct) {
+  // Handle unified payment purchase
+  const handlePaymentPurchase = async () => {
+    if (!selectedProduct) {
       Alert.alert('Error', 'No product selected for purchase');
       return;
     }
@@ -114,98 +114,100 @@ export default function PaymentScreen() {
     setError('');
 
     try {
-      const iapService = AppleIAPService.getInstance();
-      const purchase = await iapService.purchaseProduct(selectedIosProduct.productId);
+      const purchaseResult = await paymentManager.purchaseProduct(
+        selectedProduct.id,
+        userIdStr,
+        typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : ''
+      );
 
-      if (purchase && purchase.transactionReceipt) {
-        // Validate receipt with backend
-        const validationResult = await iosIAPAPI.validateReceipt({
-          receiptData: purchase.transactionReceipt,
-          productId: selectedIosProduct.productId,
-          userId: userIdStr,
-          planId: selectedIosProduct.planId,
-          purchaseDate: new Date().toISOString(),
-          transactionId: purchase.transactionId
-        });
-
-        if (validationResult.data.success) {
-          // Finish the transaction
-          await iapService.finishTransaction(purchase);
-
-          // Update user profile
-          await updateUser({
-            id: userIdStr,
-            role: "seller",
-            sellerPlan: selectedIosProduct.planId,
-            sellerVerified: true,
-            isPremium: true,
-            subscriptionStatus: "active",
-            brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : undefined,
-          });
-
-          // Get user details for notification
-          const user = getUserById(userIdStr);
-
-          // Send payment success notification to admin
-          await addNotification({
-            title: "iOS Seller Plan Purchase",
-            message: `${user?.fullName || user?.name} has completed payment for ${selectedIosProduct.title} plan using iOS In-App Purchase.`,
-            type: "payment_success",
-            data: {
-              user: {
-                id: userIdStr,
-                name: user?.fullName || user?.name,
-                email: user?.email,
-                phone: user?.phone,
-                brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? user?.brandName : undefined
-              },
-              plan: {
-                id: selectedIosProduct.planId,
-                title: selectedIosProduct.title,
-                price: selectedIosProduct.price,
-                period: selectedIosProduct.period
-              },
-              paymentMethod: 'ios_in_app_purchase'
-            }
-          });
-
-          // Show success animation
-          setIsSuccess(true);
-
-          if (Platform.OS !== "web") {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          }
-
-          // Animate success message
-          Animated.parallel([
-            Animated.spring(successScale, {
-              toValue: 1,
-              friction: 5,
-              tension: 40,
-              useNativeDriver: true,
-            }),
-            Animated.timing(successOpacity, {
-              toValue: 1,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-          ]).start();
-
-          // Redirect to dashboard after delay
-          setTimeout(() => {
-            router.replace('/(app)/(tabs)/dashboard');
-          }, 2000);
-        } else {
-          setError('Receipt validation failed. Please contact support.');
-        }
+      if (purchaseResult.success) {
+        // Handle successful purchase
+        await handleSuccessfulPurchase(purchaseResult, selectedProduct);
       } else {
-        setError('Purchase failed. Please try again.');
+        throw new Error(purchaseResult.error || 'Purchase failed');
       }
     } catch (error: any) {
-      console.error('iOS Purchase error:', error);
-      setError(error.message || 'Purchase failed. Please try again.');
+      console.error('Payment purchase error:', error);
+      setError(error.message || 'Payment failed. Please try again.');
+
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle successful purchase
+  const handleSuccessfulPurchase = async (purchaseResult: any, product: any) => {
+    try {
+      // Update user profile
+      await updateUser({
+        id: userIdStr,
+        role: "seller",
+        sellerPlan: product.planId,
+        sellerVerified: true,
+        isPremium: true,
+        subscriptionStatus: "active",
+        brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : undefined,
+      });
+
+      // Get user details for notification
+      const user = getUserById(userIdStr);
+
+      // Send payment success notification to admin
+      await addNotification({
+        title: `${paymentManager.getServiceName()} Payment Success`,
+        message: `${user?.fullName || user?.name} has completed payment for ${product.title} plan using ${paymentManager.getServiceName()}.`,
+        type: "payment_success",
+        data: {
+          user: {
+            id: userIdStr,
+            name: user?.fullName || user?.name,
+            email: user?.email,
+            phone: user?.phone,
+            brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : user?.brandName
+          },
+          plan: {
+            id: product.planId,
+            title: product.title,
+            price: product.price,
+            period: product.period
+          },
+          paymentMethod: isIOS ? 'ios_in_app_purchase' : 'razorpay'
+        }
+      });
+
+      // Show success animation
+      setIsSuccess(true);
+
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+
+      // Animate success message
+      Animated.parallel([
+        Animated.spring(successScale, {
+          toValue: 1,
+          friction: 5,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+        Animated.timing(successOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        router.push("/(app)/(tabs)/rates");
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error handling successful purchase:', error);
+      setError('Payment successful but failed to update profile. Please contact support.');
     }
   };
 
@@ -247,215 +249,7 @@ export default function PaymentScreen() {
     setTimeout(() => setUpiCopied(false), 2000);
   };
 
-  // Card and UPI validation functions commented out - Only Razorpay available
-  /*
-  const validateCardPayment = () => {
-    // Basic validation for card payment
-    if (!cardNumber || !cardName || !expiryDate || !cvv) {
-      setError("Please fill in all payment details");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
 
-    if (cardNumber.replace(/\s/g, "").length !== 16) {
-      setError("Please enter a valid 16-digit card number");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
-
-    if (expiryDate.length !== 5) {
-      setError("Please enter a valid expiry date (MM/YY)");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
-
-    if (cvv.length !== 3) {
-      setError("Please enter a valid 3-digit CVV");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
-
-    return true;
-  };
-
-  const validateUpiPayment = () => {
-    // Basic validation for UPI payment
-    if (!upiId) {
-      setError("Please enter your UPI ID for verification");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
-
-    // Simple UPI ID validation (basic format check)
-    const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/;
-    if (!upiRegex.test(upiId)) {
-      setError("Please enter a valid UPI ID (e.g., name@upi)");
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      return false;
-    }
-
-    return true;
-  };
-  */
-
-  // Legacy handlePayment function commented out - Only Razorpay available
-  /*
-  const handlePayment = async () => {
-    // Validate based on payment method
-    let isValid = false;
-
-    if (paymentMethod === 'card') {
-      isValid = validateCardPayment();
-    } else {
-      isValid = validateUpiPayment();
-    }
-
-    if (!isValid) return;
-
-    setError("");
-    setIsLoading(true);
-
-    try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Get user details for notification
-      const user = getUserById(userIdStr);
-
-      // Calculate duration months based on plan type
-      let durationMonths = 1; // Default to 1 month
-      if (planIdStr === 'half-yearly') {
-        durationMonths = 6;
-      } else if (planIdStr === 'yearly') {
-        durationMonths = 12;
-      } else if (planIdStr === 'super-seller') {
-        durationMonths = 12; // Super seller is also 12 months
-      }
-
-      // Get the current user's ID as fallback
-      const currentUser = useAuthStore.getState().user;
-      const finalUserId = userIdStr || currentUser?.id || currentUser?._id;
-
-      if (!finalUserId) {
-        throw new Error('No valid user ID found');
-      }
-
-      // Prepare payment data
-      const paymentData = {
-        userId: finalUserId,
-        amount: parseFloat(typeof planPrice === 'string' ? planPrice.replace('₹', '').replace(/,/g, '') : '0'),
-        plan: planIdStr,
-        paymentMethod: paymentMethod,
-        durationMonths: durationMonths
-      };
-
-      console.log("Sending payment data:", paymentData);
-
-      // Call backend payment completion API
-      const paymentResult = await paymentAPI.completePayment(paymentData);
-
-      if (!paymentResult.data.success) {
-        throw new Error(paymentResult.data.message || 'Payment completion failed');
-      }
-
-      // Update user with subscription details and brand name
-      await updateUser({
-        id: finalUserId,
-        role: "seller", // Update role to seller
-        sellerPlan: planIdStr,
-        sellerVerified: true,
-        isPremium: true, // Set isPremium to true after payment
-        subscriptionStatus: "active", // Set subscription status to active
-        brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : undefined, // Update brand name if provided
-      });
-
-      // Refresh user profile from backend to ensure latest subscription status
-      if (typeof useAuthStore.getState().refreshUserProfile === 'function') {
-        await useAuthStore.getState().refreshUserProfile();
-      }
-
-      // Send payment success notification to admin
-      await addNotification({
-        title: "Seller Subscription Payment",
-        message: `${user?.fullName || user?.name} has completed payment for ${planTitle} plan using ${paymentMethod.toUpperCase()}.`,
-        type: "payment_success",
-        data: {
-          user: {
-            id: userIdStr,
-            name: user?.fullName || user?.name,
-            email: user?.email,
-            phone: user?.phone,
-            brandName: typeof brandName === 'string' ? brandName : Array.isArray(brandName) ? brandName[0] : user?.brandName
-          },
-          plan: {
-            id: planIdStr,
-            title: typeof planTitle === 'string' ? planTitle : Array.isArray(planTitle) ? planTitle[0] : '',
-            price: typeof planPrice === 'string' ? planPrice : Array.isArray(planPrice) ? planPrice[0] : '',
-            period: typeof planPeriod === 'string' ? planPeriod : Array.isArray(planPeriod) ? planPeriod[0] : ''
-          },
-          paymentMethod: paymentMethod
-        }
-      });
-
-      // Show success animation
-      setIsSuccess(true);
-
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-
-      // Animate success message
-      Animated.parallel([
-        Animated.spring(successScale, {
-          toValue: 1,
-          friction: 5,
-          tension: 40,
-          useNativeDriver: true,
-        }),
-        Animated.timing(successOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      // Redirect to home after a short delay
-      setTimeout(() => {
-        router.push("/(app)/(tabs)/rates");
-      }, 2000);
-
-    } catch (error: any) {
-      console.error("Payment error:", error);
-
-      // Extract error message from response
-      let errorMessage = "Payment processing failed. Please try again.";
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      setError(errorMessage);
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  */
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -515,17 +309,17 @@ export default function PaymentScreen() {
                   // iOS In-App Purchase UI
                   <View style={styles.paymentMethodContainer}>
                     <View style={styles.iosInfo}>
-                      <Text style={styles.iosTitle}>iOS In-App Purchase</Text>
+                      <Text style={styles.iosTitle}>{paymentManager.getServiceName()}</Text>
                       <Text style={styles.iosSubtitle}>
                         Secure payment through Apple Pay
                       </Text>
                     </View>
 
-                    {selectedIosProduct && (
+                    {selectedProduct && (
                       <View style={styles.iosProductDetails}>
-                        <Text style={styles.iosProductTitle}>{selectedIosProduct.title}</Text>
-                        <Text style={styles.iosProductPrice}>{selectedIosProduct.price}</Text>
-                        <Text style={styles.iosProductPeriod}>{selectedIosProduct.period}</Text>
+                        <Text style={styles.iosProductTitle}>{selectedProduct.title}</Text>
+                        <Text style={styles.iosProductPrice}>{selectedProduct.price}</Text>
+                        <Text style={styles.iosProductPeriod}>{selectedProduct.period}</Text>
                       </View>
                     )}
 
@@ -545,8 +339,8 @@ export default function PaymentScreen() {
                     </View>
 
                     <TouchableOpacity
-                      onPress={handleIOSPurchase}
-                      disabled={isLoading || !selectedIosProduct}
+                      onPress={handlePaymentPurchase}
+                      disabled={isLoading || !selectedProduct}
                       style={styles.iosButton}
                     >
                       <LinearGradient
@@ -576,7 +370,7 @@ export default function PaymentScreen() {
                   <View style={styles.paymentMethodContainer}>
                     <View style={styles.razorpayInfo}>
                       <Shield size={24} color="#F3B62B" style={styles.razorpayIcon} />
-                      <Text style={styles.razorpayTitle}>Secure Payment Gateway</Text>
+                      <Text style={styles.razorpayTitle}>{paymentManager.getServiceName()}</Text>
                       <Text style={styles.razorpaySubtitle}>
                         Powered by Razorpay - India's most trusted payment platform
                       </Text>

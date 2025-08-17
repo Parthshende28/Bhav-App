@@ -10,6 +10,9 @@
       "android": {
         "gradleCommand": ":app:assembleDebug",
         "buildType": "apk"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
       }
     },
     "preview": {
@@ -17,6 +20,9 @@
       "android": {
         "gradleCommand": ":app:assembleRelease",
         "buildType": "apk"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
       }
     },
     "production": {
@@ -24,6 +30,9 @@
       "android": {
         "gradleCommand": ":app:bundleRelease",
         "buildType": "app-bundle"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
       }
     }
   },
