@@ -375,7 +375,6 @@ export default function HistoryScreen() {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity
-                        style={styles.menuButton}
                         onPress={() => router.push("/drawer")}
                     >
                         <Menu size={24} color="#333333" />
@@ -475,9 +474,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: 24,
-        paddingTop: 16,
-        paddingBottom: 24,
+        paddingHorizontal: 20,
+        paddingVertical: 16,
     },
     backButton: {
         padding: 8,
@@ -678,9 +676,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#666666",
         marginLeft: 8,
-    },
-    menuButton: {
-        padding: 8,
     },
     requestDetailIcon: {
         marginRight: 8,

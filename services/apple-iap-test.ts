@@ -18,9 +18,9 @@ export const APP_STORE_CONFIG = {
 
     // Subscription product IDs (matching App Store Connect)
     productIds: {
-        sellerLite: 'seller_lite_6months',
-        sellerPro: 'seller_pro_12months',
-        superSeller: 'super_seller_12months'
+        sellerLite: 'seller_lite_6m',
+        sellerPro: 'seller_pro_12m',
+        superSeller: 'super_seller_12m'
     }
 };
 

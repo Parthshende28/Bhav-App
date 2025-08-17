@@ -14,25 +14,25 @@ import {
 
 // Product IDs from your App Store Connect
 export const SUBSCRIPTION_PRODUCTS = {
-  'seller_lite_6months': {
-    id: 'seller_lite_6months',
+  'seller_lite_6m': {
+    id: 'seller_lite_6m',
     title: 'Seller Lite - 6 Months',
     price: '₹2,999',
     period: '6 months',
     planId: 'half-yearly',
     durationMonths: 6
   },
-  'seller_pro_12months': {
-    id: 'seller_pro_12months',
+  'seller_pro_12m': {
+    id: 'seller_pro_12m',
     title: 'Seller Pro - 12 Months',
     price: '₹4,999',
     period: '12 months',
     planId: 'yearly',
     durationMonths: 12
   },
-  'super_seller_12months': {
-    id: 'super_seller_12months',
-    title: 'Super Seller - 12 Months',
+  'super_seller_12m': {
+    id: 'super_seller_12m',
+    title: 'Supper Seller - 12 Months',
     price: '₹9,999',
     period: '12 months',
     planId: 'super-seller',

@@ -8,30 +8,31 @@ import {
     Product,
     PurchaseError,
     Purchase,
+    ProductPurchase,
 } from 'react-native-iap';
 import { Platform } from 'react-native';
 import { paymentAPI } from './api';
 
 // Product IDs for iOS IAP
 export const IOS_PRODUCT_IDS = [
-    'seller_lite_6months',
-    'seller_pro_12months',
-    'super_seller_12months'
+    'seller_lite_6m',
+    'seller_pro_12m',
+    'super_seller_12m'
 ];
 
 // Map product IDs to plan details
-export const PRODUCT_PLAN_MAP = {
-    'seller_lite_6months': {
+export const PRODUCT_PLAN_MAP: Record<string, { id: string; title: string; durationMonths: number }> = {
+    'seller_lite_6m': {
         id: 'half-yearly',
         title: 'Seller Lite',
         durationMonths: 6
     },
-    'seller_pro_12months': {
+    'seller_pro_12m': {
         id: 'yearly',
         title: 'Seller Pro',
         durationMonths: 12
     },
-    'super_seller_12months': {
+    'super_seller_12m': {
         id: 'super-seller',
         title: 'Super Seller',
         durationMonths: 12
@@ -46,7 +47,7 @@ export interface IAPProduct extends Product {
 
 export interface PurchaseResult {
     success: boolean;
-    purchase?: Purchase;
+    purchase?: ProductPurchase;
     error?: string;
 }
 
@@ -127,7 +128,14 @@ class IAPService {
             const purchase = await requestPurchase({ sku: productId });
             console.log('IAP: Purchase successful', purchase);
 
-            return { success: true, purchase };
+            // Handle the return type properly
+            if (purchase && !Array.isArray(purchase)) {
+                return { success: true, purchase };
+            } else if (Array.isArray(purchase) && purchase.length > 0) {
+                return { success: true, purchase: purchase[0] };
+            } else {
+                return { success: false, error: 'No purchase returned' };
+            }
         } catch (error) {
             console.error('IAP: Purchase failed', error);
 
@@ -180,19 +188,19 @@ class IAPService {
                 isValid,
                 receiptData: result
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error('IAP: Receipt validation failed', error);
             return {
                 success: false,
                 isValid: false,
-                error: error.message
+                error: error.message || 'Unknown error'
             };
         }
     }
 
     // Complete purchase and update backend
     async completePurchase(
-        purchase: Purchase,
+        purchase: ProductPurchase,
         userId: string,
         brandName?: string
     ): Promise<{ success: boolean; error?: string }> {
@@ -217,14 +225,14 @@ class IAPService {
             // Send purchase data to backend
             const paymentData = {
                 userId,
-                amount: parseFloat(purchase.localizedPrice?.replace(/[^0-9.]/g, '') || '0'),
+                amount: parseFloat((purchase as any).localizedPrice?.replace(/[^0-9.]/g, '') || '0'),
                 plan: planInfo.id,
                 paymentMethod: 'apple_iap',
                 durationMonths: planInfo.durationMonths,
                 brandName,
                 // Apple IAP specific data
                 appleTransactionId: purchase.transactionId,
-                appleOriginalTransactionId: purchase.originalTransactionId,
+                appleOriginalTransactionId: (purchase as any).originalTransactionId || purchase.transactionId,
                 appleReceipt: purchase.transactionReceipt,
                 appleProductId: purchase.productId
             };
@@ -243,14 +251,14 @@ class IAPService {
             console.log('IAP: Transaction finished');
 
             return { success: true };
-        } catch (error) {
+        } catch (error: any) {
             console.error('IAP: Failed to complete purchase', error);
-            return { success: false, error: error.message };
+            return { success: false, error: error.message || 'Unknown error' };
         }
     }
 
     // Restore purchases (for non-renewing subscriptions, this might be limited)
-    async restorePurchases(): Promise<Purchase[]> {
+    async restorePurchases(): Promise<ProductPurchase[]> {
         if (!this.isInitialized || Platform.OS !== 'ios') {
             return [];
         }
@@ -288,7 +296,7 @@ class IAPService {
 
     // Format price for display
     formatPrice(product: Product): string {
-        return product.localizedPrice || product.price || 'N/A';
+        return (product as any).localizedPrice || product.price || 'N/A';
     }
 }
 
