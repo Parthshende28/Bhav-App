@@ -11,13 +11,14 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save } from "lucide-react-native";
+import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save, LogOut, Trash, Trash2 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";
@@ -220,6 +221,39 @@ export default function ProfileScreen() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    Alert.alert("Request Account Deletion", "Are you sure you want to delete your account?\nThis action cannot be undone.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Request Delete", style: "destructive", onPress: async () => {
+          try {
+            const adminEmail = "24vipinsoni@gmail.com";
+            const subject = "Request for account deletion on Bhav app";
+            const body = `Dear Admin,\n\nI would like to request the deletion of my account from the Bhav app.\n\nUser Details:\nName: ${user?.fullName || 'N/A'}\nEmail: ${user?.email || 'N/A'}\nPhone: ${user?.phone || 'N/A'}\n\nPlease process my account deletion request.\n\nThank you.`;
+
+            const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            const canOpen = await Linking.canOpenURL(mailtoUrl);
+            if (canOpen) {
+              await Linking.openURL(mailtoUrl);
+            } else {
+              Alert.alert(
+                "Email App Not Found",
+                "Please install an email app or manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
+              );
+            }
+          } catch (error) {
+            console.error("Error opening email:", error);
+            Alert.alert(
+              "Error",
+              "Unable to open email app. Please manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
+            );
+          }
+        }
+      },
+    ]);
   };
 
   // Use a placeholder image if no profile image is set
@@ -631,6 +665,23 @@ export default function ProfileScreen() {
                 )}
               </LinearGradient>
             </TouchableOpacity>
+
+
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleDeleteAccount}
+            >
+              <LinearGradient
+                colors={["#FB4141", "#E43636"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Request Account Deletion</Text>
+                <Trash2 size={18} color="#ffffff" />
+              </LinearGradient>
+            </TouchableOpacity>
+
 
             {isSaved && (
               <View style={styles.savedMessage}>
