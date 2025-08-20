@@ -24,14 +24,13 @@
     "android": {
       "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.jpg",
         "backgroundColor": "#ffffff"
       },
       "package": "com.vipinsoni.bhav"
     },
     "plugins": [
       "expo-router",
-      "expo-web-browser",
       "expo-font",
       [
         "expo-build-properties",
