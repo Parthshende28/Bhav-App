@@ -82,6 +82,9 @@ export const userAPI = {
 
     getSellerById: (sellerId: string) =>
         API.get(`/users/seller/${sellerId}`),
+
+    deleteAccount: (userId: string) =>
+        API.delete('/users/delete-account', { data: { userId } }),
 };
 
 // Inventory API

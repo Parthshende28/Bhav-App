@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -24,9 +23,10 @@ import { images } from "@/constants/images";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth-store";
 import { cloudinaryAPI } from "@/services/cloudinary";
+import { userAPI } from "@/services/api";
 
 export default function ProfileScreen() {
-  const { user, updateUser } = useAuthStore();
+  const { user, updateUser, token, logout } = useAuthStore();
 
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -224,36 +224,91 @@ export default function ProfileScreen() {
   };
 
   const handleDeleteAccount = async () => {
-    Alert.alert("Request Account Deletion", "Are you sure you want to delete your account?\nThis action cannot be undone.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Request Delete", style: "destructive", onPress: async () => {
-          try {
-            const adminEmail = "24vipinsoni@gmail.com";
-            const subject = "Request for account deletion on Bhav app";
-            const body = `Dear Admin,\n\nI would like to request the deletion of my account from the Bhav app.\n\nUser Details:\nName: ${user?.fullName || 'N/A'}\nEmail: ${user?.email || 'N/A'}\nPhone: ${user?.phone || 'N/A'}\n\nPlease process my account deletion request.\n\nThank you.`;
-
-            const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-            const canOpen = await Linking.canOpenURL(mailtoUrl);
-            if (canOpen) {
-              await Linking.openURL(mailtoUrl);
-            } else {
-              Alert.alert(
-                "Email App Not Found",
-                "Please install an email app or manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
-              );
-            }
-          } catch (error) {
-            console.error("Error opening email:", error);
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account?\nThis action cannot be undone",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Permanently",
+          style: "destructive",
+          onPress: () => {
             Alert.alert(
-              "Error",
-              "Unable to open email app. Please manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
+              "Deleting Your Account Permanently",
+              "Please click Yes to confirm",
+              [
+                { text: "No", style: "cancel" },
+                {
+                  text: "Yes",
+                  style: "destructive",
+                  onPress: async () => {
+                    try {
+                      setIsLoading(true);
+
+                      // Check backend connectivity first
+                      const isBackendReachable = await checkBackendConnection();
+                      if (!isBackendReachable) {
+                        Alert.alert(
+                          "Connection Error",
+                          "Cannot connect to server. Please check your internet connection and try again."
+                        );
+                        return;
+                      }
+
+                      // Call backend API to delete account
+                      console.log("Attempting to delete account for user:", user?.id);
+                      console.log("Using API base URL:", 'https://bhav-backend.onrender.com/api');
+                      console.log("Full endpoint:", 'https://bhav-backend.onrender.com/api/users/delete-account');
+
+                      const result = await userAPI.deleteAccount(user?.id || '');
+
+                      if (result.status === 200) {
+                        // Account deleted successfully, logout user
+                        Alert.alert(
+                          "Account Deleted",
+                          "Your account has been permanently deleted. You will be logged out.",
+                          [
+                            {
+                              text: "OK",
+                              onPress: () => {
+                                // Clear user data and redirect to login
+                                logout();
+                                router.replace("/auth/login");
+                              }
+                            }
+                          ]
+                        );
+                      } else {
+                        Alert.alert("Error", `Failed to delete account. Status: ${result.status}`);
+                      }
+                    } catch (error: any) {
+                      console.error("Error deleting account:", error);
+
+                      let errorMessage = "Failed to delete account. Please try again.";
+
+                      if (error.response) {
+                        // Server responded with error status
+                        errorMessage = `Server error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`;
+                      } else if (error.request) {
+                        // Request was made but no response received
+                        errorMessage = "Network error: No response from server. Please check your internet connection.";
+                      } else {
+                        // Something else happened
+                        errorMessage = `Error: ${error.message || 'Unknown error occurred'}`;
+                      }
+
+                      Alert.alert("Error", errorMessage);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }
+                }
+              ]
             );
           }
         }
-      },
-    ]);
+      ]
+    );
   };
 
   // Use a placeholder image if no profile image is set
@@ -285,6 +340,17 @@ export default function ProfileScreen() {
 
   const openDrawer = () => {
     router.push("/drawer");
+  };
+
+  // Check if backend is reachable
+  const checkBackendConnection = async () => {
+    try {
+      const response = await fetch('https://bhav-backend.onrender.com/');
+      return response.ok;
+    } catch (error) {
+      console.error("Backend connection check failed:", error);
+      return false;
+    }
   };
 
 
@@ -677,7 +743,7 @@ export default function ProfileScreen() {
                 end={{ x: 1, y: 0 }}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Request Account Deletion</Text>
+                <Text style={styles.buttonText}>Delete Account</Text>
                 <Trash2 size={18} color="#ffffff" />
               </LinearGradient>
             </TouchableOpacity>
