@@ -20,6 +20,7 @@ import * as Haptics from "expo-haptics";
 import { ArrowLeft, User, Mail, Lock, Eye, EyeOff, MapPin, Phone, CheckCircle, Store } from "lucide-react-native";
 import { useAuthStore } from '@/store/auth-store';
 import { API_BASE_URL } from "@/store/api";
+import TermsModal from '@/components/TermsModal';
 
 // Define major cities for dropdown
 const MAJOR_CITIES = [
@@ -42,6 +43,7 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [address, setAddress] = useState("");
   const [brandName, setBrandName] = useState("");
+  const [referralCode, setReferralCode] = useState(""); // Empty referral code
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // UI state
@@ -52,6 +54,7 @@ export default function SignupScreen() {
   const [becomeSeller, setBecomeSeller] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [filteredCities, setFilteredCities] = useState(MAJOR_CITIES);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Filter cities based on input
   useEffect(() => {
@@ -92,14 +95,21 @@ export default function SignupScreen() {
 
   // Toggle seller option
   const toggleBecomeSeller = () => {
-    setBecomeSeller(!becomeSeller);
+    const newSellerState = !becomeSeller;
+    setBecomeSeller(newSellerState);
+
+    // Clear referral code when turning off seller mode
+    if (!newSellerState) {
+      setReferralCode("");
+    }
+
     if (Platform.OS !== "web") {
       Haptics.selectionAsync();
     }
   };
 
-  // Handle signup
-  const handleSignup = async () => {
+  // Handle signup button press - show terms modal first
+  const handleSignup = () => {
     if (!name || !email || !phone || !password || !confirmPassword || !city) {
       setError("Please fill in all fields");
       return;
@@ -122,6 +132,12 @@ export default function SignupScreen() {
     }
 
     setError("");
+    setShowTermsModal(true);
+  };
+
+  // Handle actual signup after terms agreement
+  const handleSignupAfterTerms = async () => {
+    setShowTermsModal(false);
     setIsLoading(true);
 
     try {
@@ -140,6 +156,7 @@ export default function SignupScreen() {
           about: address,
           role: becomeSeller ? "seller" : "customer",
           brandName: becomeSeller ? brandName : undefined,
+          referralCode: referralCode.trim() || undefined,
         }),
       });
 
@@ -151,10 +168,14 @@ export default function SignupScreen() {
         }
 
         // Show alert for both seller and customer
+        const referralMessage = referralCode === "M@uryanJēwels24" && becomeSeller
+          ? "\n🎁 You've received a 3-month free subscription!\n✅ Start adding products immediately\n✅ Full access to seller features"
+          : "";
+
         Alert.alert(
           "Welcome to Bhav App! 🎉",
           becomeSeller
-            ? "Your seller account has been created successfully.\n\n✅ Add your products after completing subscription\n✅ Share your referral code with users\n✅ Manage your inventory and requests\n\nYou will now be redirected to the login page."
+            ? `Your seller account has been created successfully.${referralMessage}\n\n✅ Add your products${referralMessage ? '' : ' after completing subscription'}\n✅ Share your referral code with users\n✅ Manage your inventory and requests\n\nYou will now be redirected to the login page.`
             : "Your user account has been created successfully.\n\n✅ Browse live gold & silver rates\n✅ Connect with verified sellers\n✅ Make secure transactions\n\nYou will now be redirected to the login page.",
           [
             {
@@ -450,6 +471,28 @@ export default function SignupScreen() {
               </View>
             )}
 
+            {/* Referral Code field - only visible when becomeSeller is true */}
+            {becomeSeller && (
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Referral Code (Optional)</Text>
+                <View style={[
+                  styles.inputContainer,
+                  focusedField === "referralCode" && styles.inputContainerFocused,
+                ]}>
+                  <User size={20} color="#F3B62B" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter referral code"
+                    placeholderTextColor="#9e9e9e"
+                    value={referralCode}
+                    onChangeText={setReferralCode}
+                    onFocus={() => setFocusedField("referralCode")}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                </View>
+              </View>
+            )}
+
             <TouchableOpacity
               style={styles.buttonContainer}
               onPress={handleSignup}
@@ -478,6 +521,14 @@ export default function SignupScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Terms and Privacy Policy Modal */}
+      <TermsModal
+        visible={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAgree={handleSignupAfterTerms}
+        title="Terms & Privacy Policy"
+      />
     </SafeAreaView>
   );
 }
@@ -681,5 +732,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#F3B62B",
     marginLeft: 4,
+  },
+  referralCodeInfo: {
+    fontSize: 12,
+    color: "#4CAF50",
+    marginTop: 8,
+    fontStyle: "italic",
+    lineHeight: 16,
   },
 });

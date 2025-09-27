@@ -69,7 +69,35 @@ export default function InventoryScreen() {
   // Check subscription status on mount
   useEffect(() => {
     if (user && user.role === "seller") {
-      setHasActiveSubscription(!!(user.isPremium && user.subscriptionStatus === 'active'));
+      // Check if user has active subscription (either paid or referral-based)
+      const currentDate = new Date();
+      let hasActiveSubscription = false;
+
+      // Check subscription status and expiry
+      if (user.subscriptionStatus === 'active' && user.subscriptionEndDate) {
+        const endDate = new Date(user.subscriptionEndDate);
+        if (endDate > currentDate) {
+          hasActiveSubscription = true;
+        } else {
+          // Subscription expired
+          hasActiveSubscription = false;
+        }
+      } else if (user.subscriptionStatus === 'active') {
+        // No end date but status is active (for referral codes)
+        hasActiveSubscription = true;
+      }
+
+      setHasActiveSubscription(hasActiveSubscription);
+
+      console.log('Subscription check:', {
+        subscriptionStatus: user.subscriptionStatus,
+        isPremium: user.isPremium,
+        premiumPlan: user.premiumPlan,
+        subscriptionEndDate: user.subscriptionEndDate,
+        usedReferralCode: user.usedReferralCode,
+        hasActiveSubscription,
+        currentDate: currentDate.toISOString()
+      });
     }
   }, [user]);
 

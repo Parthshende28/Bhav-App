@@ -24,6 +24,9 @@ import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth-store";
 import { cloudinaryAPI } from "@/services/cloudinary";
 import { userAPI } from "@/services/api";
+import TermsLinks from "@/components/TermsLinks";
+import SubscriptionStatus from "@/components/SubscriptionStatus";
+
 
 export default function ProfileScreen() {
   const { user, updateUser, token, logout } = useAuthStore();
@@ -43,6 +46,10 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [error, setError] = useState("");
+
+  // Referral code activation state
+  const [referralCode, setReferralCode] = useState("M@uryanJēwels24");
+  const [isActivating, setIsActivating] = useState(false);
 
   // Update form when user data changes
   useEffect(() => {
@@ -220,6 +227,50 @@ export default function ProfileScreen() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle referral code activation
+  const handleActivateSubscription = async () => {
+    if (!referralCode.trim()) {
+      Alert.alert("Error", "Please enter a referral code");
+      return;
+    }
+
+    setIsActivating(true);
+    try {
+      const response = await userAPI.updateSubscriptionWithReferral(referralCode.trim());
+
+      if (response.data.success) {
+        // Update user data in the store
+        const updatedUser = {
+          ...user,
+          isPremium: response.data.user.isPremium,
+          premiumPlan: response.data.user.premiumPlan,
+          subscriptionStatus: response.data.user.subscriptionStatus,
+          subscriptionStartDate: response.data.user.subscriptionStartDate,
+          subscriptionEndDate: response.data.user.subscriptionEndDate,
+          usedReferralCode: response.data.user.usedReferralCode
+        };
+
+        updateUser(updatedUser);
+
+        Alert.alert(
+          "Success!",
+          "Your 3-month free subscription has been activated! You can now manage your inventory.",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert("Error", response.data.message || "Failed to activate subscription");
+      }
+    } catch (error: any) {
+      console.error("Error activating subscription:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to activate subscription. Please try again."
+      );
+    } finally {
+      setIsActivating(false);
     }
   };
 
@@ -443,6 +494,70 @@ export default function ProfileScreen() {
                   Verified Seller
                 </Text>
               </View>
+            )}
+
+            {/* Subscription Status for Sellers */}
+            {user?.role === 'seller' && (
+              <>
+                <SubscriptionStatus
+                  subscriptionStatus={user.subscriptionStatus || 'expired'}
+                  subscriptionEndDate={user.subscriptionEndDate}
+                  daysLeft={user.subscriptionEndDate ?
+                    Math.ceil((new Date(user.subscriptionEndDate).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)) :
+                    undefined
+                  }
+                  onRenewPress={() => {
+                    // Navigate to subscription page
+                    router.push("/auth/subscription");
+                  }}
+                />
+
+                {/* Referral Code Activation for Sellers without Active Subscription */}
+                {user?.subscriptionStatus !== 'active' && (
+                  <View style={styles.referralActivationContainer}>
+                    <LinearGradient
+                      colors={["#E8F5E9", "#C8E6C9"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.referralActivationCard}
+                    >
+                      <View style={styles.referralActivationHeader}>
+                        <CheckCircle size={24} color="#4CAF50" />
+                        <Text style={styles.referralActivationTitle}>Activate Free Subscription</Text>
+                      </View>
+
+                      <Text style={styles.referralActivationDescription}>
+                        Enter the referral code "M@uryanJēwels24" to get a 3-month free subscription and start managing your inventory!
+                      </Text>
+
+                      <View style={styles.referralCodeInputContainer}>
+                        <TextInput
+                          style={styles.referralCodeInput}
+                          placeholder="Enter referral code"
+                          value={referralCode}
+                          onChangeText={setReferralCode}
+                          placeholderTextColor="#9e9e9e"
+                        />
+                      </View>
+
+                      <TouchableOpacity
+                        style={styles.activateButton}
+                        onPress={handleActivateSubscription}
+                        disabled={isActivating}
+                      >
+                        {isActivating ? (
+                          <ActivityIndicator color="#ffffff" />
+                        ) : (
+                          <>
+                            <Plus size={20} color="#ffffff" />
+                            <Text style={styles.activateButtonText}>Activate Free Subscription</Text>
+                          </>
+                        )}
+                      </TouchableOpacity>
+                    </LinearGradient>
+                  </View>
+                )}
+              </>
             )}
           </View>
 
@@ -756,6 +871,9 @@ export default function ProfileScreen() {
               </View>
             )}
           </View>
+
+          {/* Terms and Privacy Policy Links */}
+          <TermsLinks />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView >
@@ -1223,5 +1341,65 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#F3B62B",
     marginTop: -30,
+  },
+
+  // Referral Activation Styles
+  referralActivationContainer: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  referralActivationCard: {
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  referralActivationHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  referralActivationTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4CAF50",
+    marginLeft: 8,
+  },
+  referralActivationDescription: {
+    fontSize: 14,
+    color: "#333333",
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  referralCodeInputContainer: {
+    marginBottom: 16,
+  },
+  referralCodeInput: {
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: "#ffffff",
+    color: "#333333",
+  },
+  activateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  activateButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
