@@ -17,7 +17,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save, LogOut, Trash, Trash2 } from "lucide-react-native";
+import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save, LogOut, Trash, Trash2, Check } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";
@@ -527,14 +527,13 @@ export default function ProfileScreen() {
                       </View>
 
                       <Text style={styles.referralActivationDescription}>
-                        Enter the referral code "M@uryanJēwels24" to get a 3-month free subscription and start managing your inventory!
+                        Enter referral code to get a 3-month free subscription and start managing your inventory!
                       </Text>
 
                       <View style={styles.referralCodeInputContainer}>
                         <TextInput
                           style={styles.referralCodeInput}
                           placeholder="Enter referral code"
-                          value={referralCode}
                           onChangeText={setReferralCode}
                           placeholderTextColor="#9e9e9e"
                         />
@@ -549,7 +548,7 @@ export default function ProfileScreen() {
                           <ActivityIndicator color="#ffffff" />
                         ) : (
                           <>
-                            <Plus size={20} color="#ffffff" />
+                            <Check size={20} color="#ffffff" />
                             <Text style={styles.activateButtonText}>Activate Free Subscription</Text>
                           </>
                         )}
@@ -996,6 +995,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E8F5E9",
     paddingHorizontal: 12,
     marginTop: 8,
+    marginBottom: 16,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
@@ -1346,7 +1346,7 @@ const styles = StyleSheet.create({
   // Referral Activation Styles
   referralActivationContainer: {
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginVertical: 16,
   },
   referralActivationCard: {
     borderRadius: 12,

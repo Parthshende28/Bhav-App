@@ -108,7 +108,7 @@ const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 16,
+        width: '90%',
     },
     statusCard: {
         padding: 16,
