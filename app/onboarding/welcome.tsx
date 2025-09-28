@@ -85,25 +85,6 @@ export default function OnboardingWelcome() {
         );
     }
 
-    function renderPageIndicator() {
-        return (
-            <View style={styles.pageIndicatorContainer}>
-                {onboardingScreens.map((_, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={[
-                            styles.pageIndicator,
-                            currentIndex === index && styles.pageIndicatorActive,
-                        ]}
-                        onPress={() => {
-                            setCurrentIndex(index);
-                            flatListRef.current?.scrollToIndex({ index, animated: true });
-                        }}
-                    />
-                ))}
-            </View>
-        );
-    }
 
     return (
         <View style={styles.container}>
@@ -129,8 +110,6 @@ export default function OnboardingWelcome() {
                     });
                 }}
             />
-
-            {renderPageIndicator()}
         </View>
     );
 }
@@ -138,30 +117,10 @@ export default function OnboardingWelcome() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: '#FFFFFF',
     },
     screenContainer: {
         width,
         flex: 1,
-    },
-    pageIndicatorContainer: {
-        position: 'absolute',
-        bottom: 60,
-        left: 0,
-        right: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    pageIndicator: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: '#D1D5DB',
-        marginHorizontal: 4,
-    },
-    pageIndicatorActive: {
-        backgroundColor: '#F3B62B',
-        width: 24,
     },
 });
