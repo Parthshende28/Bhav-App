@@ -15,24 +15,24 @@ import { paymentAPI } from './api';
 
 // Product IDs for iOS IAP
 export const IOS_PRODUCT_IDS = [
-    'seller_lite_6m',
-    'seller_pro_12m',
-    'super_seller_12m'
+    'sellerLiteSixMonths',
+    'sellerProTwelveMonths',
+    'superSellerTwelveMonths'
 ];
 
 // Map product IDs to plan details
 export const PRODUCT_PLAN_MAP: Record<string, { id: string; title: string; durationMonths: number }> = {
-    'seller_lite_6m': {
+    'sellerLiteSixMonths': {
         id: 'half-yearly',
         title: 'Seller Lite',
         durationMonths: 6
     },
-    'seller_pro_12m': {
+    'sellerProTwelveMonths': {
         id: 'yearly',
         title: 'Seller Pro',
         durationMonths: 12
     },
-    'super_seller_12m': {
+    'superSellerTwelveMonths': {
         id: 'super-seller',
         title: 'Super Seller',
         durationMonths: 12

@@ -36,7 +36,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "half-yearly",
     title: "Seller Lite",
-    price: "₹2999",
+    price: "₹999",
     period: "/ 6 months",
     features: [
       "Basic seller dashboard",
@@ -49,7 +49,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "yearly",
     title: "Seller Pro",
-    price: "₹4999",
+    price: "₹1999",
     period: "/ 12 months",
     features: [
       "Advanced seller dashboard",
@@ -64,7 +64,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "super-seller",
     title: "Super Seller",
-    price: "₹9999",
+    price: "₹4999",
     period: "/ 12 months",
     features: [
       "Advanced seller dashboard",

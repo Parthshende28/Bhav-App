@@ -199,6 +199,7 @@ export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   token: string | null;
+  hasSeenOnboarding: boolean;
   adminUsernameRegistered: boolean;
   users: MockUser[];
   notifications: Notification[];
@@ -214,6 +215,7 @@ export type AuthState = {
   buyRequestStatuses: BuyRequestStatus;
   selectedSeller?: User | null;
   setSelectedSeller: (seller: User | null) => void;
+  setHasSeenOnboarding: (seen: boolean) => void;
   setBuyRequests: (requests: BuyRequest[]) => void; // Added setter for buy requests
   setSellerReferrals: (referrals: SellerReferral[]) => void; // Added setter for seller referrals
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; token?: string; user?: User }>;
@@ -335,6 +337,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       token: null,
+      hasSeenOnboarding: false,
       adminUsernameRegistered: true, // Set to true since we now have a pre-defined admin
       users: initialMockUsers, // Initialize with mock users
       notifications: initialNotifications, // Initialize with mock notifications
@@ -350,6 +353,7 @@ export const useAuthStore = create<AuthState>()(
       buyRequestStatuses: {} as BuyRequestStatus,
       selectedSeller: null,
       setSelectedSeller: (seller: User | null) => set({ selectedSeller: seller }),
+      setHasSeenOnboarding: (seen: boolean) => set({ hasSeenOnboarding: seen }),
       setBuyRequests: (requests: BuyRequest[]) => set({ buyRequests: requests }),
 
       isAdminUsername: (username: string) => {
@@ -569,7 +573,7 @@ export const useAuthStore = create<AuthState>()(
           };
 
           // Check if this is a role change from customer to seller
-          const userId = (userData as any).id || (currentUser ? currentUser.id : '');
+          const userId = (userData as any).id || (currentUser ? (currentUser as any).id : '');
           const userToUpdate = get().users.find(u => u.id === userId);
           const isRoleChangeToSeller = userToUpdate &&
             userToUpdate.role === 'customer' &&
@@ -581,29 +585,29 @@ export const useAuthStore = create<AuthState>()(
               // If role is changing to seller and no referral code exists, generate one
               if (isRoleChangeToSeller && !u.referralCode) {
                 const brandInitials = (userData as any).brandName || u.brandName
-                  ? (((userData as any).brandName || u.brandName) ? ((userData as any).brandName || u.brandName)!.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 3) : (u?.name ?? '').substring(0, 3).toUpperCase())
+                  ? (((userData as any).brandName || u.brandName) ? ((userData as any).brandName || u.brandName)!.split(' ').map((word: string) => word[0]).join('').toUpperCase().substring(0, 3) : (u?.name ?? '').substring(0, 3).toUpperCase())
                   : (u?.name ?? '').substring(0, 3).toUpperCase();
 
                 const userInitials = u.username.substring(0, 4).toUpperCase();
                 (updatedUserData as any).referralCode = `${brandInitials}${u.id}${userInitials}`;
               }
 
-              return { ...u, ...updatedUserData } as MockUser;
+              return { ...u, ...updatedUserData } as any;
             }
             return u;
           });
 
           // Update the user in the state if it's the current user
-          if (currentUser && (userId === currentUser.id || !(userData as any).id)) {
+          if (currentUser && (userId === (currentUser as any).id || !(userData as any).id)) {
             const updatedUser = {
-              ...currentUser,
+              ...(currentUser as any),
               ...updatedUserData
-            } as User;
+            } as any;
 
             set({
               user: updatedUser,
               users: updatedUsers,
-              isPremiumUser: !!(updatedUserData as any).isPremium || !!currentUser.isPremium,
+              isPremiumUser: !!(updatedUserData as any).isPremium || !!(currentUser as any).isPremium,
             });
           } else {
             set({ users: updatedUsers });

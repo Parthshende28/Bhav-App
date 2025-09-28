@@ -12,26 +12,26 @@ import { iosIAPAPI } from './api';
 
 // iOS Product configuration
 export const IOS_SUBSCRIPTION_PRODUCTS = {
-    'seller_lite_6m': {
-        id: 'seller_lite_6m',
-        title: 'Seller Lite - 6 Months',
-        price: '₹2,999',
+    'sellerLiteSixMonths': {
+        id: 'sellerLiteSixMonths',
+        title: 'Seller Lite',
+        price: '₹999',
         period: '6 months',
         planId: 'half-yearly',
         durationMonths: 6
     },
-    'seller_pro_12m': {
-        id: 'seller_pro_12m',
-        title: 'Seller Pro - 12 Months',
-        price: '₹4,999',
+    'sellerProTwelveMonths': {
+        id: 'sellerProTwelveMonths',
+        title: 'Seller Pro',
+        price: '₹1,999',
         period: '12 months',
         planId: 'yearly',
         durationMonths: 12
     },
-    'super_seller_12m': {
-        id: 'super_seller_12m',
-        title: 'Super Seller - 12 Months',
-        price: '₹9,999',
+    'superSellerTwelveMonths': {
+        id: 'superSellerTwelveMonths',
+        title: 'Super Seller',
+        price: '₹4,999',
         period: '12 months',
         planId: 'super-seller',
         durationMonths: 12
