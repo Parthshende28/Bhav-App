@@ -199,6 +199,7 @@ export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   token: string | null;
+  hasSeenOnboarding: boolean;
   adminUsernameRegistered: boolean;
   users: MockUser[];
   notifications: Notification[];
@@ -214,6 +215,7 @@ export type AuthState = {
   buyRequestStatuses: BuyRequestStatus;
   selectedSeller?: User | null;
   setSelectedSeller: (seller: User | null) => void;
+  setHasSeenOnboarding: (seen: boolean) => void;
   setBuyRequests: (requests: BuyRequest[]) => void; // Added setter for buy requests
   setSellerReferrals: (referrals: SellerReferral[]) => void; // Added setter for seller referrals
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; token?: string; user?: User }>;
@@ -335,6 +337,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       token: null,
+      hasSeenOnboarding: false,
       adminUsernameRegistered: true, // Set to true since we now have a pre-defined admin
       users: initialMockUsers, // Initialize with mock users
       notifications: initialNotifications, // Initialize with mock notifications
@@ -350,6 +353,7 @@ export const useAuthStore = create<AuthState>()(
       buyRequestStatuses: {} as BuyRequestStatus,
       selectedSeller: null,
       setSelectedSeller: (seller: User | null) => set({ selectedSeller: seller }),
+      setHasSeenOnboarding: (seen: boolean) => set({ hasSeenOnboarding: seen }),
       setBuyRequests: (requests: BuyRequest[]) => set({ buyRequests: requests }),
 
       isAdminUsername: (username: string) => {

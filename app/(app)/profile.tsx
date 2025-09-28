@@ -11,22 +11,24 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save, LogOut, Trash, Trash2 } from "lucide-react-native";
+import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle, X, User, Mail, Phone, MapPin, Store, Plus, ArrowUpCircle, Save, LogOut, Trash, Trash2, Check } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth-store";
 import { cloudinaryAPI } from "@/services/cloudinary";
+import { userAPI } from "@/services/api";
+import SubscriptionStatus from "@/components/SubscriptionStatus";
+
 
 export default function ProfileScreen() {
-  const { user, updateUser } = useAuthStore();
+  const { user, updateUser, token, logout } = useAuthStore();
 
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -43,6 +45,10 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [error, setError] = useState("");
+
+  // Referral code activation state
+  const [referralCode, setReferralCode] = useState("M@uryanJēwels24");
+  const [isActivating, setIsActivating] = useState(false);
 
   // Update form when user data changes
   useEffect(() => {
@@ -223,37 +229,136 @@ export default function ProfileScreen() {
     }
   };
 
+  // Handle referral code activation
+  const handleActivateSubscription = async () => {
+    if (!referralCode.trim()) {
+      Alert.alert("Error", "Please enter a referral code");
+      return;
+    }
+
+    setIsActivating(true);
+    try {
+      const response = await userAPI.updateSubscriptionWithReferral(referralCode.trim());
+
+      if (response.data.success) {
+        // Update user data in the store
+        const updatedUser = {
+          ...user,
+          isPremium: response.data.user.isPremium,
+          premiumPlan: response.data.user.premiumPlan,
+          subscriptionStatus: response.data.user.subscriptionStatus,
+          subscriptionStartDate: response.data.user.subscriptionStartDate,
+          subscriptionEndDate: response.data.user.subscriptionEndDate,
+          usedReferralCode: response.data.user.usedReferralCode
+        };
+
+        updateUser(updatedUser);
+
+        Alert.alert(
+          "Success!",
+          "Your 3-month free subscription has been activated! You can now manage your inventory.",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert("Error", response.data.message || "Failed to activate subscription");
+      }
+    } catch (error: any) {
+      console.error("Error activating subscription:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to activate subscription. Please try again."
+      );
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
-    Alert.alert("Request Account Deletion", "Are you sure you want to delete your account?\nThis action cannot be undone.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Request Delete", style: "destructive", onPress: async () => {
-          try {
-            const adminEmail = "24vipinsoni@gmail.com";
-            const subject = "Request for account deletion on Bhav app";
-            const body = `Dear Admin,\n\nI would like to request the deletion of my account from the Bhav app.\n\nUser Details:\nName: ${user?.fullName || 'N/A'}\nEmail: ${user?.email || 'N/A'}\nPhone: ${user?.phone || 'N/A'}\n\nPlease process my account deletion request.\n\nThank you.`;
-
-            const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-            const canOpen = await Linking.canOpenURL(mailtoUrl);
-            if (canOpen) {
-              await Linking.openURL(mailtoUrl);
-            } else {
-              Alert.alert(
-                "Email App Not Found",
-                "Please install an email app or manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
-              );
-            }
-          } catch (error) {
-            console.error("Error opening email:", error);
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account?\nThis action cannot be undone",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Permanently",
+          style: "destructive",
+          onPress: () => {
             Alert.alert(
-              "Error",
-              "Unable to open email app. Please manually send an email to 24vipinsoni@gmail.com with the subject: 'Request for account deletion on Bhav app'"
+              "Deleting Your Account Permanently",
+              "Please click Yes to confirm",
+              [
+                { text: "No", style: "cancel" },
+                {
+                  text: "Yes",
+                  style: "destructive",
+                  onPress: async () => {
+                    try {
+                      setIsLoading(true);
+
+                      // Check backend connectivity first
+                      const isBackendReachable = await checkBackendConnection();
+                      if (!isBackendReachable) {
+                        Alert.alert(
+                          "Connection Error",
+                          "Cannot connect to server. Please check your internet connection and try again."
+                        );
+                        return;
+                      }
+
+                      // Call backend API to delete account
+                      console.log("Attempting to delete account for user:", user?.id);
+                      console.log("Using API base URL:", 'https://bhav-backend.onrender.com/api');
+                      console.log("Full endpoint:", 'https://bhav-backend.onrender.com/api/users/delete-account');
+
+                      const result = await userAPI.deleteAccount(user?.id || '');
+
+                      if (result.status === 200) {
+                        // Account deleted successfully, logout user
+                        Alert.alert(
+                          "Account Deleted",
+                          "Your account has been permanently deleted. You will be logged out.",
+                          [
+                            {
+                              text: "OK",
+                              onPress: () => {
+                                // Clear user data and redirect to login
+                                logout();
+                                router.replace("/auth/login");
+                              }
+                            }
+                          ]
+                        );
+                      } else {
+                        Alert.alert("Error", `Failed to delete account. Status: ${result.status}`);
+                      }
+                    } catch (error: any) {
+                      console.error("Error deleting account:", error);
+
+                      let errorMessage = "Failed to delete account. Please try again.";
+
+                      if (error.response) {
+                        // Server responded with error status
+                        errorMessage = `Server error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`;
+                      } else if (error.request) {
+                        // Request was made but no response received
+                        errorMessage = "Network error: No response from server. Please check your internet connection.";
+                      } else {
+                        // Something else happened
+                        errorMessage = `Error: ${error.message || 'Unknown error occurred'}`;
+                      }
+
+                      Alert.alert("Error", errorMessage);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }
+                }
+              ]
             );
           }
         }
-      },
-    ]);
+      ]
+    );
   };
 
   // Use a placeholder image if no profile image is set
@@ -285,6 +390,17 @@ export default function ProfileScreen() {
 
   const openDrawer = () => {
     router.push("/drawer");
+  };
+
+  // Check if backend is reachable
+  const checkBackendConnection = async () => {
+    try {
+      const response = await fetch('https://bhav-backend.onrender.com/');
+      return response.ok;
+    } catch (error) {
+      console.error("Backend connection check failed:", error);
+      return false;
+    }
   };
 
 
@@ -377,6 +493,65 @@ export default function ProfileScreen() {
                   Verified Seller
                 </Text>
               </View>
+            )}
+
+            {/* Subscription Status for Sellers */}
+            {user?.role === 'seller' && (
+              <>
+                <SubscriptionStatus
+                  subscriptionStatus={user.subscriptionStatus || 'expired'}
+                  subscriptionEndDate={user.subscriptionEndDate}
+                  daysLeft={user.subscriptionEndDate ?
+                    Math.ceil((new Date(user.subscriptionEndDate).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)) :
+                    undefined
+                  }
+                  onRenewPress={() => {
+                    // Navigate to subscription page
+                    router.push("/auth/subscription");
+                  }}
+                />
+
+                {/* Referral Code Activation for Sellers without Active Subscription */}
+                {user?.subscriptionStatus !== 'active' && (
+                  <View style={styles.referralActivationContainer}>
+                    <LinearGradient
+                      colors={["#E8F5E9", "#C8E6C9"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.referralActivationCard}
+                    >
+                      <View style={styles.referralActivationHeader}>
+                        <CheckCircle size={24} color="#4CAF50" />
+                        <Text style={styles.referralActivationTitle}>Activate Free Subscription</Text>
+                      </View>
+
+                      <View style={styles.referralCodeInputContainer}>
+                        <TextInput
+                          style={styles.referralCodeInput}
+                          placeholder="Enter referral code"
+                          onChangeText={setReferralCode}
+                          placeholderTextColor="#9e9e9e"
+                        />
+                      </View>
+
+                      <TouchableOpacity
+                        style={styles.activateButton}
+                        onPress={handleActivateSubscription}
+                        disabled={isActivating}
+                      >
+                        {isActivating ? (
+                          <ActivityIndicator color="#ffffff" />
+                        ) : (
+                          <>
+                            <Check size={20} color="#ffffff" />
+                            <Text style={styles.activateButtonText}>Activate Free Subscription</Text>
+                          </>
+                        )}
+                      </TouchableOpacity>
+                    </LinearGradient>
+                  </View>
+                )}
+              </>
             )}
           </View>
 
@@ -677,7 +852,7 @@ export default function ProfileScreen() {
                 end={{ x: 1, y: 0 }}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Request Account Deletion</Text>
+                <Text style={styles.buttonText}>Delete Account</Text>
                 <Trash2 size={18} color="#ffffff" />
               </LinearGradient>
             </TouchableOpacity>
@@ -690,6 +865,7 @@ export default function ProfileScreen() {
               </View>
             )}
           </View>
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView >
@@ -811,7 +987,7 @@ const styles = StyleSheet.create({
   sellerBadge: {
     backgroundColor: "#E8F5E9",
     paddingHorizontal: 12,
-    marginTop: 8,
+    marginBottom: 8,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
@@ -1157,5 +1333,65 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#F3B62B",
     marginTop: -30,
+  },
+
+  // Referral Activation Styles
+  referralActivationContainer: {
+    width: '90%',
+    marginVertical: 10,
+  },
+  referralActivationCard: {
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  referralActivationHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  referralActivationTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4CAF50",
+    marginLeft: 8,
+  },
+  referralActivationDescription: {
+    fontSize: 14,
+    color: "#333333",
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  referralCodeInputContainer: {
+    marginBottom: 16,
+  },
+  referralCodeInput: {
+    borderWidth: 1,
+    borderColor: "#4CAF50",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: "#ffffff",
+    color: "#333333",
+  },
+  activateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  activateButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
