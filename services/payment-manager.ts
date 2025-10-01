@@ -7,6 +7,7 @@ export interface PaymentService {
     initialize(): Promise<boolean>;
     getProducts(): Promise<any[]>;
     purchaseProduct(productId: string, userId: string, brandName?: string): Promise<any>;
+    restorePurchases?(): Promise<any[]>;
     isAvailable(): boolean;
     getServiceName(): string;
 }
@@ -109,6 +110,19 @@ export class PaymentManager {
     // Check if running on Android
     isAndroid(): boolean {
         return Platform.OS === 'android';
+    }
+
+    // Restore purchases (iOS only)
+    async restorePurchases(): Promise<any[]> {
+        if (!this.paymentService || !this.isInitialized) {
+            await this.initialize();
+        }
+
+        if (this.paymentService && typeof this.paymentService.restorePurchases === 'function') {
+            return await this.paymentService.restorePurchases();
+        }
+
+        throw new Error('Restore purchases not supported on this platform');
     }
 
     // Get platform-specific product IDs

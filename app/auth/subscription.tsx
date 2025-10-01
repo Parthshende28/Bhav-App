@@ -9,14 +9,17 @@ import {
   Animated,
   Platform,
   TextInput,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, Check, Crown, Calendar, Infinity, Store, Trophy, Gem } from "lucide-react-native";
+import { ArrowLeft, Check, Crown, Calendar, Infinity, Store, Trophy, Gem, RotateCcw } from "lucide-react-native";
 import { useAuthStore } from "@/store/auth-store";
+import TermsLinks from "@/components/TermsLinks";
+import { paymentManager } from "@/services/payment-manager";
 
 // Define the type for subscription plan
 type SubscriptionPlan = {
@@ -92,6 +95,7 @@ export default function SubscriptionScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [brandName, setBrandName] = useState(""); // Added brand name state
   const [showBrandNameInput, setShowBrandNameInput] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   // Animation values for plan cards
   const scaleAnims = SUBSCRIPTION_PLANS.map(() => React.useRef(new Animated.Value(1)).current);
@@ -221,6 +225,69 @@ export default function SubscriptionScreen() {
     }
   };
 
+  // Handle restore purchases
+  const handleRestorePurchases = async () => {
+    if (Platform.OS !== 'ios') {
+      Alert.alert(
+        "Not Available",
+        "Restore purchases is only available on iOS devices."
+      );
+      return;
+    }
+
+    setIsRestoring(true);
+
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      // Initialize payment manager if not already initialized
+      await paymentManager.initialize();
+
+      // Restore purchases
+      const restoredPurchases = await paymentManager.restorePurchases();
+
+      if (restoredPurchases && restoredPurchases.length > 0) {
+        // Success - purchases found
+        Alert.alert(
+          "Purchases Restored! ✅",
+          `Successfully restored ${restoredPurchases.length} purchase(s). Your subscription has been activated.`,
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Navigate to home/dashboard
+                router.push("/(app)/(tabs)/home");
+              }
+            }
+          ]
+        );
+
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        // No purchases found
+        Alert.alert(
+          "No Purchases Found",
+          "We couldn't find any previous purchases to restore. If you believe this is an error, please contact support.",
+          [{ text: "OK" }]
+        );
+
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    } catch (error: any) {
+      console.error("Error restoring purchases:", error);
+
+      Alert.alert(
+        "Restore Failed",
+        error.message || "Failed to restore purchases. Please try again or contact support.",
+        [{ text: "OK" }]
+      );
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style="dark" />
@@ -231,6 +298,24 @@ export default function SubscriptionScreen() {
         >
           <ArrowLeft size={24} color="#333" />
         </TouchableOpacity>
+
+        {/* Restore Purchases Button - Top Right */}
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity
+            style={styles.restoreButton}
+            onPress={handleRestorePurchases}
+            disabled={isRestoring}
+          >
+            {isRestoring ? (
+              <ActivityIndicator size="small" color="#F3B62B" />
+            ) : (
+              <>
+                <RotateCcw size={18} color="#F3B62B" />
+                <Text style={styles.restoreButtonText}>Restore</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
 
         <Text style={styles.title}>Choose Your Seller Plan</Text>
         <Text style={styles.subtitle}>
@@ -258,7 +343,6 @@ export default function SubscriptionScreen() {
         )}
 
         <ScrollView
-          contentContainerStyle={styles.plansContainer}
           showsVerticalScrollIndicator={false}
         >
           {SUBSCRIPTION_PLANS.map((plan, index) => (
@@ -350,6 +434,11 @@ export default function SubscriptionScreen() {
             )}
           </LinearGradient>
         </TouchableOpacity>
+
+        {/* Terms and Privacy Policy Links */}
+        <View style={styles.termsLinks}>
+          <TermsLinks />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -362,7 +451,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 24,
+    padding: 20,
     backgroundColor: "#ffffff",
   },
   backButton: {
@@ -371,6 +460,31 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 10,
     padding: 8,
+  },
+  restoreButton: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    zIndex: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF8E1",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#F5D76E",
+    shadowColor: "#F3B62B",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  restoreButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#F3B62B",
+    marginLeft: 6,
   },
   title: {
     fontSize: 28,
@@ -420,9 +534,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 56,
     color: "#333333",
-  },
-  plansContainer: {
-    paddingBottom: 24,
   },
   planCard: {
     marginBottom: 20,
@@ -563,4 +674,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  termsLinks: {
+    margin: 0,
+    padding: 0,
+  }
 });

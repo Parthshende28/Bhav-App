@@ -26,6 +26,7 @@ import { paymentAPI } from "@/services/api";
 import { images } from "@/constants/images";
 import RazorpayWebView from "@/components/RazorpayWebView";
 import { paymentManager, isIOSPlatform, isAndroidPlatform } from "@/services/payment-manager";
+import TermsLinks from "@/components/TermsLinks";
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -364,6 +365,11 @@ export default function PaymentScreen() {
                     <Text style={styles.secureText}>
                       <Lock size={12} color="#666666" /> Secure payment processing
                     </Text>
+
+                    {/* Terms and Privacy Policy Links */}
+                    <View style={styles.termsContainer}>
+                      <TermsLinks />
+                    </View>
                   </View>
                 ) : (
                   // Android Razorpay Payment UI
@@ -421,6 +427,11 @@ export default function PaymentScreen() {
                         resizeMode="contain"
                         style={styles.razorpayBadge}
                       />
+                    </View>
+
+                    {/* Terms and Privacy Policy Links */}
+                    <View style={styles.termsContainer}>
+                      <TermsLinks />
                     </View>
                   </View>
                 )}
@@ -885,5 +896,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
+  },
+  termsContainer: {
+    padding: 0,
   },
 });

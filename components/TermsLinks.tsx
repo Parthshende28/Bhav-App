@@ -37,7 +37,7 @@ const TermsLinks: React.FC = () => {
                     </TouchableOpacity>
                     {' '}and{' '}
                     <TouchableOpacity onPress={handlePrivacyPress}>
-                        <Text style={styles.link}>Privacy Policy</Text>
+                        <Text style={styles.link1}>Privacy Policy</Text>
                     </TouchableOpacity>
                 </Text>
             </View>
@@ -56,10 +56,11 @@ const styles = StyleSheet.create({
     },
     linksContainer: {
         paddingHorizontal: 20,
+
     },
     text: {
         color: '#666',
-        // textAlign: 'center',
+        textAlign: 'center',
         lineHeight: 20,
     },
     link: {
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         fontWeight: '500',
         marginBottom: -3,
-        marginHorizontal: 3,
+        // marginHorizontal: 3,
     },
 });
 

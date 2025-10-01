@@ -160,6 +160,12 @@ export default function SignupScreen() {
         }),
       });
 
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned invalid response. Please check your internet connection and try again.");
+      }
+
       const data = await response.json();
 
       if (response.ok) {
@@ -191,9 +197,22 @@ export default function SignupScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signup error:", err);
-      setError("Something went wrong. Please try again.");
+
+      // Provide more helpful error messages
+      let errorMessage = "Something went wrong. Please try again.";
+
+      if (err.message && err.message.includes("invalid response")) {
+        errorMessage = "Unable to connect to server. Please check your internet connection.";
+      } else if (err.message && err.message.includes("JSON")) {
+        errorMessage = "Server error. Please try again later or contact support.";
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
