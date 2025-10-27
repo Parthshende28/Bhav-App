@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Bhav App",
-    "slug": "bhav-app",
+    "name": "Bhav Neo",
+    "slug": "bhav-neo",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/logo.jpg",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "buildNumber": "2",
-      "bundleIdentifier": "com.vipinsoni.bhav",
+      "bundleIdentifier": "com.neofour9pvtltd.bhavneo",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to allow you to select profile pictures."
@@ -28,7 +28,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.vipinsoni.bhav"
+      "package": "com.neofour9pvtltd.bhavneo"
     },
     "plugins": [
       "expo-router",
