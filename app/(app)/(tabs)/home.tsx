@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Linking, Platform, 
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { useAuthStore } from "@/store/auth-store";
-import { Bell, X, Check, User, Mail, Phone, MapPin, Gift, Award, UserCheck, IndianRupee, Clock, Package, ThumbsUp, Menu, ThumbsDown, ShoppingBag } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 
 export default function NotificationsScreen() {
@@ -98,23 +98,23 @@ export default function NotificationsScreen() {
   // Notification icon by type
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "seller_signup": return <User size={20} color="#43A047" />; // Green for sellers
-      case "customer_signup": return <User size={20} color="#1976D2" />; // Blue for customers
-      case "user_deletion": return <X size={20} color="#E53935" />;
-      case "transaction": return <IndianRupee size={20} color="#F3B62B" />;
-      case "system": return <Award size={20} color="#43A047" />;
-      case "alert": return <Bell size={20} color="#E53935" />;
-      case "referral": return <Gift size={20} color="#F3B62B" />;
-      case "contact_request": return <User size={20} color="#1976D2" />;
-      case "role_change": return <UserCheck size={20} color="#5C6BC0" />;
-      case "payment_success": return <Check size={20} color="#43A047" />;
-      case "buy_request": return <ShoppingBag size={20} color="#F3B62B" />;
+      case "seller_signup": return <Icon name="account" size={20} color="#43A047" />; // Green for sellers
+      case "customer_signup": return <Icon name="account" size={20} color="#1976D2" />; // Blue for customers
+      case "user_deletion": return <Icon name="close" size={20} color="#E53935" />;
+      case "transaction": return <Icon name="currency-inr" size={20} color="#F3B62B" />;
+      case "system": return <Icon name="trophy" size={20} color="#43A047" />;
+      case "alert": return <Icon name="bell" size={20} color="#E53935" />;
+      case "referral": return <Icon name="gift" size={20} color="#F3B62B" />;
+      case "contact_request": return <Icon name="account" size={20} color="#1976D2" />;
+      case "role_change": return <Icon name="account-check" size={20} color="#5C6BC0" />;
+      case "payment_success": return <Icon name="check" size={20} color="#43A047" />;
+      case "buy_request": return <Icon name="shopping" size={20} color="#F3B62B" />;
       case 'buy_request_accepted':
-        return <ThumbsUp size={20} color="#4CAF50" />;
+        return <Icon name="thumb-up" size={20} color="#4CAF50" />;
       case 'buy_request_declined':
-        return <ThumbsDown size={20} color="#E53935" />;
+        return <Icon name="thumb-down" size={20} color="#E53935" />;
       default:
-        return <Bell size={20} color="#333333" />;
+        return <Icon name="bell" size={20} color="#333333" />;
     }
   };
 
@@ -127,22 +127,22 @@ export default function NotificationsScreen() {
         <View style={styles.detailsBox}>
           <Text style={styles.detailsTitle}>User Details:</Text>
           <View style={styles.detailRow}>
-            <User size={16} color="#666" style={styles.detailIcon} />
+            <Icon name="account" size={16} color="#666" style={styles.detailIcon} />
             <Text style={styles.detailText}>{customer.name}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Mail size={16} color="#666" style={styles.detailIcon} />
+            <Icon name="email" size={16} color="#666" style={styles.detailIcon} />
             <Text style={styles.detailText}>{customer.email}</Text>
           </View>
           {customer.phone && (
             <View style={styles.detailRow}>
-              <Phone size={16} color="#666" style={styles.detailIcon} />
+              <Icon name="phone" size={16} color="#666" style={styles.detailIcon} />
               <Text style={styles.detailText}>{customer.phone}</Text>
             </View>
           )}
           {customer.city && (
             <View style={styles.detailRow}>
-              <MapPin size={16} color="#666" style={styles.detailIcon} />
+              <Icon name="map-marker" size={16} color="#666" style={styles.detailIcon} />
               <Text style={styles.detailText}>{customer.city}</Text>
             </View>
           )}

@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { TrendingUp, TrendingDown, RefreshCw, PenBox, PenBoxIcon, Package, ShoppingBag, Lock, ArrowDownWideNarrowIcon, Plus, Check, Menu, ArrowDownCircleIcon, CircleChevronDown, Bell, X, Send } from "lucide-react-native";
+import { TrendingUp, TrendingDown, RefreshCw, PenBox, PenBoxIcon, Package, ShoppingBag, Lock, ArrowDownWideNarrowIcon, Plus, Check, Menu, ArrowDownCircleIcon, CircleChevronDown, Bell, X, Send } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Platform, Dimensions } from "react-native";
 import * as Font from "expo-font";

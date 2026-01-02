@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet, A
 import { useAuthStore, User, InventoryItem } from '@/store/auth-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { X, Plus, ArrowLeft, Search, ShoppingBag, IndianRupee, ExternalLink } from 'lucide-react-native';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';

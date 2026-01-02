@@ -16,7 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { FileText, Upload, CheckCircle, Camera, Menu, AlertCircle } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";
@@ -265,7 +265,7 @@ export default function KycScreen() {
 
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer}>
-          <Menu size={24} color="#333333" />
+          <Icon name="menu" size={24} color="#333333" />
         </TouchableOpacity>
       </View>
 
@@ -293,11 +293,11 @@ export default function KycScreen() {
                 style={styles.successGradient}
               >
                 {kycStatus?.status === 'approved' ? (
-                  <CheckCircle size={60} color="#4CAF50" />
+                  <Icon name="check-circle" size={60} color="#4CAF50" />
                 ) : kycStatus?.status === 'rejected' ? (
-                  <AlertCircle size={60} color="#F44336" />
+                  <Icon name="alert-circle" size={60} color="#F44336" />
                 ) : (
-                  <FileText size={60} color="#FFC107" />
+                  <Icon name="file-document" size={60} color="#FFC107" />
                 )}
 
                 <Text style={styles.successTitle}>
@@ -479,7 +479,7 @@ export default function KycScreen() {
                     style={styles.uploadButton}
                     onPress={() => pickImage(setSelfieImage, 'selfie')}
                   >
-                    <Camera size={24} color="#F3B62B" />
+                    <Icon name="camera" size={24} color="#F3B62B" />
                     <Text style={styles.uploadText}>Upload Selfie</Text>
                   </TouchableOpacity>
                 )}

@@ -14,7 +14,7 @@ import {
   ArrowDownRight,
   Map,
   Menu
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");

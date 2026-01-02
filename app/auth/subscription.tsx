@@ -15,7 +15,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, Check, Crown, Calendar, Infinity, Store, Trophy, Gem } from "lucide-react-native";
+import { ArrowLeft, Check, Crown, Calendar, Infinity, Store, Trophy, Gem } from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 
 // Define the type for subscription plan

@@ -20,21 +20,7 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore, InventoryItem } from "@/store/auth-store";
 import * as Haptics from "expo-haptics";
-import {
-  Package,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  EyeOff,
-  X,
-  Save,
-  Tag,
-  ShoppingBag,
-  Info,
-  IndianRupee,
-  ArrowLeft
-} from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { useFocusEffect } from '@react-navigation/native'; // or expo-router
 
 const { width } = Dimensions.get("window");

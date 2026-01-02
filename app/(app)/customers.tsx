@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useAuthStore, ContactedSeller } from "@/store/auth-store";
-import { Search, Filter, Phone, Mail, MapPin, User, Clock, ChevronDown, ChevronUp, Menu } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Linking from "expo-linking";
 
@@ -105,7 +105,7 @@ export default function CustomersScreen() {
         <TouchableOpacity
           onPress={openDrawer}
         >
-          <Menu size={24} color="#333333" />
+          <Icon name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>My Users</Text>
@@ -119,9 +119,9 @@ export default function CustomersScreen() {
               Sort: {sortBy === "newest" ? "Newest" : sortBy === "oldest" ? "Oldest" : "Name"}
             </Text>
             {showSortOptions ? (
-              <ChevronUp size={16} color="#666666" />
+              <Icon name="chevron-up" size={16} color="#666666" />
             ) : (
-              <ChevronDown size={16} color="#666666" />
+              <Icon name="chevron-down" size={16} color="#666666" />
             )}
           </TouchableOpacity>
 
@@ -181,7 +181,7 @@ export default function CustomersScreen() {
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Search size={20} color="#9e9e9e" style={styles.searchIcon} />
+          <Icon name="magnify" size={20} color="#9e9e9e" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search users by name or location"

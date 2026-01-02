@@ -15,7 +15,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore, User } from "@/store/auth-store";
-import { Search, Filter, Star, ArrowLeft } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { DealerCard } from "@/components/DealerCard";
 import * as Haptics from "expo-haptics";
 

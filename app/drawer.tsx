@@ -19,7 +19,8 @@ import {
   BarChart2,
   Package,
   History
-} from "lucide-react-native";
+} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import { useAuthStore, ADMIN_USERNAME } from "@/store/auth-store";

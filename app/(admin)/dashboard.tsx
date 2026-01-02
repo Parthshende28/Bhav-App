@@ -43,7 +43,7 @@ import {
   Award,
   ShoppingBag,
   UserCheck
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width - 40; // Full width for single card

@@ -16,7 +16,7 @@ import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { images } from "@/constants/images";
 import { useAuthStore } from '@/store/auth-store';
 
@@ -100,7 +100,7 @@ export default function LoginScreen() {
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={[styles.inputContainer, focusedField === "email" && styles.inputContainerFocused]}>
-          <Mail size={20} color="#F3B62B" style={styles.inputIcon} />
+          <Icon name="email" size={20} color="#F3B62B" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="Email Address"
@@ -116,7 +116,7 @@ export default function LoginScreen() {
         <View style={[styles.inputContainer,
         focusedField === "password" && styles.inputContainerFocused,
         ]}>
-          <Lock size={20} color="#F3B62B" style={styles.inputIcon} />
+          <Icon name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -133,9 +133,9 @@ export default function LoginScreen() {
             style={styles.eyeIcon}
           >
             {showPassword ? (
-              <EyeOff size={20} color="#9e9e9e" />
+              <Icon name="eye-off" size={20} color="#9e9e9e" />
             ) : (
-              <Eye size={20} color="#9e9e9e" />
+              <Icon name="eye" size={20} color="#9e9e9e" />
             )}
           </TouchableOpacity>
         </View>

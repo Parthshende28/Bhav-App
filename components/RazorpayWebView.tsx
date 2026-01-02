@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/store/auth-store';
 import { createRazorpayOrder, verifyRazorpayPayment, validatePaymentResponse, parseAmount } from '@/services/razorpay';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react-native';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 interface RazorpayWebViewProps {
