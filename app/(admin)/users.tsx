@@ -18,7 +18,7 @@ import {
   Store,
   Check,
   Menu
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 
 export default function UsersScreen() {

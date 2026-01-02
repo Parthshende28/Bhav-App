@@ -32,7 +32,7 @@ import {
     MapPin,
     User,
     Info
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { useAuthStore, BuyRequest } from "@/store/auth-store";
 
 export default function HistoryScreen() {

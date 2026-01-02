@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, L
 import { useLocalSearchParams, router } from "expo-router";
 import { useAuthStore } from "@/store/auth-store";
 import { useMetalPrices } from "@/hooks/useMetalPrices";
-import { Phone, X } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 

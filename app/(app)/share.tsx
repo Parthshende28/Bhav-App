@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
-import { Share2, Copy, QrCode, LogOut, RefreshCw, Shield, Award, Scroll, Menu } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { useAuthStore } from "@/store/auth-store";

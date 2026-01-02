@@ -19,7 +19,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, CreditCard, Calendar, Lock, CheckCircle, User, QrCode, Copy, Smartphone, Shield, Apple } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 import * as Clipboard from 'expo-clipboard';
 import { paymentAPI } from "@/services/api";

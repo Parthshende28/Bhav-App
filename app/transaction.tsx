@@ -18,20 +18,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import {
-  CreditCard,
-  Smartphone,
-  Landmark,
-  Wallet,
-  ChevronRight,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
-  DollarSign,
-  IndianRupee,
-  Shield,
-  AlertCircle,
-  Clock,
-} from "lucide-react-native";
+  // Use MaterialCommunityIcons for consistent icon set
+  } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -157,11 +146,11 @@ const RecentTransaction: React.FC<RecentTransactionProps> = ({
     <View style={styles.recentTransaction}>
       <View style={styles.recentTransactionIcon}>
         {status === "completed" ? (
-          <CheckCircle size={20} color="#4CAF50" />
+          <Icon name="check-circle" size={20} color="#4CAF50" />
         ) : status === "pending" ? (
-          <Clock size={20} color="#FFC107" />
+          <Icon name="clock" size={20} color="#FFC107" />
         ) : (
-          <AlertCircle size={20} color="#F44336" />
+          <Icon name="alert-circle" size={20} color="#F44336" />
         )}
       </View>
       <View style={styles.recentTransactionDetails}>

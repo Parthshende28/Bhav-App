@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { Clock } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { images } from "@/constants/images";
 
 interface MarketUpdateProps {

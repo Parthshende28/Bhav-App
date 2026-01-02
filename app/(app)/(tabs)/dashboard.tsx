@@ -54,7 +54,7 @@ import {
   IndianRupee,
   ThumbsUpIcon,
   ThumbsDownIcon
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { NotificationBell } from "@/components/NotificationBell";
 import * as Clipboard from 'expo-clipboard';
 import { images } from "@/constants/images";

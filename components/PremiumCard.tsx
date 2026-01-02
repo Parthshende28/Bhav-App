@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { Image } from "expo-image";
-import { Edit, Trash2, Save, DollarSign, IndianRupee, Award } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { images } from "@/constants/images";
 

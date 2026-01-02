@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { CheckCircle, XCircle, Phone, Mail, Navigation, Clock, User } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface ShopCardProps {
@@ -53,12 +53,12 @@ export const ShopCard: React.FC<ShopCardProps> = ({
           <View style={styles.verification}>
             {shop.verified ? (
               <>
-                <CheckCircle size={16} color="#4CAF50" />
+                <Icon name="check-circle" size={16} color="#4CAF50" />
                 <Text style={[styles.verificationText, { color: "#4CAF50" }]}>Verified</Text>
               </>
             ) : (
               <>
-                <XCircle size={16} color="#F44336" />
+                <Icon name="close-circle" size={16} color="#F44336" />
                 <Text style={[styles.verificationText, { color: "#F44336" }]}>Unverified</Text>
               </>
             )}
@@ -73,7 +73,7 @@ export const ShopCard: React.FC<ShopCardProps> = ({
         </View>
 
         <View style={styles.ownerRow}>
-          <User size={14} color="#666" />
+          <Icon name="account" size={14} color="#666" />
           <Text style={styles.ownerName}>{shop.ownerName}</Text>
         </View>
 
@@ -84,7 +84,7 @@ export const ShopCard: React.FC<ShopCardProps> = ({
         {expanded && (
           <View style={styles.expandedInfo}>
             <View style={styles.hoursContainer}>
-              <Clock size={14} color="#666" />
+              <Icon name="clock" size={14} color="#666" />
               <Text style={styles.hours}>{shop.hours}</Text>
             </View>
 
@@ -112,7 +112,7 @@ export const ShopCard: React.FC<ShopCardProps> = ({
             style={styles.actionButton}
             onPress={() => onCall(shop.phone)}
           >
-            <Phone size={16} color="#F3B62B" />
+            <Icon name="phone" size={16} color="#F3B62B" />
             <Text style={styles.actionText}>Call</Text>
           </TouchableOpacity>
 
@@ -120,7 +120,7 @@ export const ShopCard: React.FC<ShopCardProps> = ({
             style={styles.actionButton}
             onPress={() => onEmail(shop.email)}
           >
-            <Mail size={16} color="#F3B62B" />
+            <Icon name="email" size={16} color="#F3B62B" />
             <Text style={styles.actionText}>Email</Text>
           </TouchableOpacity>
 
@@ -128,7 +128,7 @@ export const ShopCard: React.FC<ShopCardProps> = ({
             style={styles.actionButton}
             onPress={() => onDirections(shop)}
           >
-            <Navigation size={16} color="#F3B62B" />
+            <Icon name="navigation" size={16} color="#F3B62B" />
             <Text style={styles.actionText}>Directions</Text>
           </TouchableOpacity>
         </View>

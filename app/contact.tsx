@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import { Phone, Mail, MapPin, Send, CheckCircle, User, Store, Clock } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -129,13 +129,13 @@ export default function ContactScreen() {
                   <View key={dealer?.id || index} style={styles.dealerCard}>
                     <View style={styles.dealerHeader}>
                       <View style={styles.dealerIconContainer}>
-                        <User size={20} color="#1976D2" />
+                        <Icon name="account" size={20} color="#1976D2" />
                       </View>
                       <View style={styles.dealerInfo}>
                         <Text style={styles.dealerName}>{getDealerProperty(dealerData, "fullName") || getDealerProperty(dealerData, 'name')}</Text>
                         {getDealerProperty(dealerData, "brandName") && (
                           <View style={styles.brandContainer}>
-                            <Store size={14} color="#F3B62B" style={styles.brandIcon} />
+                            <Icon name="store" size={14} color="#F3B62B" style={styles.brandIcon} />
                             <Text style={styles.brandName}>{getDealerProperty(dealerData, "brandName")}</Text>
                           </View>
                         )}
@@ -145,7 +145,7 @@ export default function ContactScreen() {
                     <View style={styles.dealerDetailsContainer}>
                       {getDealerProperty(dealerData, "city") && (
                         <View style={styles.dealerDetailRow}>
-                          <MapPin size={16} color="#666666" style={styles.dealerDetailIcon} />
+                          <Icon name="map-marker" size={16} color="#666666" style={styles.dealerDetailIcon} />
                           <Text style={styles.dealerDetailText}>
                             {getDealerProperty(dealerData, "city")}{getDealerProperty(dealerData, "state") ? `, ${getDealerProperty(dealerData, "state")}` : ""}
                           </Text>
@@ -154,19 +154,19 @@ export default function ContactScreen() {
 
                       {getDealerProperty(dealerData, "phone") && (
                         <View style={styles.dealerDetailRow}>
-                          <Phone size={16} color="#666666" style={styles.dealerDetailIcon} />
+                          <Icon name="phone" size={16} color="#666666" style={styles.dealerDetailIcon} />
                           <Text style={styles.dealerDetailText}>{getDealerProperty(dealerData, "phone")}</Text>
                         </View>
                       )}
 
                       <View style={styles.dealerDetailRow}>
-                        <Mail size={16} color="#666666" style={styles.dealerDetailIcon} />
+                        <Icon name="email" size={16} color="#666666" style={styles.dealerDetailIcon} />
                         <Text style={styles.dealerDetailText}>{getDealerProperty(dealerData, "email")}</Text>
                       </View>
                     </View>
 
                     <View style={styles.contactTimeContainer}>
-                      <Clock size={14} color="#9e9e9e" style={styles.contactTimeIcon} />
+                      <Icon name="clock" size={14} color="#9e9e9e" style={styles.contactTimeIcon} />
                       <Text style={styles.contactTimeText}>
                         Contacted on {formatDate(contactedSellerDetails[index]?.timestamp || Date.now())}
                       </Text>
@@ -180,7 +180,7 @@ export default function ContactScreen() {
           <View style={styles.contactInfoContainer}>
             <View style={styles.contactInfoCard}>
               <View style={styles.contactIconContainer}>
-                <Phone size={20} color="#F3B62B" />
+                <Icon name="phone" size={20} color="#F3B62B" />
               </View>
               <View>
                 <Text style={styles.contactInfoTitle}>Phone</Text>
@@ -190,7 +190,7 @@ export default function ContactScreen() {
 
             <View style={styles.contactInfoCard}>
               <View style={styles.contactIconContainer}>
-                <Mail size={20} color="#F3B62B" />
+                <Icon name="email" size={20} color="#F3B62B" />
               </View>
               <View>
                 <Text style={styles.contactInfoTitle}>Email</Text>

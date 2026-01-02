@@ -27,7 +27,7 @@ import {
     User,
     FileText,
     AlertCircle
-} from 'lucide-react-native';
+} from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { kycAPI } from '@/services/kyc';
 

@@ -34,7 +34,7 @@ import {
   Locate,
   RefreshCw,
   AlertCircle,
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { ShopCard } from "@/components/ShopCard";
 
 // Mock data for bullion shops by city

@@ -13,7 +13,7 @@ import {
   Newspaper,
   User,
   Bell
-} from "lucide-react-native";
+} from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 

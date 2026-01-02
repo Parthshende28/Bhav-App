@@ -17,16 +17,8 @@ import { useAuthStore, InventoryItem } from "@/store/auth-store";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import {
-  MapPin,
-  Phone,
-  Mail,
-  Package,
-  ShoppingBag,
-  Check,
-  Award,
-  DollarSign,
-  Lock
-} from "lucide-react-native";
+  } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"; 
 
 export default function SellerProfileScreen() {
   const { id } = useLocalSearchParams();

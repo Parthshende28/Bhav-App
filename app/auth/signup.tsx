@@ -17,7 +17,7 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, User, Mail, Lock, Eye, EyeOff, MapPin, Phone, CheckCircle, Store } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { useAuthStore } from '@/store/auth-store';
 import { API_BASE_URL } from "@/store/api";
 

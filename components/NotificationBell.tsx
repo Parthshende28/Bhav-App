@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl, Linking } from "react-native";
-import { Bell, X, Check, User, DollarSign, Settings, AlertCircle, Mail, Phone, MapPin, Clock, ShoppingBag, Package, ThumbsUp, ThumbsDown } from "lucide-react-native";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useAuthStore, Notification, BuyRequest } from "@/store/auth-store";
 
@@ -225,19 +225,19 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "seller_signup":
-        return <User size={20} color="#43A047" />; // Green for sellers
+        return <Icon name="account" size={20} color="#43A047" />; // Green for sellers
       case "customer_signup":
-        return <User size={20} color="#1976D2" />; // Blue for customers
+        return <Icon name="account" size={20} color="#1976D2" />; // Blue for customers
       case 'transaction':
-        return <DollarSign size={20} color="#F3B62D" />;
+        return <Icon name="currency-usd" size={20} color="#F3B62D" />;
       case 'system':
-        return <Settings size={20} color="#43A047" />;
+        return <Icon name="settings" size={20} color="#43A047" />;
       case 'alert':
-        return <AlertCircle size={20} color="#E53935" />;
+        return <Icon name="alert-circle" size={20} color="#E53935" />;
       case 'email_verification':
-        return <Mail size={20} color="#4CAF50" />;
+        return <Icon name="email" size={20} color="#4CAF50" />;
       case 'contact_request':
-        return <User size={20} color="#1976D2" />;
+        return <Icon name="account" size={20} color="#1976D2" />;
       case 'role_change':
         return <User size={20} color="#5C6BC0" />;
       case 'payment_success':
