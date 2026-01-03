@@ -197,7 +197,7 @@ export default function SignupScreen() {
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <ArrowLeft size={24} color="#333333" />
+            <Icon2 name="arrow-left" size={24} color="#333333" />
           </TouchableOpacity>
 
           <View style={styles.header}>
@@ -216,7 +216,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "fullName" && styles.inputContainerFocused,
               ]}>
-                <User size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="user" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"
@@ -235,7 +235,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "email" && styles.inputContainerFocused,
               ]}>
-                <Mail size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your email"
@@ -255,7 +255,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "phone" && styles.inputContainerFocused,
               ]}>
-                <Phone size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="phone" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your phone number"
@@ -274,7 +274,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "username" && styles.inputContainerFocused,
               ]}>
-                <User size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="user" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Choose a username"
@@ -312,9 +312,9 @@ export default function SignupScreen() {
                   onPress={togglePasswordVisibility}
                 >
                   {showPassword ? (
-                    <EyeOff size={20} color="#9e9e9e" />
+                    <Icon2 name="eye-off" size={20} color="#9e9e9e" />
                   ) : (
-                    <Eye size={20} color="#9e9e9e" />
+                    <Icon2 name="eye" size={20} color="#9e9e9e" />
                   )}
                 </TouchableOpacity>
               </View>
@@ -343,9 +343,9 @@ export default function SignupScreen() {
                   onPress={toggleConfirmPasswordVisibility}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={20} color="#9e9e9e" />
+                    <Icon2 name="eye-off" size={20} color="#9e9e9e" />
                   ) : (
-                    <Eye size={20} color="#9e9e9e" />
+                    <Icon2 name="eye" size={20} color="#9e9e9e" />
                   )}
                 </TouchableOpacity>
               </View>
@@ -357,7 +357,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "city" && styles.inputContainerFocused,
               ]}>
-                <MapPin size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="map-pin" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your city"
@@ -396,7 +396,7 @@ export default function SignupScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Address (Optional)</Text>
               <View style={[styles.textAreaContainer, focusedField === "address" && styles.inputContainerFocused]}>
-                <MapPin size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
+                <Icon2 name="map-pin" size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
                 <TextInput
                   style={styles.textArea}
                   placeholder="Enter your address"
@@ -436,7 +436,7 @@ export default function SignupScreen() {
                   styles.inputContainer,
                   focusedField === "brandName" && styles.inputContainerFocused,
                 ]}>
-                  <Store size={20} color="#F3B62B" style={styles.inputIcon} />
+                  <Icon name="store" size={20} color="#F3B62B" style={styles.inputIcon} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter your business or brand name"

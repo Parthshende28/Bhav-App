@@ -16,18 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
-import {
-    CheckCircle,
-    XCircle,
-    Eye,
-    Filter,
-    Search,
-    ArrowLeft,
-    Clock,
-    User,
-    FileText,
-    AlertCircle
-} from '@expo/vector-icons';
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { router } from 'expo-router';
 import { kycAPI } from '@/services/kyc';
 
@@ -155,13 +144,13 @@ export default function KYCManagementScreen() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'approved':
-                return <CheckCircle size={16} color="#4CAF50" />;
+                return <Icon2 name="check-circle" size={16} color="#4CAF50" />;
             case 'rejected':
-                return <XCircle size={16} color="#F44336" />;
+                return <Icon2 name="x-circle" size={16} color="#F44336" />;
             case 'pending':
-                return <Clock size={16} color="#FFC107" />;
+                return <Icon2 name="clock" size={16} color="#FFC107" />;
             default:
-                return <Clock size={16} color="#FFC107" />;
+                return <Icon2 name="clock" size={16} color="#FFC107" />;
         }
     };
 
@@ -182,7 +171,7 @@ export default function KYCManagementScreen() {
         >
             <View style={styles.cardHeader}>
                 <View style={styles.userInfo}>
-                    <User size={20} color="#666" />
+                    <Icon2 name="user" size={20} color="#666" />
                     <Text style={styles.userName}>{item.fullName}</Text>
                 </View>
                 <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
@@ -209,7 +198,7 @@ export default function KYCManagementScreen() {
                             setModalVisible(true);
                         }}
                     >
-                        <Eye size={16} color="#F3B62B" />
+                        <Icon2 name="eye" size={16} color="#F3B62B" />
                         <Text style={styles.viewButtonText}>View</Text>
                     </TouchableOpacity>
                 </View>
@@ -226,7 +215,7 @@ export default function KYCManagementScreen() {
             <SafeAreaView style={styles.modalContainer}>
                 <View style={styles.modalHeader}>
                     <TouchableOpacity onPress={() => setModalVisible(false)}>
-                        <ArrowLeft size={24} color="#333" />
+                        <Icon2 name="arrow-left" size={24} color="#333" />
                     </TouchableOpacity>
                     <Text style={styles.modalTitle}>KYC Details</Text>
                     <View style={{ width: 24 }} />
@@ -319,14 +308,14 @@ export default function KYCManagementScreen() {
                                     style={[styles.actionButton, styles.approveButton]}
                                     onPress={() => handleApprove(selectedApplication._id)}
                                 >
-                                    <CheckCircle size={20} color="#fff" />
+                                    <Icon2 name="check-circle" size={20} color="#fff" />
                                     <Text style={styles.actionButtonText}>Approve</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.actionButton, styles.rejectButton]}
                                     onPress={() => setRejectionModalVisible(true)}
                                 >
-                                    <XCircle size={20} color="#fff" />
+                                    <Icon2 name="x-circle" size={20} color="#fff" />
                                     <Text style={styles.actionButtonText}>Reject</Text>
                                 </TouchableOpacity>
                             </View>
@@ -397,7 +386,7 @@ export default function KYCManagementScreen() {
 
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <ArrowLeft size={24} color="#333" />
+                    <Icon2 name="arrow-left" size={24} color="#333" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>KYC Management</Text>
                 <View style={{ width: 24 }} />
@@ -405,7 +394,7 @@ export default function KYCManagementScreen() {
 
             <View style={styles.searchContainer}>
                 <View style={styles.searchBox}>
-                    <Search size={20} color="#666" />
+                    <Icon2 name="search" size={20} color="#666" />
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Search by name, email, or PAN..."
@@ -457,7 +446,7 @@ export default function KYCManagementScreen() {
                 onEndReachedThreshold={0.1}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
-                        <FileText size={48} color="#ccc" />
+                        <Icon2 name="file-text" size={48} color="#ccc" />
                         <Text style={styles.emptyText}>No KYC applications found</Text>
                     </View>
                 }

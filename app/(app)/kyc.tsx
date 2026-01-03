@@ -503,7 +503,7 @@ export default function KycScreen() {
                       <Text style={styles.buttonText}>
                         {kycStatus ? 'Update KYC' : 'Submit KYC'}
                       </Text>
-                      <FileText size={18} color="#ffffff" />
+                      <Icon2 name="file-text" size={18} color="#ffffff" />
                     </>
                   )}
                 </LinearGradient>

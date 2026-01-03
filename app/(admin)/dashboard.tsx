@@ -17,33 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
-import {
-  Users as UsersIcon,
-  TrendingUp,
-  Settings,
-  BarChart2,
-  Menu,
-  Bell,
-  DollarSign,
-  Percent,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  ArrowUpRight,
-  ArrowDownRight,
-  LogOut,
-  X,
-  Check,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Trash2,
-  Gift,
-  Award,
-  ShoppingBag,
-  UserCheck
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width - 40; // Full width for single card
@@ -143,25 +117,25 @@ export default function AdminDashboardScreen() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'user_signup':
-        return <User size={20} color="#1976D2" />;
+        return <Icon name="account-outline" size={20} color="#1976D2" />;
       case 'user_deletion':
-        return <Trash2 size={20} color="#E53935" />;
+        return <Icon name="trash-can-outline" size={20} color="#E53935" />;
       case 'transaction':
-        return <DollarSign size={20} color="#F3B62B" />;
+        return <Icon name="currency-usd" size={20} color="#F3B62B" />;
       case 'system':
-        return <Settings size={20} color="#43A047" />;
+        return <Icon2 name="settings" size={20} color="#43A047" />;
       case 'alert':
-        return <AlertTriangle size={20} color="#E53935" />;
+        return <Icon2 name="alert-triangle" size={20} color="#E53935" />;
       case 'referral':
-        return <Gift size={20} color="#F3B62B" />;
+        return <Icon2 name="gift" size={20} color="#F3B62B" />;
       case 'contact_request':
-        return <User size={20} color="#1976D2" />;
+        return <Icon name="account-outline" size={20} color="#1976D2" />;
       case 'role_change':
-        return <UserCheck size={20} color="#5C6BC0" />;
+        return <Icon name="account-check-outline" size={20} color="#5C6BC0" />;
       case 'payment_success':
-        return <CheckCircle size={20} color="#43A047" />;
+        return <Icon2 name="check-circle" size={20} color="#43A047" />;
       default:
-        return <Bell size={20} color="#333333" />;
+        return <Icon2 name="bell" size={20} color="#333333" />;
     }
   };
 
@@ -173,7 +147,7 @@ export default function AdminDashboardScreen() {
           onPress={openDrawer}
           style={styles.menuButton}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Admin Dashboard</Text>
@@ -182,7 +156,7 @@ export default function AdminDashboardScreen() {
           style={styles.notificationButton}
           onPress={toggleNotifications}
         >
-          <Bell size={24} color="#333333" />
+          <Icon2 name="bell" size={24} color="#333333" />
           {unreadNotificationsCount > 0 && (
             <View style={styles.notificationBadge}>
               <Text style={styles.notificationBadgeText}>{unreadNotificationsCount}</Text>
@@ -209,12 +183,12 @@ export default function AdminDashboardScreen() {
             style={styles.singleStatCard}
           >
             <View style={styles.statIconContainer}>
-              <UsersIcon size={24} color="#ffffff" />
+              <Icon2 name="users" size={24} color="#ffffff" />
             </View>
             <Text style={styles.statValue}>{users.length}</Text>
             <Text style={styles.statLabel}>Total Users</Text>
             <View style={styles.statTrend}>
-              <ArrowUpRight size={16} color="#ffffff" />
+              <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
               <Text style={styles.statTrendText}>+12%</Text>
             </View>
           </LinearGradient>
@@ -229,12 +203,12 @@ export default function AdminDashboardScreen() {
             style={styles.singleStatCard}
           >
             <View style={styles.statIconContainer}>
-              <ShoppingBag size={24} color="#ffffff" />
+              <Icon2 name="shopping-bag" size={24} color="#ffffff" />
             </View>
             <Text style={styles.statValue}>{sellerCount}</Text>
             <Text style={styles.statLabel}>Total Sellers</Text>
             <View style={styles.statTrend}>
-              <ArrowUpRight size={16} color="#ffffff" />
+              <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
               <Text style={styles.statTrendText}>+8%</Text>
             </View>
           </LinearGradient>
@@ -248,12 +222,12 @@ export default function AdminDashboardScreen() {
             style={styles.singleStatCard}
           >
             <View style={styles.statIconContainer}>
-              <User size={24} color="#ffffff" />
+              <Icon2 name="user" size={24} color="#ffffff" />
             </View>
             <Text style={styles.statValue}>{customerCount}</Text>
             <Text style={styles.statLabel}>Total Customers</Text>
             <View style={styles.statTrend}>
-              <ArrowUpRight size={16} color="#ffffff" />
+              <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
               <Text style={styles.statTrendText}>+15%</Text>
             </View>
           </LinearGradient>
@@ -267,7 +241,7 @@ export default function AdminDashboardScreen() {
               onPress={() => router.push("/(admin)/users")}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: "#E3F2FD" }]}>
-                <UsersIcon size={24} color="#1976D2" />
+                <Icon2 name="user" size={24} color="#1976D2" />
               </View>
               <Text style={styles.quickActionText}>Manage Users</Text>
             </TouchableOpacity>
@@ -277,7 +251,7 @@ export default function AdminDashboardScreen() {
               onPress={() => router.push("/(admin)/analytics")}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: "#FFF8E1" }]}>
-                <BarChart2 size={24} color="#F3B62B" />
+                <Icon2 name="bar-chart-2" size={24} color="#F3B62B" />
               </View>
               <Text style={styles.quickActionText}>View Analytics</Text>
             </TouchableOpacity>
@@ -287,7 +261,7 @@ export default function AdminDashboardScreen() {
               onPress={() => router.push("/(app)/live-rates")}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: "#E8F5E9" }]}>
-                <TrendingUp size={24} color="#43A047" />
+                <Icon2 name="trending-up" size={24} color="#43A047" />
               </View>
               <Text style={styles.quickActionText}>Live Rates</Text>
             </TouchableOpacity>
@@ -297,7 +271,7 @@ export default function AdminDashboardScreen() {
               onPress={() => router.push("/(app)/share")}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: "#FFF3E0" }]}>
-                <Gift size={24} color="#FF9800" />
+                <Icon2 name="gift" size={24} color="#FF9800" />
               </View>
               <Text style={styles.quickActionText}>Referral Program</Text>
             </TouchableOpacity>
@@ -327,7 +301,7 @@ export default function AdminDashboardScreen() {
                   <Text style={styles.activityTitle}>{notification.title}</Text>
                   <Text style={styles.activityDescription}>{notification.message}</Text>
                   <View style={styles.activityMeta}>
-                    <Clock size={14} color="#9e9e9e" />
+                    <Icon2 name="clock" size={14} color="#9e9e9e" />
                     <Text style={styles.activityTime}>{formatTimestamp(notification.timestamp)}</Text>
                   </View>
                 </View>
@@ -348,7 +322,7 @@ export default function AdminDashboardScreen() {
             style={styles.logoutButton}
             onPress={handleLogout}
           >
-            <LogOut size={20} color="#ffffff" />
+            <Icon2 name="log-out" size={20} color="#ffffff" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
@@ -369,7 +343,7 @@ export default function AdminDashboardScreen() {
                 onPress={() => setShowNotifications(false)}
                 style={styles.closeButton}
               >
-                <X size={24} color="#333333" />
+                <Icon2 name="x" size={24} color="#333333" />
               </TouchableOpacity>
             </View>
 
@@ -380,7 +354,7 @@ export default function AdminDashboardScreen() {
                     style={styles.markAllReadButton}
                     onPress={handleMarkAllAsRead}
                   >
-                    <Check size={16} color="#1976D2" />
+                    <Icon2 name="check" size={16} color="#1976D2" />
                     <Text style={styles.markAllReadText}>Mark all as read</Text>
                   </TouchableOpacity>
                 </View>
@@ -399,7 +373,7 @@ export default function AdminDashboardScreen() {
                       {item.type === 'contact_request' ? (
                         <View style={styles.contactRequestNotification}>
                           <View style={styles.contactRequestHeader}>
-                            <User size={24} color="#1976D2" style={styles.contactRequestIcon} />
+                            <Icon2 name="user" size={24} color="#1976D2" style={styles.contactRequestIcon} />
                             <View style={styles.contactRequestTitleContainer}>
                               <Text style={styles.contactRequestTitle}>{item.title}</Text>
                               <Text style={styles.contactRequestTime}>{formatTimestamp(item.timestamp)}</Text>
@@ -414,16 +388,16 @@ export default function AdminDashboardScreen() {
                               <View style={styles.contactDetailSection}>
                                 <Text style={styles.contactDetailSectionTitle}>Customer:</Text>
                                 <View style={styles.contactDetailRow}>
-                                  <User size={16} color="#666666" style={styles.contactDetailIcon} />
+                                  <Icon2 name="user" size={16} color="#666666" style={styles.contactDetailIcon} />
                                   <Text style={styles.contactDetailText}>{item.data.customer.name}</Text>
                                 </View>
                                 <View style={styles.contactDetailRow}>
-                                  <Mail size={16} color="#666666" style={styles.contactDetailIcon} />
+                                  <Icon2 name="mail" size={16} color="#666666" style={styles.contactDetailIcon} />
                                   <Text style={styles.contactDetailText}>{item.data.customer.email}</Text>
                                 </View>
                                 {item.data.customer.phone && (
                                   <View style={styles.contactDetailRow}>
-                                    <Phone size={16} color="#666666" style={styles.contactDetailIcon} />
+                                    <Icon2 name="phone" size={16} color="#666666" style={styles.contactDetailIcon} />
                                     <Text style={styles.contactDetailText}>{item.data.customer.phone}</Text>
                                   </View>
                                 )}
@@ -434,22 +408,22 @@ export default function AdminDashboardScreen() {
                               <View style={styles.contactDetailSection}>
                                 <Text style={styles.contactDetailSectionTitle}>Dealer:</Text>
                                 <View style={styles.contactDetailRow}>
-                                  <User size={16} color="#666666" style={styles.contactDetailIcon} />
+                                  <Icon2 name="user" size={16} color="#666666" style={styles.contactDetailIcon} />
                                   <Text style={styles.contactDetailText}>{item.data.dealer.name}</Text>
                                 </View>
                                 <View style={styles.contactDetailRow}>
-                                  <Mail size={16} color="#666666" style={styles.contactDetailIcon} />
+                                  <Icon2 name="mail" size={16} color="#666666" style={styles.contactDetailIcon} />
                                   <Text style={styles.contactDetailText}>{item.data.dealer.email}</Text>
                                 </View>
                                 {item.data.dealer.phone && (
                                   <View style={styles.contactDetailRow}>
-                                    <Phone size={16} color="#666666" style={styles.contactDetailIcon} />
+                                    <Icon2 name="phone" size={16} color="#666666" style={styles.contactDetailIcon} />
                                     <Text style={styles.contactDetailText}>{item.data.dealer.phone}</Text>
                                   </View>
                                 )}
                                 {item.data.dealer.brandName && (
                                   <View style={styles.contactDetailRow}>
-                                    <Award size={16} color="#F3B62B" style={styles.contactDetailIcon} />
+                                    <Icon2 name="award" size={16} color="#F3B62B" style={styles.contactDetailIcon} />
                                     <Text style={styles.contactDetailText}>{item.data.dealer.brandName}</Text>
                                   </View>
                                 )}
@@ -460,7 +434,7 @@ export default function AdminDashboardScreen() {
                       ) : item.type === 'role_change' ? (
                         <View style={styles.roleChangeNotification}>
                           <View style={styles.notificationIconContainer}>
-                            <UserCheck size={20} color="#5C6BC0" />
+                            <Icon2 name="user-check" size={20} color="#5C6BC0" />
                           </View>
                           <View style={styles.notificationContent}>
                             <Text style={styles.notificationTitle}>{item.title}</Text>
@@ -469,22 +443,22 @@ export default function AdminDashboardScreen() {
                             {item.data?.user && (
                               <View style={styles.userDetailsContainer}>
                                 <View style={styles.userDetailRow}>
-                                  <User size={14} color="#666666" style={styles.userDetailIcon} />
+                                  <Icon2 name="user" size={14} color="#666666" style={styles.userDetailIcon} />
                                   <Text style={styles.userDetailText}>{item.data.user.name}</Text>
                                 </View>
                                 <View style={styles.userDetailRow}>
-                                  <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                  <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                   <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                 </View>
                                 {item.data.user.phone && (
                                   <View style={styles.userDetailRow}>
-                                    <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                    <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                   </View>
                                 )}
                                 {item.data.user.city && (
                                   <View style={styles.userDetailRow}>
-                                    <MapPin size={14} color="#666666" style={styles.userDetailIcon} />
+                                    <Icon2 name="map-pin" size={14} color="#666666" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>
                                       {item.data.user.city}
                                       {item.data.user.state ? `, ${item.data.user.state}` : ""}
@@ -493,7 +467,7 @@ export default function AdminDashboardScreen() {
                                 )}
                                 {item.data.user.brandName && (
                                   <View style={styles.userDetailRow}>
-                                    <ShoppingBag size={14} color="#F3B62B" style={styles.userDetailIcon} />
+                                    <Icon2 name="shopping-bag" size={14} color="#F3B62B" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>{item.data.user.brandName}</Text>
                                   </View>
                                 )}
@@ -509,7 +483,7 @@ export default function AdminDashboardScreen() {
                       ) : item.type === 'payment_success' ? (
                         <View style={styles.paymentSuccessNotification}>
                           <View style={styles.notificationIconContainer}>
-                            <CheckCircle size={20} color="#43A047" />
+                            <Icon2 name="check"Circle size={20} color="#43A047" />
                           </View>
                           <View style={styles.notificationContent}>
                             <Text style={styles.notificationTitle}>{item.title}</Text>
@@ -518,22 +492,22 @@ export default function AdminDashboardScreen() {
                             {item.data?.user && (
                               <View style={styles.userDetailsContainer}>
                                 <View style={styles.userDetailRow}>
-                                  <User size={14} color="#666666" style={styles.userDetailIcon} />
+                                  <Icon2 name="user" size={14} color="#666666" style={styles.userDetailIcon} />
                                   <Text style={styles.userDetailText}>{item.data.user.name}</Text>
                                 </View>
                                 <View style={styles.userDetailRow}>
-                                  <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                  <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                   <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                 </View>
                                 {item.data.user.phone && (
                                   <View style={styles.userDetailRow}>
-                                    <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                    <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                   </View>
                                 )}
                                 {item.data.plan && (
                                   <View style={styles.userDetailRow}>
-                                    <DollarSign size={14} color="#F3B62B" style={styles.userDetailIcon} />
+                                    <Icon name="currency-usd" size={14} color="#F3B62B" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>
                                       {item.data.plan.title} Plan - {item.data.plan.price}
                                     </Text>
@@ -561,24 +535,24 @@ export default function AdminDashboardScreen() {
                             {item.type === 'user_signup' && item.data?.user && (
                               <View style={styles.userDetailsContainer}>
                                 <View style={styles.userDetailRow}>
-                                  <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                  <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                   <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                 </View>
                                 {item.data.user.phone && (
                                   <View style={styles.userDetailRow}>
-                                    <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                    <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                   </View>
                                 )}
                                 {item.data.user.city && item.data.user.state && (
                                   <View style={styles.userDetailRow}>
-                                    <MapPin size={14} color="#666666" style={styles.userDetailIcon} />
+                                    <Icon2 name="map-pin" size={14} color="#666666" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>{item.data.user.city}, {item.data.user.state}</Text>
                                   </View>
                                 )}
                                 {item.data.user.role && (
                                   <View style={styles.userDetailRow}>
-                                    <UserCheck size={14} color="#5C6BC0" style={styles.userDetailIcon} />
+                                    <Icon2 name="user-check" size={14} color="#5C6BC0" style={styles.userDetailIcon} />
                                     <Text style={styles.userDetailText}>
                                       Role: {item.data.user.role.charAt(0).toUpperCase() + item.data.user.role.slice(1)}
                                     </Text>
@@ -591,19 +565,19 @@ export default function AdminDashboardScreen() {
                             {item.type === 'referral' && item.data && (
                               <View style={styles.referralDetailsContainer}>
                                 <View style={styles.referralDetailRow}>
-                                  <User size={14} color="#666666" style={styles.referralDetailIcon} />
+                                  <Icon2 name="user" size={14} color="#666666" style={styles.referralDetailIcon} />
                                   <Text style={styles.referralDetailText}>
                                     {item.data.user.name} ({item.data.user.email})
                                   </Text>
                                 </View>
                                 <View style={styles.referralDetailRow}>
-                                  <Gift size={14} color="#F3B62B" style={styles.referralDetailIcon} />
+                                  <Icon2 name="gift" size={14} color="#F3B62B" style={styles.referralDetailIcon} />
                                   <Text style={styles.referralDetailText}>
                                     Code: <Text style={styles.referralCode}>{item.data.referralCode}</Text>
                                   </Text>
                                 </View>
                                 <View style={styles.referralDetailRow}>
-                                  <Award size={14} color="#F3B62B" style={styles.referralDetailIcon} />
+                                  <Icon2 name="award" size={14} color="#F3B62B" style={styles.referralDetailIcon} />
                                   <Text style={styles.referralDetailText}>
                                     Premium access granted
                                   </Text>
@@ -626,7 +600,7 @@ export default function AdminDashboardScreen() {
               </>
             ) : (
               <View style={styles.emptyNotifications}>
-                <Bell size={48} color="#e0e0e0" />
+                <Icon2 name="bell" size={48} color="#e0e0e0" />
                 <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
               </View>
             )}

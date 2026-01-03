@@ -53,7 +53,7 @@ export const DealerCard: React.FC<DealerCardProps> = ({
         >
           {isContacted ? (
             <View style={styles.contactedContent}>
-              <CheckCircle size={16} color="#ffffff" style={styles.contactedIcon} />
+              <Icon name="check-circle" size={16} color="#ffffff" style={styles.contactedIcon} />
               <Text style={styles.contactButtonText}>Seller Selected</Text>
             </View>
           ) : (

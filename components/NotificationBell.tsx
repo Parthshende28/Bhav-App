@@ -239,17 +239,17 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       case 'contact_request':
         return <Icon name="account" size={20} color="#1976D2" />;
       case 'role_change':
-        return <User size={20} color="#5C6BC0" />;
+        return <Icon name="account" size={20} color="#5C6BC0" />;
       case 'payment_success':
-        return <DollarSign size={20} color="#43A047" />;
+        return <Icon name="currency-usd" size={20} color="#43A047" />;
       case 'buy_request':
-        return <ShoppingBag size={20} color="#F3B62B" />;
+        return <Icon name="shopping" size={20} color="#F3B62B" />;
       case 'buy_request_accepted':
-        return <ThumbsUp size={20} color="#4CAF50" />;
+        return <Icon name="thumb-up" size={20} color="#4CAF50" />;
       case 'buy_request_declined':
-        return <ThumbsDown size={20} color="#E53935" />;
+        return <Icon name="thumb-down" size={20} color="#E53935" />;
       default:
-        return <Bell size={20} color="#333333" />;
+        return <Icon name="bell" size={20} color="#333333" />; 
     }
   };
 
@@ -273,7 +273,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
         style={styles.notificationButton}
         onPress={toggleNotifications}
       >
-        <Bell size={size} color={color} />
+        <Icon name="bell" size={size} color={color} />
         {unreadNotificationsCount > 0 && (
           <View style={styles.notificationBadge}>
             <Text style={styles.notificationBadgeText}>{unreadNotificationsCount}</Text>
@@ -296,7 +296,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                 onPress={() => setShowNotifications(false)}
                 style={styles.closeButton}
               >
-                <X size={24} color="#333333" />
+                <Icon name="close" size={24} color="#333333" />
               </TouchableOpacity>
             </View>
 
@@ -307,7 +307,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                     style={styles.markAllReadButton}
                     onPress={handleMarkAllAsRead}
                   >
-                    <Check size={16} color="#1976D2" />
+                    <Icon name="check" size={16} color="#1976D2" />
                     <Text style={styles.markAllReadText}>Mark all as read</Text>
                   </TouchableOpacity>
                 </View>
@@ -334,7 +334,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                       {item.type === 'contact_request' ? (
                         <View style={styles.contactRequestNotification}>
                           <View style={styles.contactRequestHeader}>
-                            <User size={24} color="#1976D2" style={styles.contactRequestIcon} />
+                            <Icon name="account" size={24} color="#1976D2" style={styles.contactRequestIcon} />
                             <View style={styles.contactRequestTitleContainer}>
                               <Text style={styles.contactRequestTitle}>{item.title}</Text>
                               <Text style={styles.contactRequestTime}>{formatTimestamp(item.timestamp)}</Text>
@@ -349,25 +349,25 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                               <Text style={styles.customerDetailsTitle}>Customer Details:</Text>
 
                               <View style={styles.customerDetailRow}>
-                                <User size={16} color="#666666" style={styles.customerDetailIcon} />
+                                <Icon name="account" size={16} color="#666666" style={styles.customerDetailIcon} />
                                 <Text style={styles.customerDetailText}>{item.data.customer.name}</Text>
                               </View>
 
                               <View style={styles.customerDetailRow}>
-                                <Mail size={16} color="#666666" style={styles.customerDetailIcon} />
+                                <Icon name="email" size={16} color="#666666" style={styles.customerDetailIcon} />
                                 <Text style={styles.customerDetailText}>{item.data.customer.email}</Text>
                               </View>
 
                               {item.data.customer.phone && (
                                 <View style={styles.customerDetailRow}>
-                                  <Phone size={16} color="#666666" style={styles.customerDetailIcon} />
+                                  <Icon name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
                                   <Text style={styles.customerDetailText}>{item.data.customer.phone}</Text>
                                 </View>
                               )}
 
                               {item.data.customer.city && (
                                 <View style={styles.customerDetailRow}>
-                                  <MapPin size={16} color="#666666" style={styles.customerDetailIcon} />
+                                  <Icon name="map-marker" size={16} color="#666666" style={styles.customerDetailIcon} />
                                   <Text style={styles.customerDetailText}>
                                     {item.data.customer.city}
                                     {item.data.customer.state ? `, ${item.data.customer.state}` : ""}
@@ -379,12 +379,12 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
                           <View style={styles.contactRequestActions}>
                             <TouchableOpacity style={styles.contactRequestActionButton}>
-                              <Phone size={16} color="#ffffff" />
+                              <Icon2 name="phone" size={16} color="#ffffff" />
                               <Text style={styles.contactRequestActionText}>Call</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.contactRequestActionButton}>
-                              <Mail size={16} color="#ffffff" />
+                              <Icon name="email" size={16} color="#ffffff" />
                               <Text style={styles.contactRequestActionText}>Email</Text>
                             </TouchableOpacity>
                           </View>
@@ -392,7 +392,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                       ) : item.type === 'buy_request' ? (
                         <View style={styles.buyRequestNotification}>
                           <View style={styles.buyRequestHeader}>
-                            <ShoppingBag size={24} color="#F3B62B" style={styles.buyRequestIcon} />
+                            <Icon name="shopping" size={24} color="#F3B62B" style={styles.buyRequestIcon} />
                             <View style={styles.buyRequestTitleContainer}>
                               <Text style={styles.buyRequestTitle}>{item.title}</Text>
                               <Text style={styles.buyRequestTime}>{formatTimestamp(item.timestamp)}</Text>
@@ -406,9 +406,9 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                         <View style={styles.buyResponseNotification}>
                           <View style={styles.buyResponseHeader}>
                             {item.type === 'buy_request_accepted' ? (
-                              <ThumbsUp size={24} color="#4CAF50" style={styles.buyResponseIcon} />
+                              <Icon name="thumb-up" size={24} color="#4CAF50" style={styles.buyResponseIcon} />
                             ) : (
-                              <ThumbsDown size={24} color="#E53935" style={styles.buyResponseIcon} />
+                              <Icon name="thumb-down" size={24} color="#E53935" style={styles.buyResponseIcon} />
                             )}
                             <View style={styles.buyResponseTitleContainer}>
                               <Text style={styles.buyResponseTitle}>{item.title}</Text>
@@ -427,7 +427,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
                                 style={styles.contactSellerButton}
                                 onPress={() => handleContactSeller(item)}
                               >
-                                <Phone size={16} color="#ffffff" />
+                                <Icon2 name="phone" size={16} color="#ffffff" />
                                 <Text style={styles.contactSellerText}>Contact Seller</Text>
                               </TouchableOpacity>
                             </View>
@@ -456,7 +456,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
               </>
             ) : (
               <View style={styles.emptyNotifications}>
-                <Bell size={48} color="#e0e0e0" />
+                <Icon name="bell" size={48} color="#e0e0e0" />
                 <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
               </View>
             )}

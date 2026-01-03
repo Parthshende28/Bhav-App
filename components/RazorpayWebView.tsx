@@ -375,7 +375,7 @@ export default function RazorpayWebView({
     if (paymentStatus === 'success') {
       return (
         <View style={styles.successContainer}>
-          <CheckCircle size={80} color="#43A047" />
+          <Icon name="check-circle" size={80} color="#43A047" />
           <Text style={styles.successTitle}>Payment Successful!</Text>
           <Text style={styles.successMessage}>
             Your {planTitle} subscription has been activated.
@@ -387,7 +387,7 @@ export default function RazorpayWebView({
     if (paymentStatus === 'failed' || error) {
       return (
         <View style={styles.errorContainer}>
-          <XCircle size={80} color="#f44336" />
+          <Icon name="close-circle" size={80} color="#f44336" />
           <Text style={styles.errorTitle}>Payment Failed</Text>
           <Text style={styles.errorMessage}>
             {error || 'Something went wrong. Please try again.'}

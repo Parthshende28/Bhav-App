@@ -139,7 +139,7 @@ export default function ForgotPasswordScreen() {
             <SafeAreaView style={styles.safeArea}>
                 <StatusBar style="dark" />
                 <View style={styles.successContainer}>
-                    <CheckCircle size={80} color="#43A047" />
+                    <Icon2 name="check-circle" size={80} color="#43A047" />
                     <Text style={styles.successTitle}>Password Updated!</Text>
                     <Text style={styles.successMessage}>
                         Your password has been successfully updated. You can now login with your new password.
@@ -165,7 +165,7 @@ export default function ForgotPasswordScreen() {
                             style={styles.backButton}
                             onPress={() => router.back()}
                         >
-                            <ArrowLeft size={24} color="#333" />
+                            <Icon2 name="arrow-left" size={24} color="#333" />
                         </TouchableOpacity>
 
                         <Text style={styles.title}>Reset Password</Text>
@@ -210,9 +210,9 @@ export default function ForgotPasswordScreen() {
                                         style={styles.eyeButton}
                                     >
                                         {showNewPassword ? (
-                                            <EyeOff size={20} color="#666" />
+                                            <Icon2 name="eye-off" size={20} color="#666" />
                                         ) : (
-                                            <Eye size={20} color="#666" />
+                                            <Icon2 name="eye" size={20} color="#666" />
                                         )}
                                     </TouchableOpacity>
                                 </View>
@@ -237,9 +237,9 @@ export default function ForgotPasswordScreen() {
                                         style={styles.eyeButton}
                                     >
                                         {showConfirmPassword ? (
-                                            <EyeOff size={20} color="#666" />
+                                            <Icon2 name="eye-off" size={20} color="#666" />
                                         ) : (
-                                            <Eye size={20} color="#666" />
+                                            <Icon2 name="eye" size={20} color="#666" />
                                         )}
                                     </TouchableOpacity>
                                 </View>

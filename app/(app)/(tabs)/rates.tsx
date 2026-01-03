@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { TrendingUp, TrendingDown, RefreshCw, PenBox, PenBoxIcon, Package, ShoppingBag, Lock, ArrowDownWideNarrowIcon, Plus, Check, Menu, ArrowDownCircleIcon, CircleChevronDown, Bell, X, Send } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import * as Haptics from "expo-haptics";
 import { Platform, Dimensions } from "react-native";
 import * as Font from "expo-font";
@@ -517,7 +517,7 @@ export default function RatesScreen() {
           onPress={openDrawer}
           style={styles.menuButton}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Live Rates</Text>
@@ -832,7 +832,7 @@ export default function RatesScreen() {
                 </Text>
 
                 <TouchableOpacity onPress={addSeller} style={{ marginHorizontal: 2 }}>
-                  <Plus size={24} color="#333333" />
+                  <Icon name="store" size={24} color="#333333" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -933,7 +933,7 @@ export default function RatesScreen() {
                   onPress={() => setShowRequestModal(false)}
                   style={styles.closeModalButton}
                 >
-                  <X size={24} color="#333333" />
+                  <Icon2 name="x" size={24} color="#333333" />
                 </TouchableOpacity>
               </View>
 

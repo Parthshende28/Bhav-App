@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2} from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { useAuthStore } from "@/store/auth-store";
@@ -125,7 +125,7 @@ export default function ShareScreen() {
         <TouchableOpacity
           onPress={openDrawer}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Share App</Text>
@@ -151,7 +151,7 @@ export default function ShareScreen() {
                 style={styles.referralGradient}
               >
                 <View style={styles.referralHeader}>
-                  <Shield size={20} color="#1976D2" />
+                  <Icon name="shield-half-full" size={20} color="#1976D2" />
                   <Text style={styles.referralTitle}>Admin Referral Program</Text>
                 </View>
 
@@ -180,7 +180,7 @@ export default function ShareScreen() {
                     <ActivityIndicator size="small" color="#ffffff" />
                   ) : (
                     <>
-                      <RefreshCw size={16} color="#ffffff" />
+                      <Icon2 name="refresh-cw" size={16} color="#ffffff" />
                       <Text style={styles.generateButtonText}>
                         {referralCode ? "Generate New Code" : "Generate Code"}
                       </Text>
@@ -209,11 +209,11 @@ export default function ShareScreen() {
 
           <View style={styles.linkContainer}>
             <Text style={styles.linkText}>{appLink}</Text>
-            <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
+            <TouchableOpacity style={styles.copyButton} onPress={handleIcon2 name="copy"}>
               {copied ? (
-                <Award size={20} color="#4CAF50" />
+                <Icon2 name="award" size={20} color="#4CAF50" />
               ) : (
-                <Copy size={20} color="#F3B62B" />
+                <Icon2 name="copy" size={20} color="#F3B62B" />
               )}
             </TouchableOpacity>
           </View>
@@ -229,7 +229,7 @@ export default function ShareScreen() {
               style={styles.button}
             >
               <Text style={styles.buttonText}>Share App</Text>
-              <Share2 size={18} color="#ffffff" />
+              <Icon2 name="share-2" size={18} color="#ffffff" />
             </LinearGradient>
           </TouchableOpacity>
 
@@ -244,7 +244,7 @@ export default function ShareScreen() {
               style={styles.logoutButton}
             >
               <Text style={styles.logoutButtonText}>Logout</Text>
-              <LogOut size={18} color="#ffffff" />
+              <Icon name="logout" size={18} color="#ffffff" />
             </LinearGradient>
           </TouchableOpacity>
 

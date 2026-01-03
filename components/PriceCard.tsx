@@ -65,9 +65,9 @@ export const PriceCard: React.FC<PriceCardProps> = ({
 
               <View style={styles.changeContainer}>
                 {isValuePositive ? (
-                  <TrendingUp size={16} color="#4CAF50" />
+                  <Icon name="trending-up" size={16} color="#4CAF50" />
                 ) : (
-                  <TrendingDown size={16} color="#F44336" />
+                  <Icon name="trending-down" size={16} color="#F44336" />
                 )}
                 <Text
                   style={[

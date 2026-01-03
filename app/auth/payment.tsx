@@ -268,7 +268,7 @@ export default function PaymentScreen() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <ArrowLeft size={24} color="#333" />
+                <Icon2 name="arrow-left" size={24} color="#333" />
               </TouchableOpacity>
             )}
 
@@ -282,7 +282,7 @@ export default function PaymentScreen() {
                   }
                 ]}
               >
-                <CheckCircle size={80} color="#43A047" />
+                <Icon2 name="check-circle" size={80} color="#43A047" />
                 <Text style={styles.successTitle}>Payment Successful!</Text>
                 <Text style={styles.successMessage}>
                   Your seller account has been activated.
@@ -325,15 +325,15 @@ export default function PaymentScreen() {
 
                     <View style={styles.iosFeatures}>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>Secure Apple payment processing</Text>
                       </View>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>Instant plan activation</Text>
                       </View>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>Automatic receipt validation</Text>
                       </View>
                     </View>
@@ -369,7 +369,7 @@ export default function PaymentScreen() {
                   // Android Razorpay Payment UI
                   <View style={styles.paymentMethodContainer}>
                     <View style={styles.razorpayInfo}>
-                      <Shield size={24} color="#F3B62B" style={styles.razorpayIcon} />
+                      <Icon name="shield-half-full" size={24} color="#F3B62B" style={styles.razorpayIcon} />
                       <Text style={styles.razorpayTitle}>{paymentManager.getServiceName()}</Text>
                       <Text style={styles.razorpaySubtitle}>
                         Powered by Razorpay - India's most trusted payment platform
@@ -378,19 +378,19 @@ export default function PaymentScreen() {
 
                     <View style={styles.razorpayFeatures}>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>256-bit SSL encryption</Text>
                       </View>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>PCI DSS compliant</Text>
                       </View>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>Multiple payment options</Text>
                       </View>
                       <View style={styles.featureItem}>
-                        <CheckCircle size={16} color="#43A047" />
+                        <Icon2 name="check-circle" size={16} color="#43A047" />
                         <Text style={styles.featureText}>Instant payment confirmation</Text>
                       </View>
                     </View>

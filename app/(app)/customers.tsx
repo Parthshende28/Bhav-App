@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useAuthStore, ContactedSeller } from "@/store/auth-store";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Linking from "expo-linking";
 
@@ -204,12 +204,12 @@ export default function CustomersScreen() {
               <View key={index} style={styles.customerCard}>
                 <View style={styles.customerHeader}>
                   <View style={styles.customerIconContainer}>
-                    <User size={20} color="#1976D2" />
+                    <Icon2 name="user" size={20} color="#1976D2" />
                   </View>
                   <View style={styles.customerInfo}>
                     <Text style={styles.customerName}>{customer.customerName}</Text>
                     <View style={styles.contactTimeContainer}>
-                      <Clock size={12} color="#9e9e9e" style={styles.contactTimeIcon} />
+                      <Icon2 name="clock" size={12} color="#9e9e9e" style={styles.contactTimeIcon} />
                       <Text style={styles.contactTimeText}>
                         Contacted on {formatDate(customer.timestamp)}
                       </Text>
@@ -219,20 +219,20 @@ export default function CustomersScreen() {
 
                 <View style={styles.customerDetailsContainer}>
                   <View style={styles.customerDetailRow}>
-                    <Mail size={16} color="#666666" style={styles.customerDetailIcon} />
+                    <Icon2 name="mail" size={16} color="#666666" style={styles.customerDetailIcon} />
                     <Text style={styles.customerDetailText}>{customer.customerEmail}</Text>
                   </View>
 
                   {customer.customerPhone && (
                     <View style={styles.customerDetailRow}>
-                      <Phone size={16} color="#666666" style={styles.customerDetailIcon} />
+                      <Icon2 name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
                       <Text style={styles.customerDetailText}>{customer.customerPhone}</Text>
                     </View>
                   )}
 
                   {customer.customerCity && (
                     <View style={styles.customerDetailRow}>
-                      <MapPin size={16} color="#666666" style={styles.customerDetailIcon} />
+                      <Icon2 name="map-pin" size={16} color="#666666" style={styles.customerDetailIcon} />
                       <Text style={styles.customerDetailText}>
                         {customer.customerCity}
                         {customer.customerState ? `, ${customer.customerState}` : ""}
@@ -247,7 +247,7 @@ export default function CustomersScreen() {
                     onPress={() => handleCallCustomer(customer.customerPhone)}
                     disabled={!customer.customerPhone}
                   >
-                    <Phone size={16} color="#ffffff" />
+                    <Icon2 name="phone" size={16} color="#ffffff" />
                     <Text style={styles.customerActionButtonText}>Call</Text>
                   </TouchableOpacity>
 
@@ -255,7 +255,7 @@ export default function CustomersScreen() {
                     style={[styles.customerActionButton, styles.emailButton]}
                     onPress={() => handleEmailCustomer(customer.customerEmail)}
                   >
-                    <Mail size={16} color="#ffffff" />
+                    <Icon2 name="mail" size={16} color="#ffffff" />
                     <Text style={styles.customerActionButtonText}>Email</Text>
                   </TouchableOpacity>
                 </View>
@@ -264,7 +264,7 @@ export default function CustomersScreen() {
           </View>
         ) : (
           <View style={styles.emptyContainer}>
-            <User size={48} color="#e0e0e0" />
+            <Icon2 name="user" size={48} color="#e0e0e0" />
             <Text style={styles.emptyTitle}>No users found</Text>
             <Text style={styles.emptyText}>
               When users contact you, they will appear here

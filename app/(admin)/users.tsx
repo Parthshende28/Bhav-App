@@ -3,22 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Refres
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import {
-  Search,
-  Filter,
-  User,
-  ChevronDown,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Shield,
-  RefreshCw,
-  Award,
-  Store,
-  Check,
-  Menu
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import { useAuthStore } from "@/store/auth-store";
 
 export default function UsersScreen() {
@@ -177,7 +162,7 @@ export default function UsersScreen() {
             onPress={openDrawer}
             style={styles.menuButton}
           >
-            <Menu size={24} color="#333333" />
+            <Icon2 name="menu" size={24} color="#333333" />
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>User Management</Text>
@@ -199,7 +184,7 @@ export default function UsersScreen() {
           onPress={openDrawer}
           style={styles.menuButton}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>User Management</Text>
@@ -209,7 +194,7 @@ export default function UsersScreen() {
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <View style={styles.searchInputContainer}>
-            <Search size={20} color="#9e9e9e" style={styles.searchIcon} />
+            <Icon2 name="search" size={20} color="#9e9e9e" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search users..."
@@ -222,7 +207,7 @@ export default function UsersScreen() {
             style={styles.filterButton}
             onPress={() => setFilterVisible(!filterVisible)}
           >
-            <Filter size={20} color="#1976D2" />
+            <Icon2 name="filter" size={20} color="#1976D2" />
           </TouchableOpacity>
         </View>
 
@@ -339,11 +324,11 @@ export default function UsersScreen() {
           <Text style={styles.usersCount}>{filteredUsers.length} Users</Text>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
-              <RefreshCw size={16} color="#1976D2" />
+              <Icon2 name="refresh-cw" size={16} color="#1976D2" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.sortButton}>
               <Text style={styles.sortButtonText}>Sort by</Text>
-              <ChevronDown size={16} color="#1976D2" />
+              <Icon2 name="chevron-down" size={16} color="#1976D2" />
             </TouchableOpacity>
           </View>
         </View>
@@ -368,11 +353,11 @@ export default function UsersScreen() {
               <View style={styles.userCardHeader}>
                 <View style={styles.userIconContainer}>
                   {user.role === "admin" ? (
-                    <Shield size={20} color="#1976D2" />
+                    <Icon name="shield-half-full" size={20} color="#1976D2" />
                   ) : user.role === "seller" || user.role === "seller_pending" ? (
-                    <Store size={20} color={user.role === "seller" ? "#43A047" : "#FFA000"} />
+                    <Icon name="store" size={20} color={user.role === "seller" ? "#43A047" : "#FFA000"} />
                   ) : (
-                    <User size={20} color="#333333" />
+                    <Icon2 name="user" size={20} color="#333333" />
                   )}
                 </View>
                 <View style={styles.userInfo}>
@@ -383,7 +368,7 @@ export default function UsersScreen() {
                 </View>
                 <View style={styles.userActions}>
                   <TouchableOpacity style={styles.userActionButton}>
-                    <Edit size={18} color="#1976D2" />
+                    <Icon2 name="edit" size={18} color="#1976D2" />
                   </TouchableOpacity>
                   {user.role !== "admin" && (
                     <TouchableOpacity
@@ -394,7 +379,7 @@ export default function UsersScreen() {
                       {isDeleting && deletingUserId === user.id ? (
                         <ActivityIndicator size="small" color="#E53935" />
                       ) : (
-                        <Trash2 size={18} color="#E53935" />
+                        <Icon2 name="trash-2" size={18} color="#E53935" />
                       )}
                     </TouchableOpacity>
                   )}
@@ -446,9 +431,9 @@ export default function UsersScreen() {
                 <View style={styles.userDetailItem}>
                   <Text style={styles.userDetailLabel}>Verified:</Text>
                   {user.verified ? (
-                    <CheckCircle size={18} color="#43A047" />
+                    <Icon2 name="check-circle" size={18} color="#43A047" />
                   ) : (
-                    <XCircle size={18} color="#E53935" />
+                    <Icon2 name="x-circle" size={18} color="#E53935" />
                   )}
                 </View>
               </View>
@@ -476,7 +461,7 @@ export default function UsersScreen() {
                     <ActivityIndicator size="small" color="#ffffff" />
                   ) : (
                     <>
-                      <Trash2 size={16} color="#ffffff" />
+                      <Icon2 name="trash-2" size={16} color="#ffffff" />
                       <Text style={styles.deleteButtonText}>Delete User</Text>
                     </>
                   )}
@@ -487,7 +472,7 @@ export default function UsersScreen() {
 
           {filteredUsers.length === 0 && (
             <View style={styles.emptyState}>
-              <User size={48} color="#e0e0e0" />
+              <Icon2 name="user" size={48} color="#e0e0e0" />
               <Text style={styles.emptyStateText}>No users found</Text>
               <Text style={styles.emptyStateSubtext}>Try adjusting your search or filters</Text>
             </View>
