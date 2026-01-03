@@ -393,15 +393,35 @@ export const useAuthStore = create<AuthState>()(
             body: JSON.stringify({ email, password }),
           });
 
-          const data = await response.json();
+          const responseText = await response.text();
 
           if (!response.ok) {
-            // console.log("Login failed:", data?.message);
+            // If response is not ok, try to parse error message from response
+            let errorMessage = 'Login failed';
+            try {
+              const errorData = JSON.parse(responseText);
+              errorMessage = errorData?.message || errorMessage;
+            } catch (parseError) {
+              // If JSON parsing fails, use the raw text (might be HTML error page)
+              errorMessage = responseText || errorMessage;
+            }
+            
+            // Replace technical error messages with user-friendly ones
+            if (errorMessage.toLowerCase().includes('suspended') || 
+                errorMessage.toLowerCase().includes('service suspended')) {
+              errorMessage = 'Contact owner';
+            }
+            
+            // console.log("Login failed:", errorMessage);
             return {
               success: false,
-              error: data?.message || 'Login failed',
+              error: errorMessage,
             };
           }
+
+          const data = JSON.parse(responseText);
+
+          // console.log("Login successful for user:", data.user?.id, data.user?.role);
 
           // console.log("Login successful for user:", data.user?.id, data.user?.role);
 
