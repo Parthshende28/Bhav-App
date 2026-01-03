@@ -108,7 +108,7 @@ const SellerData = () => {
 
           // Try a fallback approach - maybe the API structure is different
           try {
-            const fallbackRes = await fetch('https://bhav-backend.onrender.com/api/users/referrals', {
+            const fallbackRes = await fetch('http://localhost:5001/api/users/referrals', {
               headers: {
                 'Authorization': `Bearer ${useAuthStore.getState().token}`,
                 'Content-Type': 'application/json',

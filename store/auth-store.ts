@@ -385,7 +385,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         try {
           // console.log("Login attempt for:", email);
-          const response = await fetch('https://bhav-backend.onrender.com/api/auth/login', {
+          const response = await fetch('http://localhost:5001/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -489,7 +489,7 @@ export const useAuthStore = create<AuthState>()(
       // signup from backend database
       signup: async (userData, password) => {
         try {
-          const response = await fetch('https://bhav-backend.onrender.com/api/auth/signup', {
+          const response = await fetch('http://localhost:5001/api/auth/signup', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

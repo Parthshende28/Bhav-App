@@ -1,10 +1,12 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const API_BASE_URL = "https://bhav-backend.onrender.com"; // your backend
+export const API_BASE_URL = "http://localhost:5001/api"; // your backend
+// export const API_BASE_URL = "https://bhav-backend.onrender.com"; // your backend
 
 const API = axios.create({
-    baseURL: "https://bhav-backend.onrender.com/api",
+    // baseURL: "https://bhav-backend.onrender.com/api || http://localhost:5001/api",
+    baseURL: "http://localhost:5001/api",
     headers: {
         "Content-Type": "application/json",
     },
