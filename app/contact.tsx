@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -200,7 +200,7 @@ export default function ContactScreen() {
 
             <View style={styles.contactInfoCard}>
               <View style={styles.contactIconContainer}>
-                <MapPin size={20} color="#F3B62B" />
+                <Icon2 name="map-pin" size={20} color="#F3B62B" />
               </View>
               <View>
                 <Text style={styles.contactInfoTitle}>Address</Text>
@@ -219,7 +219,7 @@ export default function ContactScreen() {
                 end={{ x: 1, y: 1 }}
                 style={styles.successGradient}
               >
-                <CheckCircle size={60} color="#4CAF50" />
+                <Icon2 name="check-circle" size={60} color="#4CAF50" />
                 <Text style={styles.successTitle}>Message Sent!</Text>
                 <Text style={styles.successText}>
                   Thank you for contacting us. We'll get back to you shortly.

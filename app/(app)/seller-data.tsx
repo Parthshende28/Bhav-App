@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet, A
 import { useAuthStore, User, InventoryItem } from '@/store/auth-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -374,7 +374,7 @@ const SellerData = () => {
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}>
-          <ArrowLeft size={24} color="#333" />
+          <Icon2 name="arrow-left" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Sellers</Text>
       </View>
@@ -443,7 +443,7 @@ const SellerData = () => {
                     onPress={() => handleRemoveSeller(item.id)}
                     style={styles.removeButton}
                   >
-                    <X size={18} color="#FF3B30" />
+                    <Icon2 name="x" size={18} color="#FF3B30" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -476,14 +476,14 @@ const SellerData = () => {
                           />
                         ) : (
                           <View style={styles.productImagePlaceholder}>
-                            <ShoppingBag size={24} color="#e0e0e0" />
+                            <Icon2 name="shopping-bag" size={24} color="#e0e0e0" />
                           </View>
                         )}
                         <Text style={styles.productName}>{product.productName}</Text>
 
                         {product.sellPremium > 0 && (
                           <View style={styles.premiumContainer}>
-                            <IndianRupee size={14} color="#007AFF" />
+                            <Icon name="currency-rupee" size={14} color="#007AFF" />
                             <Text style={styles.productPrice}>{product.sellPremium.toLocaleString()}</Text>
                           </View>
                         )}
@@ -499,7 +499,7 @@ const SellerData = () => {
         />
       ) : (
         <View style={styles.emptyState}>
-          <Search size={64} color="#e0e0e0" style={styles.emptyStateIcon} />
+          <Icon2 name="search" size={64} color="#e0e0e0" style={styles.emptyStateIcon} />
           <Text style={styles.emptyStateText}>
             No sellers added yet.
           </Text>

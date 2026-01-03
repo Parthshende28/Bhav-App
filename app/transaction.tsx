@@ -17,9 +17,6 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
-import {
-  // Use MaterialCommunityIcons for consistent icon set
-  } from "@expo/vector-icons";
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
@@ -423,7 +420,7 @@ export default function TransactionScreen() {
           <View style={styles.paymentForm}>
             <Text style={styles.formLabel}>Card Number</Text>
             <View style={styles.inputContainer}>
-              <CreditCard size={20} color="#F3B62B" style={styles.inputIcon} />
+              <Icon name="credit-card" size={20} color="#F3B62B" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="1234 5678 9012 3456"
@@ -480,7 +477,7 @@ export default function TransactionScreen() {
             </View>
 
             <View style={styles.securePaymentInfo}>
-              <Shield size={16} color="#4CAF50" />
+              <Icon name="shield" size={16} color="#4CAF50" />
               <Text style={styles.securePaymentText}>
                 Your payment information is secure and encrypted
               </Text>
@@ -592,9 +589,9 @@ export default function TransactionScreen() {
         >
           <View style={styles.transactionResultIcon}>
             {transactionStatus === "success" ? (
-              <CheckCircle size={60} color="#4CAF50" />
+              <Icon name="check-circle" size={60} color="#4CAF50" />
             ) : (
-              <XCircle size={60} color="#F44336" />
+              <Icon name="close-circle" size={60} color="#F44336" />
             )}
           </View>
 
@@ -719,7 +716,7 @@ export default function TransactionScreen() {
             style={styles.historyButton}
             onPress={toggleRecentTransactions}
           >
-            <Clock size={20} color="#333" />
+            <Icon name="clock" size={20} color="#333" />
           </TouchableOpacity>
         </View>
 
@@ -751,7 +748,7 @@ export default function TransactionScreen() {
             >
               <Text style={styles.amountLabel}>Amount</Text>
               <View style={styles.amountRow}>
-                <IndianRupee size={24} color="#F3B62B" />
+                <Icon name="currency-inr" size={24} color="#F3B62B" />
                 <TextInput
                   style={styles.amountInput}
                   value={amount}
@@ -771,28 +768,28 @@ export default function TransactionScreen() {
           <View style={styles.paymentMethodsContainer}>
             <PaymentOption
               title="UPI"
-              icon={<Smartphone size={24} color={paymentMethod === "upi" ? "#F3B62B" : "#666"} />}
+              icon={<Icon name="cellphone" size={24} color={paymentMethod === "upi" ? "#F3B62B" : "#666"} />}
               isSelected={paymentMethod === "upi"}
               onSelect={() => handlePaymentMethodSelect("upi")}
             />
 
             <PaymentOption
               title="Card"
-              icon={<CreditCard size={24} color={paymentMethod === "card" ? "#F3B62B" : "#666"} />}
+              icon={<Icon name="credit-card" size={24} color={paymentMethod === "card" ? "#F3B62B" : "#666"} />}
               isSelected={paymentMethod === "card"}
               onSelect={() => handlePaymentMethodSelect("card")}
             />
 
             <PaymentOption
               title="Net Banking"
-              icon={<Landmark size={24} color={paymentMethod === "netbanking" ? "#F3B62B" : "#666"} />}
+              icon={<Icon name="bank" size={24} color={paymentMethod === "netbanking" ? "#F3B62B" : "#666"} />}
               isSelected={paymentMethod === "netbanking"}
               onSelect={() => handlePaymentMethodSelect("netbanking")}
             />
 
             <PaymentOption
               title="Wallet"
-              icon={<Wallet size={24} color={paymentMethod === "wallet" ? "#F3B62B" : "#666"} />}
+              icon={<Icon name="wallet" size={24} color={paymentMethod === "wallet" ? "#F3B62B" : "#666"} />}
               isSelected={paymentMethod === "wallet"}
               onSelect={() => handlePaymentMethodSelect("wallet")}
             />
@@ -820,7 +817,7 @@ export default function TransactionScreen() {
                   <Text style={styles.payButtonText}>
                     {transactionType === "buy" ? "Pay Now" : "Receive Payment"}
                   </Text>
-                  <ArrowRight size={18} color="#ffffff" />
+                  <Icon name="arrow-right" size={18} color="#ffffff" />
                 </>
               )}
             </LinearGradient>

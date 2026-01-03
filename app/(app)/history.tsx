@@ -14,25 +14,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import {
-    ArrowLeft,
-    Clock,
-    CheckCircle,
-    XCircle,
-    TrendingUp,
-    TrendingDown,
-    Package,
-    ShoppingCart,
-    Menu,
-    Users,
-    BarChart2,
-    IndianRupee,
-    Mail,
-    Phone,
-    MapPin,
-    User,
-    Info
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import { useAuthStore, BuyRequest } from "@/store/auth-store";
 
 export default function HistoryScreen() {
@@ -216,17 +198,17 @@ export default function HistoryScreen() {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'pending': return <Clock size={16} color="#FFA500" />;
-            case 'accepted': return <CheckCircle size={16} color="#4CAF50" />;
-            case 'declined': return <XCircle size={16} color="#F44336" />;
-            default: return <Clock size={16} color="#666666" />;
+            case 'pending': return <Icon2 name="clock" size={16} color="#FFA500" />;
+            case 'accepted': return <Icon2 name="check-circle" size={16} color="#4CAF50" />;
+            case 'declined': return <Icon2 name="x-circle" size={16} color="#F44336" />;
+            default: return <Icon2 name="clock" size={16} color="#666666" />;
         }
     };
 
     const getTypeIcon = (type: string) => {
         return type === 'buy'
-            ? <ShoppingCart size={16} color="#2196F3" />
-            : <Package size={16} color="#FF9800" />;
+            ? <Icon2 name="shopping-cart" size={16} color="#2196F3" />
+            : <Icon2 name="package" size={16} color="#FF9800" />;
     };
 
     const formatAmount = (amount: number) => {
@@ -342,7 +324,7 @@ export default function HistoryScreen() {
                     </View>
 
                     <View style={styles.requestDetailRow}>
-                        <Clock size={16} color="#666666" style={styles.requestDetailIcon} />
+                        <Icon2 name="clock" size={16} color="#666666" style={styles.requestDetailIcon} />
                         <Text style={styles.requestDetailLabel}>Status:</Text>
                         <Text style={styles.requestDetailValue}>
                             {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -377,7 +359,7 @@ export default function HistoryScreen() {
                     <TouchableOpacity
                         onPress={() => router.push("/drawer")}
                     >
-                        <Menu size={24} color="#333333" />
+                        <Icon2 name="menu" size={24} color="#333333" />
                     </TouchableOpacity>
                     <Text style={styles.title}>Request History</Text>
                     <View style={styles.headerRight} />
@@ -385,17 +367,17 @@ export default function HistoryScreen() {
 
                 <View style={styles.statsContainer}>
                     <View style={styles.statCard}>
-                        <TrendingUp size={20} color="#4CAF50" />
+                        <Icon2 name="trending-up" size={20} color="#4CAF50" />
                         <Text style={styles.statNumber}>{acceptedCount}</Text>
                         <Text style={styles.statLabel}>Accepted</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <TrendingDown size={20} color="#F44336" />
+                        <Icon2 name="trending-down" size={20} color="#F44336" />
                         <Text style={styles.statNumber}>{declinedCount}</Text>
                         <Text style={styles.statLabel}>Declined</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <Clock size={20} color="#FFA500" />
+                        <Icon2 name="clock" size={20} color="#FFA500" />
                         <Text style={styles.statNumber}>{pendingCount}</Text>
                         <Text style={styles.statLabel}>Pending</Text>
                     </View>
@@ -432,7 +414,7 @@ export default function HistoryScreen() {
                 >
                     {filteredRequests.length === 0 ? (
                         <View style={styles.emptyState}>
-                            <Clock size={48} color="#ccc" />
+                            <Icon2 name="clock" size={48} color="#ccc" />
                             <Text style={styles.emptyStateTitle}>No requests found</Text>
                             <Text style={styles.emptyStateSubtitle}>
                                 {selectedStatus !== 'all' || selectedType !== 'all'

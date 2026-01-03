@@ -2,18 +2,7 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Platform, View, StyleSheet, TouchableOpacity } from "react-native";
 import { BlurView } from "expo-blur";
-import {
-  Home,
-  TrendingUp,
-  Calculator,
-  Phone,
-  CreditCard,
-  Menu,
-  Users,
-  Newspaper,
-  User,
-  Bell
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 
@@ -76,7 +65,7 @@ export default function TabsLayout() {
               marginLeft: 8,
             }}
           >
-            <Menu size={24} color="#333333" />
+            <Icon2 name="menu" size={24} color="#333333" />
           </TouchableOpacity>
         ),
       }}
@@ -89,7 +78,7 @@ export default function TabsLayout() {
           // headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.activeIconContainer : null}>
-              <Home size={22} color={color} />
+              <Icon name="home" size={22} color={color} />
             </View>
           ),
         }}
@@ -104,7 +93,7 @@ export default function TabsLayout() {
           // headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.activeIconContainer : null}>
-              <TrendingUp size={22} color={color} />
+              <Icon2 name="trending-up" size={22} color={color} />
             </View>
           ),
         }}
@@ -117,7 +106,7 @@ export default function TabsLayout() {
           // headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <View style={focused ? styles.activeIconContainer : null}>
-              <Bell size={22} color={color} />
+              <Icon2 name="bell" size={22} color={color} />
             </View>
           ),
         }}
@@ -131,7 +120,7 @@ export default function TabsLayout() {
             // headerShown: true,
             tabBarIcon: ({ color, focused }) => (
               <View style={focused ? styles.activeIconContainer : null}>
-                <Users size={22} color={color} />
+                <Icon2 name="user"s size={22} color={color} />
               </View>
             ),
           }}

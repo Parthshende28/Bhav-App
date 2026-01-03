@@ -122,20 +122,20 @@ export default async function SellersScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}>
-          <ArrowLeft size={24} color="#333" />
+          <Icon name="arrow-left" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sellers</Text>
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Filter size={20} color="#333333" />
+          <Icon name="filter-variant" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Search size={20} color="#9e9e9e" style={styles.searchIcon} />
+          <Icon name="magnify" size={20} color="#9e9e9e" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search dealers by name or location"
@@ -278,7 +278,7 @@ export default async function SellersScreen() {
             style={styles.tipsGradient}
           >
             <View style={styles.tipsHeader}>
-              <Star size={20} color="#F3B62B" />
+              <Icon name="star" size={20} color="#F3B62B" />
               <Text style={styles.tipsTitle}>Sellers Tips</Text>
             </View>
             <Text style={styles.tipsContent}>

@@ -15,7 +15,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { ArrowLeft, Check, Crown, Calendar, Infinity, Store, Trophy, Gem } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"; 
 import { useAuthStore } from "@/store/auth-store";
 
 // Define the type for subscription plan
@@ -26,7 +26,7 @@ type SubscriptionPlan = {
   period: string;
   features: string[];
   color: readonly [string, string]; // Fixed: Define as readonly tuple of strings
-  icon: React.ComponentType<any>;
+  iconName: string; 
   recommended?: boolean;
   superSeller?: boolean;
 };
@@ -44,7 +44,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Standard user support",
     ],
     color: ["#4CAF50", "#81C784"] as const, // Fixed: Use 'as const' to make it a readonly tuple
-    icon: Trophy
+    iconName: "trophy"
   },
   {
     id: "yearly",
@@ -58,7 +58,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Featured listings"
     ],
     color: ["#F3B62B", "#F5D76E"] as const, // Fixed: Use 'as const' to make it a readonly tuple
-    icon: Crown,
+    iconName: "crown",
     recommended: true
   },
   {
@@ -78,7 +78,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Unlimited messages",
     ],
     color: ["#F3B62B", "#F5D76E"] as const, // Fixed: Use 'as const' to make it a readonly tuple
-    icon: Gem,
+    iconName: "gem",
   },
 ];
 
@@ -229,7 +229,7 @@ export default function SubscriptionScreen() {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={24} color="#333" />
+          <Icon2 name="arrow-left" size={24} color="#333" />
         </TouchableOpacity>
 
         <Text style={styles.title}>Choose Your Seller Plan</Text>
@@ -245,7 +245,7 @@ export default function SubscriptionScreen() {
               This will be displayed to users when they view your listings
             </Text>
             <View style={styles.brandNameInputContainer}>
-              <Store size={20} color="#F3B62B" style={styles.brandNameIcon} />
+              <Icon name="store" size={20} color="#F3B62B" style={styles.brandNameIcon} />
               <TextInput
                 style={styles.brandNameInput}
                 placeholder="Enter your business or brand name"
@@ -288,7 +288,7 @@ export default function SubscriptionScreen() {
                   end={{ x: 1, y: 0 }}
                   style={styles.planIconContainer}
                 >
-                  <plan.icon size={28} color="#ffffff" />
+                  <Icon name={plan.iconName} size={28} color="#ffffff" />
                 </LinearGradient>
 
                 <View style={styles.planHeader}>
@@ -302,7 +302,7 @@ export default function SubscriptionScreen() {
                 <View style={styles.planFeatures}>
                   {plan.features.map((feature, featureIndex) => (
                     <View key={featureIndex} style={styles.featureItem}>
-                      <Check size={16} color="#43A047" style={styles.featureIcon} />
+                      <Icon name="check" size={16} color="#43A047" style={styles.featureIcon} />
                       <Text style={styles.featureText}>{feature}</Text>
                     </View>
                   ))}
