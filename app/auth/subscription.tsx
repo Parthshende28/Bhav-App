@@ -15,7 +15,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import { useAuthStore } from "@/store/auth-store";
 
 // Define the type for subscription plan

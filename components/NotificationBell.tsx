@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl, Linking } from "react-native";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useAuthStore, Notification, BuyRequest } from "@/store/auth-store";
 

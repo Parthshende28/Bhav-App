@@ -209,7 +209,7 @@ export default function ShareScreen() {
 
           <View style={styles.linkContainer}>
             <Text style={styles.linkText}>{appLink}</Text>
-            <TouchableOpacity style={styles.copyButton} onPress={handleIcon2 name="copy"}>
+            <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
               {copied ? (
                 <Icon2 name="award" size={20} color="#4CAF50" />
               ) : (
@@ -300,7 +300,7 @@ const TrendingUpIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <QrCode size={24} color="#ffffff" />
+      <Icon name="qrcode" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );
@@ -311,7 +311,7 @@ const CalculatorIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <QrCode size={24} color="#ffffff" />
+      <Icon name="qrcode" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );
@@ -322,7 +322,7 @@ const UpdatesIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <QrCode size={24} color="#ffffff" />
+      <Icon name="qrcode" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );

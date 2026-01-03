@@ -19,7 +19,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 import * as Clipboard from 'expo-clipboard';
 import { paymentAPI } from "@/services/api";
@@ -362,7 +362,7 @@ export default function PaymentScreen() {
                     {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                     <Text style={styles.secureText}>
-                      <Lock size={12} color="#666666" /> Secure payment processing
+                      <Icon2 name="lock" size={12} color="#666666" /> Secure payment processing
                     </Text>
                   </View>
                 ) : (
@@ -412,7 +412,7 @@ export default function PaymentScreen() {
                     </TouchableOpacity>
 
                     <Text style={styles.secureText}>
-                      <Lock size={12} color="#666666" /> Secure payment processing
+                      <Icon2 name="lock" size={12} color="#666666" /> Secure payment processing
                     </Text>
 
                     <View style={styles.razorpayBadgeContainer}>

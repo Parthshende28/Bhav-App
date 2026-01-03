@@ -17,7 +17,7 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { useAuthStore } from '@/store/auth-store';
 import { API_BASE_URL } from "@/store/api";
 
@@ -295,7 +295,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "password" && styles.inputContainerFocused,
               ]}>
-                <Lock size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Create a password"
@@ -326,7 +326,7 @@ export default function SignupScreen() {
                 styles.inputContainer,
                 focusedField === "confirm-password" && styles.inputContainerFocused,
               ]}>
-                <Lock size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Confirm your password"
