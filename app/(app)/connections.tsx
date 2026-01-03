@@ -18,23 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import * as Haptics from "expo-haptics";
 import { useAuthStore } from "@/store/auth-store";
-import {
-  Map,
-  Phone,
-  Mail,
-  Navigation,
-  CheckCircle,
-  XCircle,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-  Search,
-  Filter,
-  MapPin,
-  Locate,
-  RefreshCw,
-  AlertCircle,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2, Ionicons as Icon3 } from "@expo/vector-icons"; 
 import { ShopCard } from "@/components/ShopCard";
 
 // Mock data for bullion shops by city
@@ -1350,9 +1334,9 @@ export default function ConnectionsScreen() {
             >
               <Text style={styles.cityButtonText}>{selectedCity || "Select City"}</Text>
               {showCitySelector ? (
-                <ChevronUp size={20} color="#F3B62B" />
+                <Icon2 name="chevron-up" size={20} color="#F3B62B" />
               ) : (
-                <ChevronDown size={20} color="#F3B62B" />
+                <Icon2 name="chevron-down" size={20} color="#F3B62B" />
               )}
             </TouchableOpacity>
 
@@ -1375,7 +1359,7 @@ export default function ConnectionsScreen() {
                         {city}
                       </Text>
                       {selectedCity === city && (
-                        <CheckCircle size={16} color="#F3B62B" />
+                        <Icon2 name="check-circle" size={16} color="#F3B62B" />
                       )}
                     </TouchableOpacity>
                   ))}
@@ -1386,7 +1370,7 @@ export default function ConnectionsScreen() {
 
           <View style={styles.searchContainer}>
             <View style={styles.searchInputContainer}>
-              <Search size={20} color="#666" style={styles.searchIcon} />
+              <Icon2 name="search" size={20} color="#666" style={styles.searchIcon} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search by name or location"
@@ -1397,7 +1381,7 @@ export default function ConnectionsScreen() {
             </View>
 
             <TouchableOpacity style={styles.filterButton} onPress={toggleFilter}>
-              <Filter size={20} color="#F3B62B" />
+              <Icon2 name="filter" size={20} color="#F3B62B" />
             </TouchableOpacity>
           </View>
 
@@ -1423,7 +1407,7 @@ export default function ConnectionsScreen() {
                     Verified Only
                   </Text>
                   {filterOptions.verified && (
-                    <CheckCircle size={16} color="#F3B62B" />
+                    <Icon2 name="check-circle" size={16} color="#F3B62B" />
                   )}
                 </TouchableOpacity>
 
@@ -1444,7 +1428,7 @@ export default function ConnectionsScreen() {
                     Gold
                   </Text>
                   {filterOptions.gold && (
-                    <CheckCircle size={16} color="#F3B62B" />
+                    <Icon2 name="check-circle" size={16} color="#F3B62B" />
                   )}
                 </TouchableOpacity>
 
@@ -1465,7 +1449,7 @@ export default function ConnectionsScreen() {
                     Silver
                   </Text>
                   {filterOptions.silver && (
-                    <CheckCircle size={16} color="#F3B62B" />
+                    <Icon2 name="check-circle" size={16} color="#F3B62B" />
                   )}
                 </TouchableOpacity>
               </View>
@@ -1501,12 +1485,12 @@ export default function ConnectionsScreen() {
                     <View style={styles.webShopVerification}>
                       {shop.verified ? (
                         <>
-                          <CheckCircle size={16} color="#4CAF50" />
+                          <Icon2 name="check-circle" size={16} color="#4CAF50" />
                           <Text style={[styles.webShopVerificationText, { color: "#4CAF50" }]}>Verified</Text>
                         </>
                       ) : (
                         <>
-                          <XCircle size={16} color="#F44336" />
+                          <Icon2 name="x-circle" size={16} color="#F44336" />
                           <Text style={[styles.webShopVerificationText, { color: "#F44336" }]}>Unverified</Text>
                         </>
                       )}
@@ -1523,7 +1507,7 @@ export default function ConnectionsScreen() {
                       style={styles.webShopAction}
                       onPress={() => handleCall(shop.phone)}
                     >
-                      <Phone size={16} color="#F3B62B" />
+                      <Icon2 name="phone" size={16} color="#F3B62B" />
                       <Text style={styles.webShopActionText}>Call</Text>
                     </TouchableOpacity>
 
@@ -1531,7 +1515,7 @@ export default function ConnectionsScreen() {
                       style={styles.webShopAction}
                       onPress={() => handleEmail(shop.email)}
                     >
-                      <Mail size={16} color="#F3B62B" />
+                      <Icon2 name="mail" size={16} color="#F3B62B" />
                       <Text style={styles.webShopActionText}>Email</Text>
                     </TouchableOpacity>
 
@@ -1539,7 +1523,7 @@ export default function ConnectionsScreen() {
                       style={styles.webShopAction}
                       onPress={() => handleDirections(shop)}
                     >
-                      <Navigation size={16} color="#F3B62B" />
+                      <Icon2 name="navigation" size={16} color="#F3B62B" />
                       <Text style={styles.webShopActionText}>Directions</Text>
                     </TouchableOpacity>
                   </View>
@@ -1547,7 +1531,7 @@ export default function ConnectionsScreen() {
               ))
             ) : (
               <View style={styles.noShopsContainer}>
-                <AlertCircle size={48} color="#F3B62B" />
+                <Icon2 name="alert-circle" size={48} color="#F3B62B" />
                 <Text style={styles.noShopsText}>No shops found</Text>
                 <Text style={styles.noShopsSubtext}>
                   Try changing your filters or search for a different city
@@ -1590,9 +1574,9 @@ export default function ConnectionsScreen() {
               style={styles.cityPill}
               onPress={() => setShowCitySelector(!showCitySelector)}
             >
-              <MapPin size={14} color="#F3B62B" />
+              <Icon2 name="map-pin" size={14} color="#F3B62B" />
               <Text style={styles.cityPillText}>{selectedCity}</Text>
-              <ChevronDown size={14} color="#F3B62B" />
+              <Icon2 name="chevron-down" size={14} color="#F3B62B" />
             </TouchableOpacity>
           )}
         </View>
@@ -1607,7 +1591,7 @@ export default function ConnectionsScreen() {
                 style={styles.citySelectorClose}
                 onPress={() => setShowCitySelector(false)}
               >
-                <XCircle size={20} color="#666" />
+                <Icon2 name="x-circle" size={20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -1628,7 +1612,7 @@ export default function ConnectionsScreen() {
                     {city}
                   </Text>
                   {selectedCity === city && (
-                    <CheckCircle size={16} color="#F3B62B" />
+                    <Icon2 name="check-circle" size={16} color="#F3B62B" />
                   )}
                 </TouchableOpacity>
               ))}
@@ -1639,7 +1623,7 @@ export default function ConnectionsScreen() {
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Search size={20} color="#666" style={styles.searchIcon} />
+          <Icon2 name="search" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search by name or location"
@@ -1650,7 +1634,7 @@ export default function ConnectionsScreen() {
         </View>
 
         <TouchableOpacity style={styles.filterButton} onPress={toggleFilter}>
-          <Filter size={20} color="#F3B62B" />
+          <Icon2 name="filter" size={20} color="#F3B62B" />
         </TouchableOpacity>
       </View>
 
@@ -1676,7 +1660,7 @@ export default function ConnectionsScreen() {
                 Verified Only
               </Text>
               {filterOptions.verified && (
-                <CheckCircle size={16} color="#F3B62B" />
+                <Icon2 name="check-circle" size={16} color="#F3B62B" />
               )}
             </TouchableOpacity>
 
@@ -1697,7 +1681,7 @@ export default function ConnectionsScreen() {
                 Gold
               </Text>
               {filterOptions.gold && (
-                <CheckCircle size={16} color="#F3B62B" />
+                <Icon2 name="check-circle" size={16} color="#F3B62B" />
               )}
             </TouchableOpacity>
 
@@ -1718,7 +1702,7 @@ export default function ConnectionsScreen() {
                 Silver
               </Text>
               {filterOptions.silver && (
-                <CheckCircle size={16} color="#F3B62B" />
+                <Icon2 name="check-circle" size={16} color="#F3B62B" />
               )}
             </TouchableOpacity>
           </View>
@@ -1757,7 +1741,7 @@ export default function ConnectionsScreen() {
           </View>
         ) : locationPermissionDenied ? (
           <View style={styles.permissionDeniedContainer}>
-            <AlertCircle size={48} color="#F44336" />
+            <Icon2 name="alert-circle" size={48} color="#F44336" />
             <Text style={styles.permissionDeniedText}>
               Location permission denied
             </Text>
@@ -1776,7 +1760,7 @@ export default function ConnectionsScreen() {
         ) : (
           <View style={styles.mapContent}>
             <View style={styles.mapPlaceholder}>
-              <MapPin size={48} color="#F3B62B" />
+              <Icon2 name="map-pin" size={48} color="#F3B62B" />
               <Text style={styles.mapPlaceholderText}>
                 Map View
               </Text>
@@ -1797,7 +1781,7 @@ export default function ConnectionsScreen() {
                 {isRefreshing ? (
                   <ActivityIndicator size="small" color="#F3B62B" />
                 ) : (
-                  <RefreshCw size={20} color="#F3B62B" />
+                  <Icon2 name="refresh-cw" size={20} color="#F3B62B" />
                 )}
               </TouchableOpacity>
 
@@ -1811,7 +1795,7 @@ export default function ConnectionsScreen() {
                   console.log("Center on user location");
                 }}
               >
-                <Locate size={20} color="#F3B62B" />
+                <Icon3 name="locate-outline" size={20} color="#F3B62B" />
               </TouchableOpacity>
             </View>
 
@@ -1869,7 +1853,7 @@ export default function ConnectionsScreen() {
             style={styles.closeDetailsButton}
             onPress={handleCloseDetails}
           >
-            <ChevronDown size={24} color="#666" />
+            <Icon2 name="chevron-down" size={24} color="#666" />
           </TouchableOpacity>
         </Animated.View>
       )}

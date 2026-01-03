@@ -20,41 +20,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore, BuyRequest } from "@/store/auth-store";
 import { useRouter, useFocusEffect } from "expo-router";
 import * as Haptics from "expo-haptics";
-import {
-  BarChart2,
-  Package,
-  Settings,
-  User,
-  ChevronRight,
-  ShoppingBag,
-  Bell,
-  Mail,
-  Phone,
-  MapPin,
-  Clock,
-  Check,
-  X,
-  Users,
-  Tag,
-  Copy,
-  Share2,
-  Award,
-  Gift,
-  UserCheck,
-  CheckCircle,
-  LogOut,
-  AlertTriangle,
-  Trash2,
-  Menu,
-  ArrowUpRight,
-  TrendingUp,
-  UsersIcon,
-  Info,
-  ArrowUpCircle,
-  IndianRupee,
-  ThumbsUpIcon,
-  ThumbsDownIcon
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import { NotificationBell } from "@/components/NotificationBell";
 import * as Clipboard from 'expo-clipboard';
 import { images } from "@/constants/images";
@@ -499,25 +465,25 @@ export default function SellerDashboardScreen() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'user_signup':
-        return <User size={20} color="#1976D2" />;
+        return <Icon2 name="user" size={20} color="#1976D2" />;
       case 'user_deletion':
-        return <Trash2 size={20} color="#E53935" />;
+        return <Icon2 name="trash-2" size={20} color="#E53935" />;
       case 'transaction':
-        return <IndianRupee size={20} color="#F3B62B" />;
+        return <Icon name="currency-rupee" size={20} color="#F3B62B" />;
       case 'system':
-        return <Settings size={20} color="#43A047" />;
+        return <Icon2 name="settings" size={20} color="#43A047" />;
       case 'alert':
-        return <AlertTriangle size={20} color="#E53935" />;
+        return <Icon2 name="alert-triangle" size={20} color="#E53935" />;
       case 'referral':
-        return <Gift size={20} color="#F3B62B" />;
+        return <Icon2 name="gift" size={20} color="#F3B62B" />;
       case 'contact_request':
-        return <User size={20} color="#1976D2" />;
+        return <Icon2 name="user" size={20} color="#1976D2" />;
       case 'role_change':
-        return <UserCheck size={20} color="#5C6BC0" />;
+        return <Icon2 name="user-check" size={20} color="#5C6BC0" />;
       case 'payment_success':
-        return <CheckCircle size={20} color="#43A047" />;
+        return <Icon2 name="check-circle" size={20} color="#43A047" />;
       default:
-        return <Bell size={20} color="#333333" />;
+        return <Icon2 name="bell" size={20} color="#333333" />;
     }
   };
 
@@ -645,9 +611,9 @@ export default function SellerDashboardScreen() {
           <View style={styles.buyRequestHeader}>
             <View style={styles.buyRequestIconContainer}>
               {isBuyRequest ? (
-                <ShoppingBag size={20} color="#4CAF50" />
+                <Icon2 name="shopping-bag" size={20} color="#4CAF50" />
               ) : (
-                <Package size={20} color="#F44336" />
+                <Icon2 name="package" size={20} color="#F44336" />
               )}
             </View>
             <View style={styles.buyRequestTitleContainer}>
@@ -660,7 +626,7 @@ export default function SellerDashboardScreen() {
 
           <View style={styles.buyRequestDetailsContainer}>
             <View style={styles.buyRequestDetailRow}>
-              <Package size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+              <Icon2 name="package" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
               <Text style={styles.buyRequestDetailLabel}>Product:</Text>
               <Text style={styles.buyRequestDetailValue}>{product.productName}</Text>
             </View>
@@ -668,12 +634,12 @@ export default function SellerDashboardScreen() {
             {isBuyRequest && product.capturedAmount && (
               <>
                 <View style={styles.buyRequestDetailRow}>
-                  <IndianRupee size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+                  <Icon name="currency-rupee" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
                   <Text style={styles.buyRequestDetailLabel}>Buy Premium:</Text>
                   <Text style={styles.buyRequestDetailValue}>₹{product.buyPremium}</Text>
                 </View>
                 <View style={styles.buyRequestDetailRow}>
-                  <IndianRupee size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+                  <Icon name="currency-rupee" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
                   <Text style={styles.buyRequestDetailLabel}>Total Cost:</Text>
                   <Text style={styles.buyRequestDetailValue}>₹{product.capturedAmount.toLocaleString()}</Text>
                 </View>
@@ -683,12 +649,12 @@ export default function SellerDashboardScreen() {
             {isSellRequest && product.capturedAmount && (
               <>
                 <View style={styles.buyRequestDetailRow}>
-                  <IndianRupee size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+                  <Icon name="currency-rupee" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
                   <Text style={styles.buyRequestDetailLabel}>Sell Premium:</Text>
                   <Text style={styles.buyRequestDetailValue}>₹{product.sellPremium}</Text>
                 </View>
                 <View style={styles.buyRequestDetailRow}>
-                  <IndianRupee size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+                  <Icon name="currency-rupee" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
                   <Text style={styles.buyRequestDetailLabel}>Total Amount:</Text>
                   <Text style={styles.buyRequestDetailValue}>₹{product.capturedAmount.toLocaleString()}</Text>
                 </View>
@@ -700,25 +666,25 @@ export default function SellerDashboardScreen() {
             <Text style={styles.customerDetailsTitle}>User Details:</Text>
 
             <View style={styles.customerDetailRow}>
-              <User size={16} color="#666666" style={styles.customerDetailIcon} />
+              <Icon2 name="user" size={16} color="#666666" style={styles.customerDetailIcon} />
               <Text style={styles.customerDetailText}>{customer.fullName || customer.name}</Text>
             </View>
 
             <View style={styles.customerDetailRow}>
-              <Mail size={16} color="#666666" style={styles.customerDetailIcon} />
+              <Icon2 name="mail" size={16} color="#666666" style={styles.customerDetailIcon} />
               <Text style={styles.customerDetailText}>{customer.email}</Text>
             </View>
 
             {customer.phone && (
               <View style={styles.customerDetailRow}>
-                <Phone size={16} color="#666666" style={styles.customerDetailIcon} />
+                <Icon2 name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
                 <Text style={styles.customerDetailText}>{customer.phone}</Text>
               </View>
             )}
 
             {customer.city && (
               <View style={styles.customerDetailRow}>
-                <MapPin size={16} color="#666666" style={styles.customerDetailIcon} />
+                <Icon2 name="map-pin" size={16} color="#666666" style={styles.customerDetailIcon} />
                 <Text style={styles.customerDetailText}>
                   {customer.city}
                   {customer.state ? `, ${customer.state}` : ""}
@@ -737,7 +703,7 @@ export default function SellerDashboardScreen() {
               onPress={() => handleAcceptBuyRequest(request.id)}
               disabled={isProcessing || request.status !== 'pending'}
             >
-              <Check size={16} color="#ffffff" />
+              <Icon2 name="check" size={16} color="#ffffff" />
               <Text style={styles.buyRequestActionText}>
                 {request.status === 'accepted' ? 'Accepted' : 'Accept'}
               </Text>
@@ -752,7 +718,7 @@ export default function SellerDashboardScreen() {
               onPress={() => handleDeclineBuyRequest(request.id)}
               disabled={isProcessing || request.status !== 'pending'}
             >
-              <X size={16} color="#ffffff" />
+              <Icon2 name="x" size={16} color="#ffffff" />
               <Text style={styles.buyRequestActionText}>
                 {request.status === 'declined' ? 'Declined' : 'Decline'}
               </Text>
@@ -768,9 +734,9 @@ export default function SellerDashboardScreen() {
         <View style={styles.buyRequestHeader}>
           <View style={styles.buyRequestIconContainer}>
             {isBuyRequest ? (
-              <ShoppingBag size={20} color="#4CAF50" />
+              <Icon2 name="shopping-bag" size={20} color="#4CAF50" />
             ) : (
-              <Package size={20} color="#F44336" />
+              <Icon2 name="package" size={20} color="#F44336" />
             )}
           </View>
           <View style={styles.buyRequestTitleContainer}>
@@ -783,13 +749,13 @@ export default function SellerDashboardScreen() {
 
         <View style={styles.buyRequestDetailsContainer}>
           <View style={styles.buyRequestDetailRow}>
-            <Package size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+            <Icon2 name="package" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
             <Text style={styles.buyRequestDetailLabel}>Request ID:</Text>
             <Text style={styles.buyRequestDetailValue}>{request.id}</Text>
           </View>
 
           <View style={styles.buyRequestDetailRow}>
-            <Clock size={16} color="#666666" style={styles.buyRequestDetailIcon} />
+            <Icon2 name="clock" size={16} color="#666666" style={styles.buyRequestDetailIcon} />
             <Text style={styles.buyRequestDetailLabel}>Status:</Text>
             <Text style={styles.buyRequestDetailValue}>
               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -811,7 +777,7 @@ export default function SellerDashboardScreen() {
             onPress={() => handleAcceptBuyRequest(request.id)}
             disabled={isProcessing || request.status !== 'pending'}
           >
-            <Check size={16} color="#ffffff" />
+            <Icon2 name="check" size={16} color="#ffffff" />
             <Text style={styles.buyRequestActionText}>
               {request.status === 'accepted' ? 'Accepted' : 'Accept'}
             </Text>
@@ -826,7 +792,7 @@ export default function SellerDashboardScreen() {
             onPress={() => handleDeclineBuyRequest(request.id)}
             disabled={isProcessing || request.status !== 'pending'}
           >
-            <X size={16} color="#ffffff" />
+            <Icon2 name="x" size={16} color="#ffffff" />
             <Text style={styles.buyRequestActionText}>
               {request.status === 'declined' ? 'Declined' : 'Decline'}
             </Text>
@@ -847,7 +813,7 @@ export default function SellerDashboardScreen() {
               onPress={openDrawer}
               style={styles.menuButton}
             >
-              <Menu size={24} color="#333333" />
+              <Icon2 name="menu" size={24} color="#333333" />
             </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>Admin Dashboard</Text>
@@ -873,12 +839,12 @@ export default function SellerDashboardScreen() {
                 style={styles.singleStatCard}
               >
                 <View style={styles.statIconContainerAdmin}>
-                  <UsersIcon size={24} color="#ffffff" />
+                  <Icon2 name="user"sIcon size={24} color="#ffffff" />
                 </View>
                 <Text style={styles.statValueAdmin}>{users.length}</Text>
                 <Text style={styles.statLabelAdmin}>Total Users</Text>
                 <View style={styles.statTrend}>
-                  <ArrowUpRight size={16} color="#ffffff" />
+                  <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
                   <Text style={styles.statTrendText}>+12%</Text>
                 </View>
               </LinearGradient>
@@ -893,12 +859,12 @@ export default function SellerDashboardScreen() {
                 style={styles.singleStatCard}
               >
                 <View style={styles.statIconContainerAdmin}>
-                  <ShoppingBag size={24} color="#ffffff" />
+                  <Icon2 name="shopping-bag" size={24} color="#ffffff" />
                 </View>
                 <Text style={styles.statValueAdmin}>{sellerCount}</Text>
                 <Text style={styles.statLabelAdmin}>Total Sellers</Text>
                 <View style={styles.statTrend}>
-                  <ArrowUpRight size={16} color="#ffffff" />
+                  <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
                   <Text style={styles.statTrendText}>+8%</Text>
                 </View>
               </LinearGradient>
@@ -912,12 +878,12 @@ export default function SellerDashboardScreen() {
                 style={styles.singleStatCard}
               >
                 <View style={styles.statIconContainerAdmin}>
-                  <User size={24} color="#ffffff" />
+                  <Icon2 name="user" size={24} color="#ffffff" />
                 </View>
                 <Text style={styles.statValueAdmin}>{customerCount}</Text>
                 <Text style={styles.statLabelAdmin}>Total Customers</Text>
                 <View style={styles.statTrend}>
-                  <ArrowUpRight size={16} color="#ffffff" />
+                  <Icon2 name="arrow-up-right" size={16} color="#ffffff" />
                   <Text style={styles.statTrendText}>+15%</Text>
                 </View>
               </LinearGradient>
@@ -931,7 +897,7 @@ export default function SellerDashboardScreen() {
                   onPress={() => router.push("/(admin)/users")}
                 >
                   <View style={[styles.quickActionIcon, { backgroundColor: "#E3F2FD" }]}>
-                    <UsersIcon size={24} color="#1976D2" />
+                    <Icon2 name="user"sIcon size={24} color="#1976D2" />
                   </View>
                   <Text style={styles.quickActionText}>Manage Users</Text>
                 </TouchableOpacity>
@@ -941,7 +907,7 @@ export default function SellerDashboardScreen() {
                   onPress={() => router.push("/(admin)/analytics")}
                 >
                   <View style={[styles.quickActionIcon, { backgroundColor: "#FFF8E1" }]}>
-                    <BarChart2 size={24} color="#F3B62B" />
+                    <Icon2 name="bar-chart-2" size={24} color="#F3B62B" />
                   </View>
                   <Text style={styles.quickActionText}>View Analytics</Text>
                 </TouchableOpacity>
@@ -951,7 +917,7 @@ export default function SellerDashboardScreen() {
                   onPress={() => router.push("/(app)/live-rates")}
                 >
                   <View style={[styles.quickActionIcon, { backgroundColor: "#E8F5E9" }]}>
-                    <TrendingUp size={24} color="#43A047" />
+                    <Icon2 name="trending-up" size={24} color="#43A047" />
                   </View>
                   <Text style={styles.quickActionText}>Live Rates</Text>
                 </TouchableOpacity>
@@ -961,7 +927,7 @@ export default function SellerDashboardScreen() {
                   onPress={() => router.push("/(app)/share")}
                 >
                   <View style={[styles.quickActionIcon, { backgroundColor: "#FFF3E0" }]}>
-                    <Gift size={24} color="#FF9800" />
+                    <Icon2 name="gift" size={24} color="#FF9800" />
                   </View>
                   <Text style={styles.quickActionText}>Referral Program</Text>
                 </TouchableOpacity>
@@ -991,7 +957,7 @@ export default function SellerDashboardScreen() {
                       <Text style={styles.activityTitle}>{notification.title}</Text>
                       <Text style={styles.activityDescription}>{notification.message}</Text>
                       <View style={styles.activityMeta}>
-                        <Clock size={14} color="#9e9e9e" />
+                        <Icon2 name="clock" size={14} color="#9e9e9e" />
                         <Text style={styles.activityTime}>{formatTimestamp(notification.timestamp)}</Text>
                       </View>
                     </View>
@@ -1012,7 +978,7 @@ export default function SellerDashboardScreen() {
                 style={styles.logoutButton}
                 onPress={handleLogout}
               >
-                <LogOut size={20} color="#ffffff" />
+                <Icon name="logout" size={20} color="#ffffff" />
                 <Text style={styles.logoutText}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -1033,7 +999,7 @@ export default function SellerDashboardScreen() {
                     onPress={() => setShowNotifications(false)}
                     style={styles.closeButton}
                   >
-                    <X size={24} color="#333333" />
+                    <Icon2 name="x" size={24} color="#333333" />
                   </TouchableOpacity>
                 </View>
 
@@ -1044,7 +1010,7 @@ export default function SellerDashboardScreen() {
                         style={styles.markAllReadButton}
                         onPress={handleMarkAllAsRead}
                       >
-                        <Check size={16} color="#1976D2" />
+                        <Icon2 name="check" size={16} color="#1976D2" />
                         <Text style={styles.markAllReadText}>Mark all as read</Text>
                       </TouchableOpacity>
                     </View>
@@ -1063,7 +1029,7 @@ export default function SellerDashboardScreen() {
                           {item.type === 'contact_request' ? (
                             <View style={styles.contactRequestNotification}>
                               <View style={styles.contactRequestHeader}>
-                                <User size={24} color="#1976D2" style={styles.contactRequestIcon} />
+                                <Icon2 name="user" size={24} color="#1976D2" style={styles.contactRequestIcon} />
                                 <View style={styles.contactRequestTitleContainer}>
                                   <Text style={styles.contactRequestTitle}>{item.title}</Text>
                                   <Text style={styles.contactRequestTime}>{formatTimestamp(item.timestamp)}</Text>
@@ -1078,16 +1044,16 @@ export default function SellerDashboardScreen() {
                                   <View style={styles.contactDetailSection}>
                                     <Text style={styles.contactDetailSectionTitle}>Customer:</Text>
                                     <View style={styles.contactDetailRow}>
-                                      <User size={16} color="#666666" style={styles.contactDetailIcon} />
+                                      <Icon2 name="user" size={16} color="#666666" style={styles.contactDetailIcon} />
                                       <Text style={styles.contactDetailText}>{item.data.customer.name}</Text>
                                     </View>
                                     <View style={styles.contactDetailRow}>
-                                      <Mail size={16} color="#666666" style={styles.contactDetailIcon} />
+                                      <Icon2 name="mail" size={16} color="#666666" style={styles.contactDetailIcon} />
                                       <Text style={styles.contactDetailText}>{item.data.customer.email}</Text>
                                     </View>
                                     {item.data.customer.phone && (
                                       <View style={styles.contactDetailRow}>
-                                        <Phone size={16} color="#666666" style={styles.contactDetailIcon} />
+                                        <Icon2 name="phone" size={16} color="#666666" style={styles.contactDetailIcon} />
                                         <Text style={styles.contactDetailText}>{item.data.customer.phone}</Text>
                                       </View>
                                     )}
@@ -1098,22 +1064,22 @@ export default function SellerDashboardScreen() {
                                   <View style={styles.contactDetailSection}>
                                     <Text style={styles.contactDetailSectionTitle}>Dealer:</Text>
                                     <View style={styles.contactDetailRow}>
-                                      <User size={16} color="#666666" style={styles.contactDetailIcon} />
+                                      <Icon2 name="user" size={16} color="#666666" style={styles.contactDetailIcon} />
                                       <Text style={styles.contactDetailText}>{item.data.dealer.name}</Text>
                                     </View>
                                     <View style={styles.contactDetailRow}>
-                                      <Mail size={16} color="#666666" style={styles.contactDetailIcon} />
+                                      <Icon2 name="mail" size={16} color="#666666" style={styles.contactDetailIcon} />
                                       <Text style={styles.contactDetailText}>{item.data.dealer.email}</Text>
                                     </View>
                                     {item.data.dealer.phone && (
                                       <View style={styles.contactDetailRow}>
-                                        <Phone size={16} color="#666666" style={styles.contactDetailIcon} />
+                                        <Icon2 name="phone" size={16} color="#666666" style={styles.contactDetailIcon} />
                                         <Text style={styles.contactDetailText}>{item.data.dealer.phone}</Text>
                                       </View>
                                     )}
                                     {item.data.dealer.brandName && (
                                       <View style={styles.contactDetailRow}>
-                                        <Award size={16} color="#F3B62B" style={styles.contactDetailIcon} />
+                                        <Icon2 name="award" size={16} color="#F3B62B" style={styles.contactDetailIcon} />
                                         <Text style={styles.contactDetailText}>{item.data.dealer.brandName}</Text>
                                       </View>
                                     )}
@@ -1124,7 +1090,7 @@ export default function SellerDashboardScreen() {
                           ) : item.type === 'role_change' ? (
                             <View style={styles.roleChangeNotification}>
                               <View style={styles.notificationIconContainer}>
-                                <UserCheck size={20} color="#5C6BC0" />
+                                <Icon2 name="user-check" size={20} color="#5C6BC0" />
                               </View>
                               <View style={styles.notificationContent}>
                                 <Text style={styles.notificationTitle}>{item.title}</Text>
@@ -1133,22 +1099,22 @@ export default function SellerDashboardScreen() {
                                 {item.data?.user && (
                                   <View style={styles.userDetailsContainer}>
                                     <View style={styles.userDetailRow}>
-                                      <User size={14} color="#666666" style={styles.userDetailIcon} />
+                                      <Icon2 name="user" size={14} color="#666666" style={styles.userDetailIcon} />
                                       <Text style={styles.userDetailText}>{item.data.user.name}</Text>
                                     </View>
                                     <View style={styles.userDetailRow}>
-                                      <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                      <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                       <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                     </View>
                                     {item.data.user.phone && (
                                       <View style={styles.userDetailRow}>
-                                        <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                        <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                       </View>
                                     )}
                                     {item.data.user.city && (
                                       <View style={styles.userDetailRow}>
-                                        <MapPin size={14} color="#666666" style={styles.userDetailIcon} />
+                                        <Icon2 name="map-pin" size={14} color="#666666" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>
                                           {item.data.user.city}
                                           {item.data.user.state ? `, ${item.data.user.state}` : ""}
@@ -1157,7 +1123,7 @@ export default function SellerDashboardScreen() {
                                     )}
                                     {item.data.user.brandName && (
                                       <View style={styles.userDetailRow}>
-                                        <ShoppingBag size={14} color="#F3B62B" style={styles.userDetailIcon} />
+                                        <Icon2 name="shopping-bag" size={14} color="#F3B62B" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>{item.data.user.brandName}</Text>
                                       </View>
                                     )}
@@ -1173,7 +1139,7 @@ export default function SellerDashboardScreen() {
                           ) : item.type === 'payment_success' ? (
                             <View style={styles.paymentSuccessNotification}>
                               <View style={styles.notificationIconContainer}>
-                                <CheckCircle size={20} color="#43A047" />
+                                <Icon2 name="check-circle" size={20} color="#43A047" />
                               </View>
                               <View style={styles.notificationContent}>
                                 <Text style={styles.notificationTitle}>{item.title}</Text>
@@ -1182,22 +1148,22 @@ export default function SellerDashboardScreen() {
                                 {item.data?.user && (
                                   <View style={styles.userDetailsContainer}>
                                     <View style={styles.userDetailRow}>
-                                      <User size={14} color="#666666" style={styles.userDetailIcon} />
+                                      <Icon2 name="user" size={14} color="#666666" style={styles.userDetailIcon} />
                                       <Text style={styles.userDetailText}>{item.data.user.name}</Text>
                                     </View>
                                     <View style={styles.userDetailRow}>
-                                      <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                      <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                       <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                     </View>
                                     {item.data.user.phone && (
                                       <View style={styles.userDetailRow}>
-                                        <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                        <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                       </View>
                                     )}
                                     {item.data.plan && (
                                       <View style={styles.userDetailRow}>
-                                        <IndianRupee size={14} color="#F3B62B" style={styles.userDetailIcon} />
+                                        <Icon name="currency-rupee" size={14} color="#F3B62B" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>
                                           {item.data.plan.title} Plan - {item.data.plan.price}
                                         </Text>
@@ -1225,24 +1191,24 @@ export default function SellerDashboardScreen() {
                                 {item.type === 'user_signup' && item.data?.user && (
                                   <View style={styles.userDetailsContainer}>
                                     <View style={styles.userDetailRow}>
-                                      <Mail size={14} color="#666666" style={styles.userDetailIcon} />
+                                      <Icon2 name="mail" size={14} color="#666666" style={styles.userDetailIcon} />
                                       <Text style={styles.userDetailText}>{item.data.user.email}</Text>
                                     </View>
                                     {item.data.user.phone && (
                                       <View style={styles.userDetailRow}>
-                                        <Phone size={14} color="#666666" style={styles.userDetailIcon} />
+                                        <Icon2 name="phone" size={14} color="#666666" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>{item.data.user.phone}</Text>
                                       </View>
                                     )}
                                     {item.data.user.city && item.data.user.state && (
                                       <View style={styles.userDetailRow}>
-                                        <MapPin size={14} color="#666666" style={styles.userDetailIcon} />
+                                        <Icon2 name="map-pin" size={14} color="#666666" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>{item.data.user.city}, {item.data.user.state}</Text>
                                       </View>
                                     )}
                                     {item.data.user.role && (
                                       <View style={styles.userDetailRow}>
-                                        <UserCheck size={14} color="#5C6BC0" style={styles.userDetailIcon} />
+                                        <Icon2 name="user-check" size={14} color="#5C6BC0" style={styles.userDetailIcon} />
                                         <Text style={styles.userDetailText}>
                                           Role: {item.data.user.role.charAt(0).toUpperCase() + item.data.user.role.slice(1)}
                                         </Text>
@@ -1255,19 +1221,19 @@ export default function SellerDashboardScreen() {
                                 {item.type === 'referral' && item.data && (
                                   <View style={styles.referralDetailsContainer}>
                                     <View style={styles.referralDetailRow}>
-                                      <User size={14} color="#666666" style={styles.referralDetailIcon} />
+                                      <Icon2 name="user" size={14} color="#666666" style={styles.referralDetailIcon} />
                                       <Text style={styles.referralDetailText}>
                                         {item.data.user.name} ({item.data.user.email})
                                       </Text>
                                     </View>
                                     <View style={styles.referralDetailRow}>
-                                      <Gift size={14} color="#F3B62B" style={styles.referralDetailIcon} />
+                                      <Icon2 name="gift" size={14} color="#F3B62B" style={styles.referralDetailIcon} />
                                       <Text style={styles.referralDetailText}>
                                         Code: <Text style={styles.referralCode}>{item.data.referralCode}</Text>
                                       </Text>
                                     </View>
                                     <View style={styles.referralDetailRow}>
-                                      <Award size={14} color="#F3B62B" style={styles.referralDetailIcon} />
+                                      <Icon2 name="award" size={14} color="#F3B62B" style={styles.referralDetailIcon} />
                                       <Text style={styles.referralDetailText}>
                                         Premium access granted
                                       </Text>
@@ -1290,7 +1256,7 @@ export default function SellerDashboardScreen() {
                   </>
                 ) : (
                   <View style={styles.emptyNotifications}>
-                    <Bell size={48} color="#e0e0e0" />
+                    <Icon2 name="bell" size={48} color="#e0e0e0" />
                     <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
                   </View>
                 )}
@@ -1316,7 +1282,7 @@ export default function SellerDashboardScreen() {
               onPress={openDrawer}
               style={styles.menuButton}
             >
-              <Menu size={24} color="#333333" />
+              <Icon2 name="menu" size={24} color="#333333" />
             </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>Seller Dashboard</Text>
@@ -1342,7 +1308,7 @@ export default function SellerDashboardScreen() {
                   onPress={handleShareReferralCode}
                   disabled={!user?.phone}
                 >
-                  <Share2 size={18} color="#1976D2" />
+                  <Icon2 name="share-2" size={18} color="#1976D2" />
                 </TouchableOpacity>
               </View>
 
@@ -1355,9 +1321,9 @@ export default function SellerDashboardScreen() {
                       onPress={handleCopyReferralCode}
                     >
                       {codeCopied ? (
-                        <Check size={20} color="#4CAF50" />
+                        <Icon2 name="check" size={20} color="#4CAF50" />
                       ) : (
-                        <Copy size={20} color="#1976D2" />
+                        <Icon2 name="copy" size={20} color="#1976D2" />
                       )}
                     </TouchableOpacity>
                   </>
@@ -1375,7 +1341,7 @@ export default function SellerDashboardScreen() {
             <View style={styles.statsContainer}>
               <View style={styles.statCard}>
                 <View style={[styles.statIconContainer, { backgroundColor: "#E3F2FD" }]}>
-                  <Package size={24} color="#1976D2" />
+                  <Icon2 name="package" size={24} color="#1976D2" />
                 </View>
                 <Text style={styles.statValue}>{inventoryCount}</Text>
                 <Text style={styles.statLabel}>Products</Text>
@@ -1383,7 +1349,7 @@ export default function SellerDashboardScreen() {
 
               <View style={styles.statCard}>
                 <View style={[styles.statIconContainer, { backgroundColor: "#FFF8E1" }]}>
-                  <IndianRupee size={24} color="#F3B26B" />
+                  <Icon name="currency-rupee" size={24} color="#F3B26B" />
                 </View>
                 <Text style={styles.statValue}>{salesCount}</Text>
                 <Text style={styles.statLabel}>Sales</Text>
@@ -1391,7 +1357,7 @@ export default function SellerDashboardScreen() {
 
               <View style={styles.statCard}>
                 <View style={[styles.statIconContainer, { backgroundColor: "#E8F5E9" }]}>
-                  <BarChart2 size={24} color="#43A047" />
+                  <Icon2 name="bar-chart-2" size={24} color="#43A047" />
                 </View>
                 <Text style={styles.statValue}>{totalRequestsCount}</Text>
                 <Text style={styles.statLabel}>Total Requests</Text>
@@ -1424,7 +1390,7 @@ export default function SellerDashboardScreen() {
                 <View style={styles.buyRequestCard}>
                   <View style={styles.buyRequestHeader}>
                     <View style={styles.buyRequestIconContainer}>
-                      <Info size={25} color="#666666" />
+                      <Icon2 name="info" size={25} color="#666666" />
                     </View>
                     <View style={styles.buyRequestTitleContainer}>
                       <Text style={styles.buyRequestTitle}>No Pending Requests</Text>
@@ -1445,7 +1411,7 @@ export default function SellerDashboardScreen() {
                 style={styles.infoCard}
               >
                 <View style={styles.infoCardHeader}>
-                  <Bell size={24} color="#1976D2" />
+                  <Icon2 name="bell" size={24} color="#1976D2" />
                   <Text style={styles.infoCardTitle}>User Inquiries</Text>
                 </View>
                 <Text style={styles.infoCardContent}>
@@ -1471,7 +1437,7 @@ export default function SellerDashboardScreen() {
               onPress={openDrawer}
               style={styles.menuButton}
             >
-              <Menu size={24} color="#333333" />
+              <Icon2 name="menu" size={24} color="#333333" />
             </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>User Dashboard</Text>
@@ -1624,7 +1590,7 @@ export default function SellerDashboardScreen() {
                     style={styles.infoCard}
                   >
                     <View style={styles.infoCardHeader}>
-                      <Info size={24} color="#1976D2" />
+                      <Icon2 name="info" size={24} color="#1976D2" />
                       <Text style={styles.infoCardTitle}>User Dashboard</Text>
                     </View>
                     <Text style={styles.infoCardContent}>
@@ -1647,7 +1613,7 @@ export default function SellerDashboardScreen() {
                     end={{ x: 1, y: 1 }}
                     style={styles.cardGradient}
                   >
-                    <Users size={50} color="#F3B62B" />
+                    <Icon2 name="user"s size={50} color="#F3B62B" />
                     <Text style={styles.customerText}>Connect to a Seller</Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -1661,7 +1627,7 @@ export default function SellerDashboardScreen() {
                     end={{ x: 1, y: 1 }}
                     style={styles.cardGradient}
                   >
-                    <ArrowUpCircle size={50} color="#F3B62B" />
+                    <Icon2 name="arrow-up-circle" size={50} color="#F3B62B" />
                     <Text style={styles.customerText}>
                       Upgrade to Seller
                     </Text>
@@ -1678,7 +1644,7 @@ export default function SellerDashboardScreen() {
                 style={styles.infoCard}
               >
                 <View style={styles.infoCardHeader}>
-                  <Info size={24} color="#1976D2" />
+                  <Icon2 name="info" size={24} color="#1976D2" />
                   <Text style={styles.infoCardTitle}>Benfits for Seller</Text>
                 </View>
                 <Text style={styles.infoCardContent}>

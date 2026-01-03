@@ -3,24 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import {
-  Home,
-  TrendingUp,
-  Phone,
-  Calculator,
-  FileText,
-  User,
-  Share2,
-  LogOut,
-  CreditCard,
-  Map,
-  X,
-  Users as UsersIcon,
-  BarChart2,
-  Package,
-  History
-} from "@expo/vector-icons";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import { useAuthStore, ADMIN_USERNAME } from "@/store/auth-store";
@@ -69,7 +52,7 @@ export default function DrawerScreen() {
                 onPress={closeDrawer}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <X size={24} color="#333333" />
+                <Icon name="close" size={24} color="#333333" />
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Menu</Text>
             </View>
@@ -83,7 +66,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/(tabs)/dashboard")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Home size={22} color="#333333" />
+                      <Icon name="home" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Dashboard</Text>
                   </TouchableOpacity>
@@ -93,7 +76,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(admin)/users")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <UsersIcon size={22} color="#333333" />
+                      <Icon name="account-multiple" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>User Management</Text>
                   </TouchableOpacity>
@@ -103,7 +86,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(admin)/kyc-management")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <BarChart2 size={22} color="#333333" />
+                      <Icon name="chart-bar" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>KYC Management</Text>
                   </TouchableOpacity>
@@ -113,7 +96,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/live-rates")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <TrendingUp size={22} color="#333333" />
+                      <Icon name="trending-up" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Live Rates</Text>
                   </TouchableOpacity>
@@ -173,7 +156,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/profile")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <User size={22} color="#333333" />
+                      <Icon2 name="user" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>My Profile</Text>
                   </TouchableOpacity>
@@ -183,7 +166,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/share")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Share2 size={22} color="#333333" />
+                      <Icon2 name="share-2" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Share App</Text>
                   </TouchableOpacity>
@@ -196,7 +179,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/(tabs)/dashboard")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Home size={22} color="#333333" />
+                      <Icon name="home" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Dashboard</Text>
                   </TouchableOpacity>
@@ -206,7 +189,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/live-rates")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <TrendingUp size={22} color="#333333" />
+                      <Icon name="trending-up" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Live Rates</Text>
                   </TouchableOpacity>
@@ -236,7 +219,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/customers")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <UsersIcon size={22} color="#333333" />
+                      <Icon2 name="user"sIcon size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Customers</Text>
                   </TouchableOpacity> */}
@@ -256,7 +239,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/inventory")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Package size={22} color="#333333" />
+                      <Icon2 name="package" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Manage Inventory</Text>
                   </TouchableOpacity>
@@ -286,7 +269,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/kyc")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <FileText size={22} color="#333333" />
+                      <Icon2 name="file-text" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>KYC</Text>
                   </TouchableOpacity>
@@ -296,7 +279,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/profile")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <User size={22} color="#333333" />
+                      <Icon2 name="user" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>My Profile</Text>
                   </TouchableOpacity>
@@ -306,7 +289,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/history")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <History size={22} color="#333333" />
+                      <Icon name="history" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>History</Text>
                   </TouchableOpacity>
@@ -316,7 +299,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/share")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Share2 size={22} color="#333333" />
+                      <Icon2 name="share-2" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Share App</Text>
                   </TouchableOpacity>
@@ -329,7 +312,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/(tabs)/dashboard")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Home size={22} color="#333333" />
+                      <Icon name="home" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Dashboard</Text>
                   </TouchableOpacity>
@@ -339,7 +322,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/live-rates")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <TrendingUp size={22} color="#333333" />
+                      <Icon name="trending-up" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Live Rates</Text>
                   </TouchableOpacity>
@@ -349,7 +332,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/sellers")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <UsersIcon size={22} color="#333333" />
+                      <Icon2 name="user"sIcon size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Sellers</Text>
                   </TouchableOpacity> */}
@@ -379,7 +362,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/kyc")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <FileText size={22} color="#333333" />
+                      <Icon2 name="file-text" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>KYC</Text>
                   </TouchableOpacity>
@@ -389,7 +372,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/profile")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <User size={22} color="#333333" />
+                      <Icon2 name="user" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>My Profile</Text>
                   </TouchableOpacity>
@@ -399,7 +382,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/history")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <User size={22} color="#333333" />
+                      <Icon2 name="user" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>History</Text>
                   </TouchableOpacity>
@@ -409,7 +392,7 @@ export default function DrawerScreen() {
                     onPress={() => handleNavigation("/(app)/share")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <Share2 size={22} color="#333333" />
+                      <Icon2 name="share-2" size={22} color="#333333" />
                     </View>
                     <Text style={styles.menuText}>Share App</Text>
                   </TouchableOpacity>
@@ -424,7 +407,7 @@ export default function DrawerScreen() {
                 onPress={handleLogout}
               >
                 <View style={styles.menuIconContainer}>
-                  <LogOut size={22} color="#D32F2F" />
+                  <Icon name="logout" size={22} color="#D32F2F" />
                 </View>
                 <Text style={styles.logoutText}>Logout</Text>
               </TouchableOpacity>

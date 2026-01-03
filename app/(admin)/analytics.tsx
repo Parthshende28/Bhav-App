@@ -3,18 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  BarChart2,
-  TrendingUp,
-  Users as UsersIcon,
-  DollarSign,
-  Calendar,
-  ChevronDown,
-  ArrowUpRight,
-  ArrowDownRight,
-  Map,
-  Menu
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
@@ -45,7 +34,7 @@ export default function AnalyticsScreen() {
           onPress={openDrawer}
           style={{ padding: 8, marginLeft: 8 }}
         >
-          <Menu size={24} color="#333333" />
+          <Icon name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Analytics Dashboard</Text>
@@ -63,7 +52,7 @@ export default function AnalyticsScreen() {
               onPress={() => setShowTimeRangeDropdown(!showTimeRangeDropdown)}
             >
               <Text style={styles.timeRangeText}>{timeRange}</Text>
-              <ChevronDown size={16} color="#1976D2" />
+              <Icon name="chevron-down" size={16} color="#1976D2" />
             </TouchableOpacity>
 
             {showTimeRangeDropdown && (
@@ -99,12 +88,12 @@ export default function AnalyticsScreen() {
               style={styles.statCard}
             >
               <View style={styles.statIconContainer}>
-                <UsersIcon size={24} color="#ffffff" />
+                <Icon name="account-circle-outline" size={24} color="#ffffff" />
               </View>
               <Text style={styles.statValue}>1,245</Text>
               <Text style={styles.statLabel}>Total Users</Text>
               <View style={styles.statTrend}>
-                <ArrowUpRight size={16} color="#ffffff" />
+                <Icon name="arrow-up-right" size={16} color="#ffffff" />
                 <Text style={styles.statTrendText}>+12%</Text>
               </View>
             </LinearGradient>
@@ -116,12 +105,12 @@ export default function AnalyticsScreen() {
               style={styles.statCard}
             >
               <View style={styles.statIconContainer}>
-                <DollarSign size={24} color="#ffffff" />
+                <Icon name="currency-usd" size={24} color="#ffffff" />
               </View>
               <Text style={styles.statValue}>₹ 4.2M</Text>
               <Text style={styles.statLabel}>Total Revenue</Text>
               <View style={styles.statTrend}>
-                <ArrowUpRight size={16} color="#ffffff" />
+                <Icon name="arrow-up-right" size={16} color="#ffffff" />
                 <Text style={styles.statTrendText}>+8%</Text>
               </View>
             </LinearGradient>
@@ -131,12 +120,12 @@ export default function AnalyticsScreen() {
         <View style={styles.chartContainer}>
           <View style={styles.chartHeader}>
             <View style={styles.chartTitleContainer}>
-              <BarChart2 size={20} color="#1976D2" />
+              <Icon name="chart-timeline-variant" size={20} color="#1976D2" />
               <Text style={styles.chartTitle}>User Growth</Text>
             </View>
             <TouchableOpacity style={styles.chartFilterButton}>
               <Text style={styles.chartFilterText}>Filter</Text>
-              <ChevronDown size={16} color="#1976D2" />
+              <Icon name="chevron-down" size={16} color="#1976D2" />
             </TouchableOpacity>
           </View>
 
@@ -203,12 +192,12 @@ export default function AnalyticsScreen() {
         <View style={styles.chartContainer}>
           <View style={styles.chartHeader}>
             <View style={styles.chartTitleContainer}>
-              <TrendingUp size={20} color="#F3B62B" />
+              <Icon name="chart-timeline-variant" size={20} color="#F3B62B" />
               <Text style={[styles.chartTitle, { color: "#F3B62B" }]}>Revenue Trends</Text>
             </View>
             <TouchableOpacity style={styles.chartFilterButton}>
               <Text style={styles.chartFilterText}>Filter</Text>
-              <ChevronDown size={16} color="#1976D2" />
+              <Icon name="chevron-down" size={16} color="#1976D2" />
             </TouchableOpacity>
           </View>
 
@@ -275,7 +264,7 @@ export default function AnalyticsScreen() {
         <View style={styles.regionContainer}>
           <View style={styles.chartHeader}>
             <View style={styles.chartTitleContainer}>
-              <Map size={20} color="#43A047" />
+              <Icon name="map-marker-radius-outline" size={20} color="#43A047" />
               <Text style={[styles.chartTitle, { color: "#43A047" }]}>Regional Distribution</Text>
             </View>
           </View>

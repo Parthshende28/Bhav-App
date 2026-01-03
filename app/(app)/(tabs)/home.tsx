@@ -152,7 +152,7 @@ export default function NotificationsScreen() {
                 style={styles.actionButton}
                 onPress={() => Linking.openURL(`tel:${customer.phone}`)}
               >
-                <Phone size={18} color="#fff" />
+                <Icon2 name="phone" size={18} color="#fff" />
                 <Text style={styles.actionButtonText}>Call</Text>
               </TouchableOpacity>
             )}
@@ -160,7 +160,7 @@ export default function NotificationsScreen() {
               style={styles.actionButton}
               onPress={() => Linking.openURL(`mailto:${customer.email}`)}
             >
-              <Mail size={18} color="#fff" />
+              <Icon2 name="mail" size={18} color="#fff" />
               <Text style={styles.actionButtonText}>Email</Text>
             </TouchableOpacity>
           </View>
@@ -175,19 +175,19 @@ export default function NotificationsScreen() {
       return (
         <View style={styles.detailsBox}>
           <View style={styles.detailRow}>
-            <Package size={16} color="#666" style={styles.detailIcon} />
+            <Icon2 name="package" size={16} color="#666" style={styles.detailIcon} />
             <Text style={styles.detailLabel}>Product:</Text>
             <Text style={styles.detailText}>{product.productName}</Text>
           </View>
           <Text style={[styles.detailsTitle, { marginTop: 8 }]}>Seller Contact Details:</Text>
           {seller.phone && (
             <View style={styles.detailRow}>
-              <Phone size={16} color="#666" style={styles.detailIcon} />
+              <Icon2 name="phone" size={16} color="#666" style={styles.detailIcon} />
               <Text style={styles.detailText}>{seller.phone}</Text>
             </View>
           )}
           <View style={styles.detailRow}>
-            <Mail size={16} color="#666" style={styles.detailIcon} />
+            <Icon2 name="mail" size={16} color="#666" style={styles.detailIcon} />
             <Text style={styles.detailText}>{seller.email}</Text>
           </View>
           <View style={styles.actionRow}>
@@ -196,7 +196,7 @@ export default function NotificationsScreen() {
                 style={styles.actionButton}
                 onPress={() => Linking.openURL(`tel:${seller.phone}`)}
               >
-                <Phone size={18} color="#fff" />
+                <Icon2 name="phone" size={18} color="#fff" />
                 <Text style={styles.actionButtonText}>Call</Text>
               </TouchableOpacity>
             )}
@@ -204,7 +204,7 @@ export default function NotificationsScreen() {
               style={styles.actionButton}
               onPress={() => Linking.openURL(`mailto:${seller.email}`)}
             >
-              <Mail size={18} color="#fff" />
+              <Icon2 name="mail" size={18} color="#fff" />
               <Text style={styles.actionButtonText}>Email</Text>
             </TouchableOpacity>
           </View>
@@ -240,7 +240,7 @@ export default function NotificationsScreen() {
           onPress={openDrawer}
           style={styles.menuButton}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Notification</Text>
@@ -256,7 +256,7 @@ export default function NotificationsScreen() {
           }}
           style={styles.markAllReadButton}
         >
-          <Check size={22} color="#1976D2" />
+          <Icon2 name="check" size={22} color="#1976D2" />
           {/* <Text style={styles.markAllReadText}>Mark all as read</Text> */}
           {unreadNotificationsCount > 0 && (
             <View style={styles.notificationBadge}>
@@ -288,7 +288,7 @@ export default function NotificationsScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Bell size={48} color="#e0e0e0" />
+              <Icon2 name="bell" size={48} color="#e0e0e0" />
               <Text style={styles.emptyText}>No notifications yet</Text>
             </View>
           }
@@ -338,7 +338,7 @@ export default function NotificationsScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Bell size={48} color="#e0e0e0" />
+              <Icon2 name="bell" size={48} color="#e0e0e0" />
               <Text style={styles.emptyText}>No notifications yet</Text>
             </View>
           }

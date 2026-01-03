@@ -18,7 +18,7 @@ import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
 import {
   } from "@expo/vector-icons";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
 
 export default function SellerProfileScreen() {
   const { id } = useLocalSearchParams();
@@ -333,14 +333,14 @@ Email: ${seller.email}`,
 
               {seller.sellerVerified && (
                 <View style={styles.verifiedBadge}>
-                  <Check size={12} color="#ffffff" />
+                  <Icon2 name="check" size={12} color="#ffffff" />
                   <Text style={styles.verifiedText}>Verified Seller</Text>
                 </View>
               )}
 
               {seller.city && (
                 <View style={styles.locationContainer}>
-                  <MapPin size={16} color="#ffffff" style={styles.locationIcon} />
+                  <Icon2 name="map-pin" size={16} color="#ffffff" style={styles.locationIcon} />
                   <Text style={styles.locationText}>
                     {seller.city}{seller.state ? `, ${seller.state}` : ""}
                   </Text>
@@ -364,7 +364,7 @@ Email: ${seller.email}`,
               {hasReachedLimit ? (
                 <Lock size={20} color="#E53935" />
               ) : (
-                <ShoppingBag size={20} color={hasReachedLimit ? "#E53935" : "#1976D2"} />
+                <Icon2 name="shopping-bag" size={20} color={hasReachedLimit ? "#E53935" : "#1976D2"} />
               )}
             </View>
             <View style={styles.buyLimitContent}>
@@ -392,14 +392,14 @@ Email: ${seller.email}`,
         <View style={styles.contactInfoContainer}>
           {seller.phone && (
             <View style={styles.contactInfoItem}>
-              <Phone size={20} color="#1976D2" style={styles.contactInfoIcon} />
+              <Icon2 name="phone" size={20} color="#1976D2" style={styles.contactInfoIcon} />
               <Text style={styles.contactInfoText}>{seller.phone}</Text>
             </View>
           )}
 
           {seller.email && (
             <View style={styles.contactInfoItem}>
-              <Mail size={20} color="#1976D2" style={styles.contactInfoIcon} />
+              <Icon2 name="mail" size={20} color="#1976D2" style={styles.contactInfoIcon} />
               <Text style={styles.contactInfoText}>{seller.email}</Text>
             </View>
           )}
@@ -420,7 +420,7 @@ Email: ${seller.email}`,
 
             {seller.benefits.map((benefit: string, index: number) => (
               <View key={index} style={styles.benefitItem}>
-                <Award size={16} color="#D4AF37" style={styles.benefitIcon} />
+                <Icon2 name="award" size={16} color="#D4AF37" style={styles.benefitIcon} />
                 <Text style={styles.benefitText}>{benefit}</Text>
               </View>
             ))}
@@ -447,7 +447,7 @@ Email: ${seller.email}`,
                       />
                     ) : (
                       <View style={styles.productImagePlaceholder}>
-                        <Package size={32} color="#e0e0e0" />
+                        <Icon2 name="package" size={32} color="#e0e0e0" />
                       </View>
                     )}
 
@@ -456,7 +456,7 @@ Email: ${seller.email}`,
 
                       {item.isSellPremiumEnabled && (
                         <View style={styles.premiumContainer}>
-                          <DollarSign size={16} color="#666666" style={styles.premiumIcon} />
+                          <Icon name="currency-usd" size={16} color="#666666" style={styles.premiumIcon} />
                           <Text style={styles.premiumText}>
                             Sell Premium: ₹{item.sellPremium.toLocaleString()}
                           </Text>
@@ -484,7 +484,7 @@ Email: ${seller.email}`,
                           </>
                         ) : (
                           <>
-                            <ShoppingBag size={16} color="#ffffff" style={styles.buyButtonIcon} />
+                            <Icon2 name="shopping-bag" size={16} color="#ffffff" style={styles.buyButtonIcon} />
                             <Text style={styles.buyButtonText}>Buy Now</Text>
                           </>
                         )}
@@ -518,7 +518,7 @@ Email: ${seller.email}`,
               end={{ x: 1, y: 0 }}
               style={styles.premiumUpgradeGradient}
             >
-              <Award size={24} color="#ffffff" style={styles.premiumUpgradeIcon} />
+              <Icon2 name="award" size={24} color="#ffffff" style={styles.premiumUpgradeIcon} />
               <View style={styles.premiumUpgradeContent}>
                 <Text style={styles.premiumUpgradeTitle}>Upgrade to Premium</Text>
                 <Text style={styles.premiumUpgradeText}>

@@ -36,7 +36,7 @@ export const MarketUpdate: React.FC<MarketUpdateProps> = ({
         </Text>
         <View style={styles.footer}>
           <View style={styles.timeContainer}>
-            <Clock size={12} color="#999999" />
+            <Icon name="clock" size={12} color="#999999" />
             <Text style={styles.time}>{time}</Text>
           </View>
           <Text style={styles.source}>{source}</Text>

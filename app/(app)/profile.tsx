@@ -17,7 +17,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";
@@ -262,7 +262,7 @@ export default function ProfileScreen() {
         <TouchableOpacity
           onPress={openDrawer}
         >
-          <Menu size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         {/* <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>My Profile</Text>
@@ -308,7 +308,7 @@ export default function ProfileScreen() {
                   style={styles.brandCameraButton}
                   onPress={pickBrandImage}
                 >
-                  <Camera size={16} color="#ffffff" />
+                  <Icon name="camera" size={16} color="#ffffff" />
                 </TouchableOpacity>
               </View>
             )}
@@ -326,7 +326,7 @@ export default function ProfileScreen() {
                 style={styles.cameraButton}
                 onPress={pickImage}
               >
-                <Camera size={16} color="#ffffff" />
+                <Icon name="camera" size={16} color="#ffffff" />
               </TouchableOpacity>
             </View>
 
@@ -373,7 +373,7 @@ export default function ProfileScreen() {
                       {codeCopied ? (
                         <Check size={20} color="#4CAF50" />
                       ) : (
-                        <Copy size={20} color="#1976D2" />
+                        <Icon2 name="copy" size={20} color="#1976D2" />
                       )}
                     </TouchableOpacity>
                   </>
@@ -406,7 +406,7 @@ export default function ProfileScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Full Name</Text>
               <View style={styles.inputContainer}>
-                <User size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="user" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"
@@ -424,7 +424,7 @@ export default function ProfileScreen() {
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Brand Name</Text>
                   <View style={styles.inputContainer}>
-                    <Store size={20} color="#F3B62B" style={styles.inputIcon} />
+                    <Icon name="store" size={20} color="#F3B62B" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="Enter your business or brand name"
@@ -438,7 +438,7 @@ export default function ProfileScreen() {
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>About</Text>
                   <View style={styles.textAreaContainer}>
-                    <Store size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
+                    <Icon name="store" size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
                     <TextInput
                       style={styles.textArea}
                       placeholder="Enter a brief description about your business"
@@ -457,7 +457,7 @@ export default function ProfileScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Email Address</Text>
               <View style={styles.inputContainer}>
-                <Mail size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your email"
@@ -471,9 +471,9 @@ export default function ProfileScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Phone Number</Text>
+              <Text style={styles.inputLabel}>Icon2 name="phone" Number</Text>
               <View style={styles.inputContainer}>
-                <Phone size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="phone" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your phone number"
@@ -488,7 +488,7 @@ export default function ProfileScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Address</Text>
               <View style={styles.textAreaContainer}>
-                <MapPin size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
+                <Icon2 name="map-pin" size={20} color="#F3B62B" style={[styles.inputIcon, { marginTop: 6 }]} />
                 <TextInput
                   style={styles.textArea}
                   placeholder="Enter your address"
@@ -509,7 +509,7 @@ export default function ProfileScreen() {
                 <Text style={styles.inputLabel}>WhatsApp</Text>
                 <View style={styles.socialInputContainer}>
                   <View style={styles.socialIconContainer}>
-                    <Phone size={20} color="#25D366" />
+                    <Icon2 name="phone" size={20} color="#25D366" />
                   </View>
                   <TextInput
                     style={styles.socialInput}
@@ -525,7 +525,7 @@ export default function ProfileScreen() {
                 <Text style={styles.inputLabel}>Instagram</Text>
                 <View style={styles.socialInputContainer}>
                   <View style={styles.socialIconContainer}>
-                    <Camera size={20} color="#E4405F" />
+                    <Icon name="camera" size={20} color="#E4405F" />
                   </View>
                   <TextInput
                     style={styles.socialInput}
@@ -540,7 +540,7 @@ export default function ProfileScreen() {
                 <Text style={styles.inputLabel}>Location</Text>
                 <View style={styles.socialInputContainer}>
                   <View style={styles.socialIconContainer}>
-                    <MapPin size={20} color="#1F7D53" />
+                    <Icon2 name="map-pin" size={20} color="#1F7D53" />
                   </View>
                   <TextInput
                     style={styles.socialInput}
@@ -575,7 +575,7 @@ export default function ProfileScreen() {
                               style={styles.addImageButton}
                               onPress={pickCatalogueImage}
                             >
-                              <Plus size={32} color="#F3B62B" />
+                              <Icon name="plus" size={32} color="#F3B62B" />
                               <Text style={styles.addImageText}>Add Image</Text>
                             </TouchableOpacity>
                           );
@@ -591,7 +591,7 @@ export default function ProfileScreen() {
                                 style={styles.removeImageButton}
                                 onPress={() => removeCatalogueImage(index)}
                               >
-                                <X size={16} color="#ffffff" />
+                                <Icon2 name="x" size={16} color="#ffffff" />
                               </TouchableOpacity>
                             </View>
                           );
@@ -626,7 +626,7 @@ export default function ProfileScreen() {
                 ) : (
                   <>
                     <Text style={styles.buttonText}>Save Changes</Text>
-                    <Save size={18} color="#ffffff" />
+                    <Icon2 name="save" size={18} color="#ffffff" />
                   </>
                 )}
               </LinearGradient>
@@ -634,7 +634,7 @@ export default function ProfileScreen() {
 
             {isSaved && (
               <View style={styles.savedMessage}>
-                <CheckCircle size={18} color="#4CAF50" style={styles.savedIcon} />
+                <Icon2 name="check-circle" size={18} color="#4CAF50" style={styles.savedIcon} />
                 <Text style={styles.savedMessageText}>Profile updated successfully!</Text>
               </View>
             )}

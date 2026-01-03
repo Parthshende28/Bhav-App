@@ -299,7 +299,7 @@ export default function ModalScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{item.productName}</Text>
               <TouchableOpacity onPress={() => router.back()}>
-                <X size={24} color="#333" />
+                <Icon2 name="x" size={24} color="#333" />
               </TouchableOpacity>
             </View>
             <View style={styles.productDetails}>
@@ -375,10 +375,10 @@ export default function ModalScreen() {
                   style={styles.phoneButton}
                   onPress={handleCallSeller}
                 >
-                  <Phone color="#333" size={22} />
+                  <Icon2 name="phone" color="#333" size={22} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.phoneButton} onPress={() => router.back()}>
-                  <X size={24} color="#333" />
+                  <Icon2 name="x" size={24} color="#333" />
                 </TouchableOpacity>
               </View>
             </View>

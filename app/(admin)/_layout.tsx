@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { useAuthStore, ADMIN_USERNAME } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Menu } from "@expo/vector-icons";
+
 
 export default function AdminLayout() {
   const { user } = useAuthStore();

@@ -50,11 +50,11 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   // Get the appropriate icon based on the type
   const getIcon = () => {
     if (type === "gold") {
-      return <IndianRupee size={16} color="#F3B62B" />;
+      return <Icon name="currency-inr" size={16} color="#F3B62B" />;
     } else if (type === "silver") {
-      return <IndianRupee size={16} color="#A9A9A9" />;
+      return <Icon name="currency-inr" size={16} color="#A9A9A9" />;
     }
-    return <IndianRupee size={16} color="#F3B62B" />;
+    return <Icon name="currency-inr" size={16} color="#F3B62B" />;
   };
 
   // Get the appropriate image based on the type
@@ -95,7 +95,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
                 <Text style={styles.title}>{name}</Text>
                 {isPremium && (
                   <View style={styles.premiumBadge}>
-                    <Award size={12} color="#F3B62B" />
+                    <Icon name="trophy" size={12} color="#F3B62B" />
                     <Text style={styles.premiumBadgeText}>Premium</Text>
                   </View>
                 )}
@@ -106,7 +106,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
               style={styles.removeButton}
               onPress={() => onRemove(id)}
             >
-              <Trash2 size={16} color="#E53935" />
+              <Icon name="trash-can" size={16} color="#E53935" />
             </TouchableOpacity>
           </View>
 
@@ -142,12 +142,12 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           >
             {isEditing ? (
               <>
-                <Save size={16} color="#4CAF50" />
+                <Icon name="content-save" size={16} color="#4CAF50" />
                 <Text style={[styles.actionButtonText, { color: "#4CAF50" }]}>Save</Text>
               </>
             ) : (
               <>
-                <Edit size={16} color="#2196F3" />
+                <Icon name="pencil" size={16} color="#2196F3" />
                 <Text style={styles.actionButtonText}>Edit Premium</Text>
               </>
             )}
@@ -170,7 +170,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       >
         {isPremium && (
           <View style={styles.premiumTag}>
-            <Award size={12} color="#FFFFFF" />
+            <Icon name="trophy" size={12} color="#FFFFFF" />
             <Text style={styles.premiumTagText}>Premium</Text>
           </View>
         )}
