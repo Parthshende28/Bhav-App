@@ -16,7 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
 import { router } from "expo-router";

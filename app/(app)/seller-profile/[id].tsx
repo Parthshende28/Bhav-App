@@ -362,7 +362,7 @@ Email: ${seller.email}`,
           <View style={[styles.buyLimitBanner, hasReachedLimit && styles.buyLimitBannerReached]}>
             <View style={styles.buyLimitIconContainer}>
               {hasReachedLimit ? (
-                <Lock size={20} color="#E53935" />
+                <Icon2 name="lock" size={20} color="#E53935" />
               ) : (
                 <Icon2 name="shopping-bag" size={20} color={hasReachedLimit ? "#E53935" : "#1976D2"} />
               )}
@@ -479,7 +479,7 @@ Email: ${seller.email}`,
                       <>
                         {isBuyDisabled ? (
                           <>
-                            <Lock size={16} color="#ffffff" style={styles.buyButtonIcon} />
+                            <Icon2 name="lock" size={16} color="#ffffff" style={styles.buyButtonIcon} />
                             <Text style={styles.buyButtonText}>Upgrade to Buy</Text>
                           </>
                         ) : (

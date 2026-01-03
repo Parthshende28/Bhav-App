@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Linking, Platform, 
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { useAuthStore } from "@/store/auth-store";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 
 export default function NotificationsScreen() {
