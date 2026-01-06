@@ -22,7 +22,9 @@ import { useRouter } from "expo-router";
 import * as Clipboard from 'expo-clipboard';
 
 export default function ShareScreen() {
-  const baseAppLink = "https://bhavapp.com/app";
+  const baseAppLink = Platform.OS === 'ios' 
+    ? "https://apps.apple.com/app/bhav-app/id1234567890"  // Replace with actual App Store link
+    : "https://play.google.com/store/apps/details?id=com.bhavapp";  // Replace with actual Play Store link
   const { user, logout, generateReferralCode, } = useAuthStore();
   const router = useRouter();
   const [referralCode, setReferralCode] = useState<string | null>();
@@ -118,178 +120,184 @@ export default function ShareScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar style="dark" />
+    <LinearGradient
+      colors={["#ffffff", "#f9f9f9"]}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <StatusBar style="dark" />
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={openDrawer}
-        >
-          <Icon2 name="menu" size={24} color="#333333" />
-        </TouchableOpacity>
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>Share App</Text>
-        </View>
-      </View>
-
-      <ScrollView>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Share App</Text>
-          <Text style={styles.headerSubtitle}>
-            Share Bhav App with friends and family
-          </Text>
+          <TouchableOpacity
+            onPress={openDrawer}
+          >
+            <Icon2 name="menu" size={24} color="#333333" />
+          </TouchableOpacity>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>Share App</Text>
+          </View>
         </View>
 
-        <View style={styles.container}>
-          {/* Admin Referral Section */}
-          {/* {user?.role === 'admin' && (
-            <View style={styles.referralContainer}>
-              <LinearGradient
-                colors={["#E3F2FD", "#BBDEFB"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.referralGradient}
-              >
-                <View style={styles.referralHeader}>
-                  <Icon name="shield-half-full" size={20} color="#1976D2" />
-                  <Text style={styles.referralTitle}>Admin Referral Program</Text>
-                </View>
+        <ScrollView>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Share App</Text>
+            <Text style={styles.headerSubtitle}>
+              Share Bhav App with friends and family
+            </Text>
+          </View>
 
-                <Text style={styles.referralDescription}>
-                  Generate a unique referral code to share with new users. Users who sign up with your code will get premium access to exclusive content.
-                </Text>
-
-                {referralCode ? (
-                  <View style={styles.codeContainer}>
-                    <Text style={styles.codeLabel}>Your active referral code:</Text>
-                    <View style={styles.codeBox}>
-                      <Text style={styles.codeText}>{referralCode}</Text>
-                    </View>
-                    <Text style={styles.codeHint}>This code will be included when you share the app</Text>
-                  </View>
-                ) : (
-                  <Text style={styles.noCodeText}>No active referral code. Generate one now!</Text>
-                )}
-
-                <TouchableOpacity
-                  style={styles.generateButton}
-                  onPress={handleGenerateReferralCode}
-                  disabled={isGenerating}
+          <View style={styles.container}>
+            {/* Admin Referral Section */}
+            {/* {user?.role === 'admin' && (
+              <View style={styles.referralContainer}>
+                <LinearGradient
+                  colors={["#E3F2FD", "#BBDEFB"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.referralGradient}
                 >
-                  {isGenerating ? (
-                    <ActivityIndicator size="small" color="#ffffff" />
+                  <View style={styles.referralHeader}>
+                    <Icon name="shield-half-full" size={20} color="#1976D2" />
+                    <Text style={styles.referralTitle}>Admin Referral Program</Text>
+                  </View>
+
+                  <Text style={styles.referralDescription}>
+                    Generate a unique referral code to share with new users. Users who sign up with your code will get premium access to exclusive content.
+                  </Text>
+
+                  {referralCode ? (
+                    <View style={styles.codeContainer}>
+                      <Text style={styles.codeLabel}>Your active referral code:</Text>
+                      <View style={styles.codeBox}>
+                        <Text style={styles.codeText}>{referralCode}</Text>
+                      </View>
+                      <Text style={styles.codeHint}>This code will be included when you share the app</Text>
+                    </View>
                   ) : (
-                    <>
-                      <Icon2 name="refresh-cw" size={16} color="#ffffff" />
-                      <Text style={styles.generateButtonText}>
-                        {referralCode ? "Generate New Code" : "Generate Code"}
-                      </Text>
-                    </>
+                    <Text style={styles.noCodeText}>No active referral code. Generate one now!</Text>
                   )}
-                </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.generateButton}
+                    onPress={handleGenerateReferralCode}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <ActivityIndicator size="small" color="#ffffff" />
+                    ) : (
+                      <>
+                        <Icon2 name="refresh-cw" size={16} color="#ffffff" />
+                        <Text style={styles.generateButtonText}>
+                          {referralCode ? "Generate New Code" : "Generate Code"}
+                        </Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
+                </LinearGradient>
+              </View>
+            )} */}
+
+            {/* <LinearGradient
+              colors={["#FFF8E1", "#FFF3CD"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.qrContainer}
+            >
+              <View style={styles.qrWrapper}>
+                <Image
+                  source={images.qrCode}
+                  style={styles.qrCode}
+                  contentFit="contain"
+                />
+              </View>
+              <Text style={styles.scanText}>Scan to download the app</Text>
+            </LinearGradient> */}
+
+            <Text style={styles.linkTitle}>App Link:</Text>
+            <View style={styles.linkContainer}>
+              <Text style={styles.linkText}>{appLink}</Text>
+              <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
+                {copied ? (
+                  <Icon2 name="check" size={20} color="#4CAF50" />
+                ) : (
+                  <Icon2 name="copy" size={20} color="#F3B62B" />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleShare}
+            >
+              <LinearGradient
+                colors={["#F3B62B", "#F5D76E"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Share App</Text>
+                <Icon2 name="share-2" size={18} color="#ffffff" />
               </LinearGradient>
-            </View>
-          )} */}
-
-          <LinearGradient
-            colors={["#FFF8E1", "#FFF3CD"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.qrContainer}
-          >
-            <View style={styles.qrWrapper}>
-              <Image
-                source={images.qrCode}
-                style={styles.qrCode}
-                contentFit="contain"
-              />
-            </View>
-            <Text style={styles.scanText}>Scan to download the app</Text>
-          </LinearGradient>
-
-          <View style={styles.linkContainer}>
-            <Text style={styles.linkText}>{appLink}</Text>
-            <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
-              {copied ? (
-                <Icon2 name="award" size={20} color="#4CAF50" />
-              ) : (
-                <Icon2 name="copy" size={20} color="#F3B62B" />
-              )}
             </TouchableOpacity>
-          </View>
 
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={handleShare}
-          >
-            <LinearGradient
-              colors={["#F3B62B", "#F5D76E"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.button}
+            <TouchableOpacity
+              style={styles.logoutButtonContainer}
+              onPress={handleLogout}
             >
-              <Text style={styles.buttonText}>Share App</Text>
-              <Icon2 name="share-2" size={18} color="#ffffff" />
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={["#F44336", "#D32F2F"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.logoutButton}
+              >
+                <Text style={styles.logoutButtonText}>Logout</Text>
+                <Icon name="logout" size={18} color="#ffffff" />
+              </LinearGradient>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.logoutButtonContainer}
-            onPress={handleLogout}
-          >
-            <LinearGradient
-              colors={["#F44336", "#D32F2F"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.logoutButton}
-            >
-              <Text style={styles.logoutButtonText}>Logout</Text>
-              <Icon name="logout" size={18} color="#ffffff" />
-            </LinearGradient>
-          </TouchableOpacity>
+            <View style={styles.benefitsContainer}>
+              <Text style={styles.benefitsTitle}>Why Share Bhav App?</Text>
 
-          <View style={styles.benefitsContainer}>
-            <Text style={styles.benefitsTitle}>Why Share Bhav App?</Text>
+              <View style={styles.benefitCard}>
+                <View style={styles.benefitIconContainer}>
+                  <TrendingUpIcon />
+                </View>
+                <View style={styles.benefitContent}>
+                  <Text style={styles.benefitTitle}>Real-time Rates</Text>
+                  <Text style={styles.benefitText}>
+                    Get live gold and silver rates from COMEX, Spot, and INR markets
+                  </Text>
+                </View>
+              </View>
 
-            <View style={styles.benefitCard}>
-              <View style={styles.benefitIconContainer}>
-                <TrendingUpIcon />
+              <View style={styles.benefitCard}>
+                <View style={styles.benefitIconContainer}>
+                  <CalculatorIcon />
+                </View>
+                <View style={styles.benefitContent}>
+                  <Text style={styles.benefitTitle}>TDS Calculator</Text>
+                  <Text style={styles.benefitText}>
+                    Easily calculate TDS on bullion transactions
+                  </Text>
+                </View>
               </View>
-              <View style={styles.benefitContent}>
-                <Text style={styles.benefitTitle}>Real-time Rates</Text>
-                <Text style={styles.benefitText}>
-                  Get live gold and silver rates from COMEX, Spot, and INR markets
-                </Text>
-              </View>
-            </View>
 
-            <View style={styles.benefitCard}>
-              <View style={styles.benefitIconContainer}>
-                <CalculatorIcon />
-              </View>
-              <View style={styles.benefitContent}>
-                <Text style={styles.benefitTitle}>TDS Calculator</Text>
-                <Text style={styles.benefitText}>
-                  Easily calculate TDS on bullion transactions
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.benefitCard}>
-              <View style={styles.benefitIconContainer}>
-                <UpdatesIcon />
-              </View>
-              <View style={styles.benefitContent}>
-                <Text style={styles.benefitTitle}>Market Updates</Text>
-                <Text style={styles.benefitText}>
-                  Stay informed with the latest bullion market news and trends
-                </Text>
+              <View style={styles.benefitCard}>
+                <View style={styles.benefitIconContainer}>
+                  <UpdatesIcon />
+                </View>
+                <View style={styles.benefitContent}>
+                  <Text style={styles.benefitTitle}>Market Updates</Text>
+                  <Text style={styles.benefitText}>
+                    Stay informed with the latest bullion market news and trends
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -300,7 +308,7 @@ const TrendingUpIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <Icon name="qrcode" size={24} color="#ffffff" />
+      <Icon name="trending-up" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );
@@ -311,7 +319,7 @@ const CalculatorIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <Icon name="qrcode" size={24} color="#ffffff" />
+      <Icon name="calculator" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );
@@ -322,7 +330,7 @@ const UpdatesIcon = () => (
       colors={["#F3B62B", "#F5D76E"]}
       style={styles.iconGradient}
     >
-      <Icon name="qrcode" size={24} color="#ffffff" />
+      <Icon name="newspaper" size={24} color="#ffffff" />
     </LinearGradient>
   </View>
 );
@@ -330,7 +338,6 @@ const UpdatesIcon = () => (
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
   header: {
     paddingHorizontal: 20,
@@ -463,6 +470,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 24,
+  },
+  linkTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333333",
+    marginBottom: 8,
   },
   linkText: {
     flex: 1,
