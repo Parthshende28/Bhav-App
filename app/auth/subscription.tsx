@@ -78,7 +78,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Unlimited messages",
     ],
     color: ["#F3B62B", "#F5D76E"] as const, // Fixed: Use 'as const' to make it a readonly tuple
-    iconName: "gem",
+    iconName: "diamond-stone",
   },
 ];
 

@@ -23,6 +23,7 @@ import * as Font from "expo-font";
 import { useMetalPrices } from "@/hooks/useMetalPrices";
 import { useAuthStore, InventoryItem, User } from "@/store/auth-store";
 import { images } from "@/constants/images";
+import MetalRateCard from "@/components/MetalRateCard";
 import { router, useFocusEffect } from "expo-router";
 import colors from "@/constants/colors";
 // import { NotificationBell } from "@/components/NotificationBell";
@@ -259,6 +260,15 @@ export default function RatesScreen() {
   const isAdmin = user?.role === "admin";
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Modal for detailed rates when a card is tapped
+  const [metalModal, setMetalModal] = useState<null | { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }>(null);
+
+  const openMetalDetail = (payload: { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }) => {
+    setMetalModal(payload);
+  };
+
+  const closeMetalModal = () => setMetalModal(null);
 
   const [isBuyLoading, setIsBuyLoading] = useState(false);
 
@@ -586,155 +596,104 @@ export default function RatesScreen() {
         {/* Top row */}
         <>
           <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 5 }}>
-            {/* silver dollar */}
-            <View style={[styles.card, { marginHorizontal: 5 }]}>
-              <LinearGradient
-                colors={["#FFF8E1", "#FFF3CD"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.cardGradient}
-              >
-                <View>
-                  <Text style={styles.cardTitle}>Silver $</Text>
-                </View>
-
-                <Text style={styles.priceText}>
-                  {prices.spotSilver?.comex || "Loading"}
-                </Text>
-
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailValue}>
-                      {prices.spotSilver?.low || "Loading"}  |  {prices.spotSilver?.high || "Loading"}
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="Silver $"
+                subtitle="COMEX"
+                value={prices.spotSilver?.comex || "Loading"}
+                low={prices.spotSilver?.low}
+                high={prices.spotSilver?.high}
+                metal="Silver"
+                compact
+                unit="$"
+                onPress={() => openMetalDetail({ title: 'Silver $', left: String(prices.spotSilver?.comex || 'Loading'), low: prices.spotSilver?.low, high: prices.spotSilver?.high, metal: 'Silver' })}
+              />
             </View>
 
-            {/* USD/INR */}
-            <View style={[styles.card, { marginHorizontal: 5 }]}>
-              <LinearGradient
-                colors={["#FFF8E1", "#FFF3CD"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.cardGradient}
-              >
-                <View>
-                  <Text style={styles.cardTitle}>USD/INR</Text>
-                </View>
-
-                <Text style={styles.priceText}>
-                  {prices.usdinr?.comex || "Loading"}
-                </Text>
-
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailValue}>
-                      {prices.usdinr?.low || "Loading"}  |  {prices.usdinr?.high || "Loading"}
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="USD/INR"
+                subtitle="USD to INR"
+                value={prices.usdinr?.comex || "Loading"}
+                metal="Neutral"
+                compact
+                unit="INR"
+                onPress={() => openMetalDetail({ title: 'USD/INR', left: String(prices.usdinr?.comex || 'Loading'), metal: 'Neutral' })}
+              />
             </View>
 
-            {/* gold dollar */}
-            <View style={[styles.card, { marginHorizontal: 5 }]}>
-              <LinearGradient
-                colors={["#FFF8E1", "#FFF3CD"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.cardGradient}
-              >
-                <View>
-                  <Text style={styles.cardTitle}>Gold $</Text>
-                </View>
-
-                <Text style={styles.priceText}>
-                  {prices.spotGold?.spot || "Loading"}
-                </Text>
-
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailValue}>
-                      {prices.spotGold?.low || "Loading"}  |  {prices.spotGold?.high || "Loading"}
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
-            </View>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="Gold $"
+                subtitle="Spot"
+                value={prices.spotGold?.spot || "Loading"}
+                low={prices.spotGold?.low}
+                high={prices.spotGold?.high}
+                metal="Gold"
+                compact
+                unit="$"
+                onPress={() => openMetalDetail({ title: 'Gold $', left: String(prices.spotGold?.spot || 'Loading'), low: prices.spotGold?.low, high: prices.spotGold?.high, metal: 'Gold' })}
+              />
+            </View> 
           </View>
         </>
 
 
         {/* Bottom row */}
         <>
-          <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 5, }}>
-            {/* gold MCX */}
-            <View style={[styles.card, { marginHorizontal: 5, width: "50%" }]}>
-              <LinearGradient
-                colors={["#FFF8E1", "#FFF3CD"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.cardGradient}
-              >
-                <View>
-                  <Text style={styles.cardTitle}>Gold MCX</Text>
-                </View>
-
-                <View style={{ flexDirection: "row", justifyContent: "space-evenly", width: "100%" }}>
-                  <Text style={[styles.priceText, { color: goldBuyColor }]}>
-                    {goldBuy}
-                  </Text>
-                  <Text style={[styles.priceText, { color: goldSellColor }]}>
-                    {goldSell}
-                  </Text>
-                </View>
-
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailValue}>
-                      {prices.gold?.low || "Loading"}  |  {prices.gold?.high || "Loading"}
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
+          <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 5 }}>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="Gold MCX"
+                split
+                leftValue={`${goldBuy}`}
+                rightValue={`${goldSell}`}
+                leftColor={goldBuyColor}
+                rightColor={goldSellColor}
+                low={prices.gold?.low}
+                high={prices.gold?.high}
+                metal="Gold"
+                unit="₹"
+                onPress={() => openMetalDetail({ title: 'Gold MCX', left: String(goldBuy), right: String(goldSell), low: prices.gold?.low, high: prices.gold?.high, metal: 'Gold' })}
+              />
             </View>
 
-            {/* Silver MCX */}
-            <View style={[styles.card, { marginHorizontal: 2, width: "50%" }]}>
-              <LinearGradient
-                colors={["#FFF8E1", "#FFF3CD"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.cardGradient}
-              >
-                <View>
-                  <Text style={styles.cardTitle}>Silver MCX</Text>
-                </View>
-
-                <View style={{ flexDirection: "row", justifyContent: "space-evenly", width: "100%" }}>
-                  <Text style={[styles.priceText, { color: silverBuyColor }]}>
-                    {silverBuy}
-                  </Text>
-                  <Text style={[styles.priceText, { color: silverSellColor }]}>
-                    {silverSell}
-                  </Text>
-                </View>
-
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailValue}>
-                      {prices.silver?.low || "Loading"}  |  {prices.silver?.high || "Loading"}
-                    </Text>
-                  </View>
-                </View>
-              </LinearGradient>
-            </View>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="Silver MCX"
+                split
+                leftValue={`${silverBuy}`}
+                rightValue={`${silverSell}`}
+                leftColor={silverBuyColor}
+                rightColor={silverSellColor}
+                low={prices.silver?.low}
+                high={prices.silver?.high}
+                metal="Silver"
+                unit="₹"
+                onPress={() => openMetalDetail({ title: 'Silver MCX', left: String(silverBuy), right: String(silverSell), low: prices.silver?.low, high: prices.silver?.high, metal: 'Silver' })}
+              />
+            </View> 
           </View>
         </>
 
         <View style={styles.horizontalRow} />
+
+        {/* Detail modal for cards */}
+        <Modal visible={!!metalModal} animationType="slide" transparent onRequestClose={closeMetalModal}>
+          <View style={styles.rateModalOverlay}>
+            <View style={styles.rateModalContent}>
+              <Text style={styles.rateModalTitle}>{metalModal?.title}</Text>
+              <Text style={styles.rateModalValue}>{metalModal?.left ?? '-'}{metalModal?.right ? `  |  ${metalModal?.right}` : ''}</Text>
+              <Text style={styles.rateModalDetail}>Low: {metalModal?.low ?? '-'}  |  High: {metalModal?.high ?? '-'}</Text>
+
+              <View style={styles.rateModalActions}>
+                <TouchableOpacity onPress={closeMetalModal} style={styles.rateModalClose}>
+                  <Text style={{ color: '#fff', fontWeight: '700' }}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
 
         {/* For Sellers - Show their own inventory */}
@@ -1043,6 +1002,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
   },
+
+
   card: {
     borderRadius: 16,
     marginBottom: 5,
@@ -1499,6 +1460,53 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333333",
     marginBottom: 16,
+  },
+
+  rateModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  rateModalContent: {
+    width: "100%",
+    maxWidth: 520,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 20,
+  },
+  rateModalTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#222",
+  },
+  rateModalValue: {
+    fontSize: 22,
+    fontWeight: "900",
+    marginTop: 10,
+    color: "#111",
+  },
+  rateModalDetail: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 8,
+  },
+  rateModalActions: {
+    marginTop: 18,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  rateModalClose: {
+    backgroundColor: "#F3B62B",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
   },
   sellerItem: {
     paddingVertical: 12,
