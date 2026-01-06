@@ -745,7 +745,7 @@ export default function RatesScreen() {
             <View style={styles.alertsHeader}>
               <Text style={styles.sectionTitle}>Manage Inventory</Text>
               <TouchableOpacity onPress={editInventory}>
-                <PenBoxIcon size={24} color="#333333" />
+                <Icon2 name="edit" size={24} color="#333333" />
               </TouchableOpacity>
             </View>
 
@@ -977,7 +977,7 @@ export default function RatesScreen() {
                     <ActivityIndicator size="small" color="#ffffff" />
                   ) : (
                     <>
-                      <Send size={16} color="#ffffff" />
+                      <Icon2 name="send" size={16} color="#ffffff" />
                       <Text style={styles.submitButtonText}>Send Request</Text>
                     </>
                   )}

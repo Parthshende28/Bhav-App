@@ -231,7 +231,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       case 'transaction':
         return <Icon name="currency-usd" size={20} color="#F3B62D" />;
       case 'system':
-        return <Icon name="settings" size={20} color="#43A047" />;
+        return <Icon2 name="settings" size={20} color="#43A047" />;
       case 'alert':
         return <Icon name="alert-circle" size={20} color="#E53935" />;
       case 'email_verification':

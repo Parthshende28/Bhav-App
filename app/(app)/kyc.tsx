@@ -425,7 +425,7 @@ export default function KycScreen() {
                     style={styles.uploadButton}
                     onPress={() => pickImage(setPanImage, 'pan')}
                   >
-                    <Upload size={24} color="#F3B62B" />
+                    <Icon2 name="upload" size={24} color="#F3B62B" />
                     <Text style={styles.uploadText}>Upload PAN Card</Text>
                   </TouchableOpacity>
                 )}
@@ -452,7 +452,7 @@ export default function KycScreen() {
                     style={styles.uploadButton}
                     onPress={() => pickImage(setAadharImage, 'aadhar')}
                   >
-                    <Upload size={24} color="#F3B62B" />
+                    <Icon2 name="upload" size={24} color="#F3B62B" />
                     <Text style={styles.uploadText}>Upload Aadhar Card</Text>
                   </TouchableOpacity>
                 )}

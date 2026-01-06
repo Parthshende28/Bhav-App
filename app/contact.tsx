@@ -304,7 +304,7 @@ export default function ContactScreen() {
                   ) : (
                     <>
                       <Text style={styles.buttonText}>Send Message</Text>
-                      <Send size={18} color="#ffffff" />
+                      <Icon name="send" size={18} color="#ffffff" />
                     </>
                   )}
                 </LinearGradient>
