@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from './api';
 import { userAPI, requestAPI, notificationAPI } from '@/services/api';
+import systemIP from '../services/ip.js';
 
 // Reserved admin username - this is the username that only admin can use
 export const ADMIN_USERNAME = "vipin_bullion";
@@ -385,7 +386,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         try {
           // console.log("Login attempt for:", email);
-          const response = await fetch('http://localhost:5001/api/auth/login', {
+          const response = await fetch(`http://${systemIP}:5001/api/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -489,7 +490,7 @@ export const useAuthStore = create<AuthState>()(
       // signup from backend database
       signup: async (userData, password) => {
         try {
-          const response = await fetch('http://localhost:5001/api/auth/signup', {
+          const response = await fetch(`http://${systemIP}:5001/api/auth/signup`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
