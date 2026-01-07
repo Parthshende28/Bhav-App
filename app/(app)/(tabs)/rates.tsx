@@ -719,11 +719,16 @@ export default function RatesScreen() {
                   .filter(item => (item.sellerId === user?.id || item.sellerId === user?._id) && item.isVisible)
                   .map((item, index) => (
                     <TouchableOpacity onPress={() => openModal(String(item._id ?? item.id))} key={String(item._id ?? item.id ?? index)}>
-                      <View key={String(item._id ?? item.id ?? index)} style={styles.inventoryCard}>
+                      <View key={String(item._id ?? item.id ?? index)} style={[styles.inventoryCard, item.productType === "Gold" ? styles.goldInventoryCard : item.productType === "Silver" ? styles.silverInventoryCard : null]}>
                         <View style={styles.inventoryCardHeader}>
-                          <Text style={styles.inventoryProductName}>
-                            {item.productName}
-                          </Text>
+                          <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={styles.inventoryProductName}>
+                              {item.productName}
+                            </Text>
+                            <View style={[styles.productBadge, item.productType === "Gold" ? styles.productBadgeGold : styles.productBadgeSilver]}>
+                              <Text style={styles.productBadgeText}>{item.productType}</Text>
+                            </View>
+                          </View>
                           <View style={styles.ratesContainer}>
                             {/* Only show buy price if buyPremium > 0 */}
                             {item.buyPremium !== 0 && (
@@ -806,9 +811,14 @@ export default function RatesScreen() {
                 ) : inventoryItems.length > 0 ? (
                   inventoryItems.map((item, index) => (
                     <TouchableOpacity onPress={() => openModal(String(item._id ?? item.id))} key={String(item._id ?? item.id ?? index)}>
-                      <View style={styles.inventoryCard}>
+                      <View style={[styles.inventoryCard, item.productType === "Gold" ? styles.goldInventoryCard : item.productType === "Silver" ? styles.silverInventoryCard : null]}>
                         <View style={styles.inventoryCardHeader}>
-                          <Text style={styles.inventoryProductName}>{item.productName}</Text>
+                          <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={styles.inventoryProductName}>{item.productName}</Text>
+                            <View style={[styles.productBadge, item.productType === "Gold" ? styles.productBadgeGold : styles.productBadgeSilver]}>
+                              <Text style={styles.productBadgeText}>{item.productType}</Text>
+                            </View>
+                          </View>
                           <View style={styles.ratesContainer}>
                             {item.buyPremium !== 0 && (
                               <View style={styles.buysell}>
@@ -1435,6 +1445,32 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
 
+  // Gold / Silver themed inventory cards
+  goldInventoryCard: {
+    backgroundColor: "#FFF8E1",
+    borderColor: "#F3B62B",
+  },
+  silverInventoryCard: {
+    backgroundColor: "#ECEFF1",
+    borderColor: "#90A4AE",
+  },
+  productBadge: {
+    marginLeft: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  productBadgeGold: {
+    backgroundColor: "#F3B62B",
+  },
+  productBadgeSilver: {
+    backgroundColor: "#90A4AE",
+  },
+  productBadgeText: {
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 12,
+  },
 
   modalOverlay: {
     position: "absolute",
