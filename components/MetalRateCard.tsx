@@ -75,7 +75,7 @@ export const MetalRateCard: React.FC<MetalRateCardProps> = ({
     ? (["#F5F7FA", "#EEF1F5"] as const)
     : (["#FFFFFF", "#FAFAFA"] as const);
 
-  const accent = isGold ? "#F3B62B" : isSilver ? "#BDBDBD" : "#117808ff";
+  const accent = isGold ? "#F3B62B" : isSilver ? "#BDBDBD" : "#194215ff";
 
   const imageSource = isGold ? images.goldCoins : isSilver ? images.silverBar : images.bhavLogo;
 
