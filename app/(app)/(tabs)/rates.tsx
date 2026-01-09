@@ -555,35 +555,45 @@ export default function RatesScreen() {
 
         {/* Brand/logo section */}
         {isSeller && (
-          <View style={styles.top}>
-            {user?.brandImage ? (
-              <Image
-                source={{ uri: user.brandImage }}
-                style={styles.brandCoverImage}
-              />
-            ) : user?.brandName ? (
-              <Text style={styles.brandName}>{user.brandName}</Text>
-            ) : (
-              <Image
-                source={images.bhavLogo}
-                style={styles.logo}
-              />
-            )}
-          </View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigateToSellerProfile(String(user?.id ?? user?._id ?? ''))}
+          >
+            <View style={styles.top}>
+              {user?.brandImage ? (
+                <Image
+                  source={{ uri: user.brandImage }}
+                  style={styles.brandCoverImage}
+                />
+              ) : user?.brandName ? (
+                <Text style={styles.brandName}>{user.brandName}</Text>
+              ) : (
+                <Image
+                  source={images.bhavLogo}
+                  style={styles.logo}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
         )}
 
         {(isCustomer || isAdmin) && (
           <>
             {selectedSeller ? (
-              <View style={styles.top}>
-                {selectedSeller.brandImage ? (
-                  <Image source={{ uri: selectedSeller.brandImage }} style={styles.brandCoverImage} />
-                ) : selectedSeller.brandName ? (
-                  <Text style={styles.brandName}>{selectedSeller.brandName}</Text>
-                ) : (
-                  <Image source={images.bhavLogo} style={styles.logo} />
-                )}
-              </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => navigateToSellerProfile(String(selectedSeller.id ?? selectedSeller._id ?? ''))}
+              >
+                <View style={styles.top}>
+                  {selectedSeller.brandImage ? (
+                    <Image source={{ uri: selectedSeller.brandImage }} style={styles.brandCoverImage} />
+                  ) : selectedSeller.brandName ? (
+                    <Text style={styles.brandName}>{selectedSeller.brandName}</Text>
+                  ) : (
+                    <Image source={images.bhavLogo} style={styles.logo} />
+                  )}
+                </View>
+              </TouchableOpacity>
             ) : (
               <View style={styles.top}>
                 <Image source={images.bhavLogo} style={styles.logo} />

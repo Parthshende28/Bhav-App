@@ -16,7 +16,7 @@ import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { images } from "@/constants/images";
 import { useAuthStore } from '@/store/auth-store';
 
@@ -100,7 +100,7 @@ export default function LoginScreen() {
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={[styles.inputContainer, focusedField === "email" && styles.inputContainerFocused]}>
-          <Icon name="email" size={20} color="#F3B62B" style={styles.inputIcon} />
+          <Icon2 name ="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="Email Address"
@@ -110,13 +110,14 @@ export default function LoginScreen() {
             onFocus={() => setFocusedField("email")}
             onBlur={() => setFocusedField(null)}
             autoCapitalize="none"
+            keyboardType="email-address"
           />
         </View>
 
         <View style={[styles.inputContainer,
         focusedField === "password" && styles.inputContainerFocused,
         ]}>
-          <Icon name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
+          <Icon2 name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -126,6 +127,7 @@ export default function LoginScreen() {
             onFocus={() => setFocusedField("password")}
             onBlur={() => setFocusedField(null)}
             secureTextEntry={!showPassword}
+            keyboardType="default"
             autoCapitalize="none"
           />
           <TouchableOpacity
@@ -133,9 +135,9 @@ export default function LoginScreen() {
             style={styles.eyeIcon}
           >
             {showPassword ? (
-              <Icon name="eye-off" size={20} color="#9e9e9e" />
+              <Icon2 name="eye-off" size={20} color="#9e9e9e" />
             ) : (
-              <Icon name="eye" size={20} color="#9e9e9e" />
+              <Icon2 name="eye" size={20} color="#9e9e9e" />
             )}
           </TouchableOpacity>
         </View>
@@ -160,16 +162,16 @@ export default function LoginScreen() {
             {isLoading ? (
               <ActivityIndicator color="#ffffff" />
             ) : (
-              <Text style={styles.buttonText}>Log In</Text>
+              <Text style={styles.buttonText}>Sign In</Text>
             )}
           </LinearGradient>
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>New User? </Text>
+          <Text style={styles.signupText}>Don't have an account? </Text>
           <Link href="/auth/signup" asChild>
             <TouchableOpacity>
-              <Text style={styles.signupLink}>Create Account</Text>
+              <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </Link>
         </View>

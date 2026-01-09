@@ -57,6 +57,7 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="splash" options={{ animation: "fade" }} />
       <Stack.Screen name="auth" options={{ animation: "fade" }} />
+      <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
       <Stack.Screen name="(app)" options={{ animation: "fade" }} />
       <Stack.Screen name="(admin)" options={{ animation: "fade" }} />
       <Stack.Screen name="drawer" options={{ animation: "slide_from_left" }} />

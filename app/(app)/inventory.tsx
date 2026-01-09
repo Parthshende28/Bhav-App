@@ -55,7 +55,35 @@ export default function InventoryScreen() {
   // Check subscription status on mount
   useEffect(() => {
     if (user && user.role === "seller") {
-      setHasActiveSubscription(!!(user.isPremium && user.subscriptionStatus === 'active'));
+      // Check if user has active subscription (either paid or referral-based)
+      const currentDate = new Date();
+      let hasActiveSubscription = false;
+
+      // Check subscription status and expiry
+      if (user.subscriptionStatus === 'active' && user.subscriptionEndDate) {
+        const endDate = new Date(user.subscriptionEndDate);
+        if (endDate > currentDate) {
+          hasActiveSubscription = true;
+        } else {
+          // Subscription expired
+          hasActiveSubscription = false;
+        }
+      } else if (user.subscriptionStatus === 'active') {
+        // No end date but status is active (for referral codes)
+        hasActiveSubscription = true;
+      }
+
+      setHasActiveSubscription(hasActiveSubscription);
+
+      console.log('Subscription check:', {
+        subscriptionStatus: user.subscriptionStatus,
+        isPremium: user.isPremium,
+        premiumPlan: user.premiumPlan,
+        subscriptionEndDate: user.subscriptionEndDate,
+        usedReferralCode: user.usedReferralCode,
+        hasActiveSubscription,
+        currentDate: currentDate.toISOString()
+      });
     }
   }, [user]);
 
@@ -369,7 +397,7 @@ export default function InventoryScreen() {
               onPress={handleGoBack}
               style={styles.menuButton}
             >
-              <Icon name="arrow-left" size={24} color="#333333" />
+              <Icon2 name="arrow-left" size={24} color="#333333" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Manage Inventory</Text>
             <Text style={styles.headerSubtitle}>
@@ -383,7 +411,7 @@ export default function InventoryScreen() {
             onPress={handleShowAddForm}
             disabled={showAddForm}
           >
-            <Icon name="store" size={24} color="#ffffff" />
+            <Plus size={24} color="#ffffff" />
             <Text style={styles.addButtonText}>Add New Product</Text>
           </TouchableOpacity>
 
@@ -406,7 +434,7 @@ export default function InventoryScreen() {
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Product Name</Text>
                 <View style={styles.inputContainer}>
-                  <Icon2 name="package" size={20} color="#666666" style={styles.inputIcon} />
+                  <Package size={20} color="#666666" style={styles.inputIcon} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter product name"
@@ -470,7 +498,7 @@ export default function InventoryScreen() {
                 </View>
                 {isBuyPremiumEnabled && (
                   <View style={styles.inputContainer}>
-                    <Icon name="currency-rupee" size={20} color="#666666" style={styles.inputIcon} />
+                    <IndianRupee size={20} color="#666666" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="Enter buy premium (can be negative)"
@@ -500,7 +528,7 @@ export default function InventoryScreen() {
                 </View>
                 {isSellPremiumEnabled && (
                   <View style={styles.inputContainer}>
-                    <Icon2 name="tag" size={20} color="#666666" style={styles.inputIcon} />
+                    <Tag size={20} color="#666666" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="Enter sell premium (can be negative)"
@@ -527,7 +555,7 @@ export default function InventoryScreen() {
                   <ActivityIndicator color="#ffffff" />
                 ) : (
                   <>
-                    <Icon2 name="save" size={20} color="#ffffff" />
+                    <Save size={20} color="#ffffff" />
                     <Text style={styles.submitButtonText}>
                       {editingItemId ? "Update Product" : "Add Product"}
                     </Text>
@@ -543,7 +571,7 @@ export default function InventoryScreen() {
 
             {inventoryItems.length === 0 ? (
               <View style={styles.emptyInventoryContainer}>
-                <Icon2 name="shopping-bag" size={48} color="#e0e0e0" />
+                <ShoppingBag size={48} color="#e0e0e0" />
                 <Text style={styles.emptyInventoryText}>
                   You haven't added any products yet
                 </Text>
@@ -553,7 +581,7 @@ export default function InventoryScreen() {
                 <View key={item._id || item.id} style={styles.productCard}>
                   <View style={styles.productCardHeader}>
                     <View style={styles.productNameContainer}>
-                      <Icon2 name="package" size={20} color="#1976D2" style={styles.productIcon} />
+                      <Package size={20} color="#1976D2" style={styles.productIcon} />
                       <Text style={styles.productName}>{item.productName}</Text>
                     </View>
                     <View style={styles.visibilityBadge}>
@@ -600,12 +628,12 @@ export default function InventoryScreen() {
                     >
                       {item.isVisible ? (
                         <>
-                          <Icon2 name="eye-off" size={16} color="#666666" />
+                          <EyeOff size={16} color="#666666" />
                           <Text style={styles.actionButtonText}>Hide</Text>
                         </>
                       ) : (
                         <>
-                          <Icon2 name="eye" size={16} color="#1976D2" />
+                          <Eye size={16} color="#1976D2" />
                           <Text style={[styles.actionButtonText, { color: "#1976D2" }]}>Show</Text>
                         </>
                       )}
@@ -615,7 +643,7 @@ export default function InventoryScreen() {
                       style={[styles.actionButton, styles.editButton]}
                       onPress={() => handleEditItem(item)}
                     >
-                      <Icon2 name="edit" size={16} color="#4CAF50" />
+                      <Edit size={16} color="#4CAF50" />
                       <Text style={[styles.actionButtonText, { color: "#4CAF50" }]}>Update</Text>
                     </TouchableOpacity>
 
@@ -628,7 +656,7 @@ export default function InventoryScreen() {
                         <ActivityIndicator size="small" color="#E53935" />
                       ) : (
                         <>
-                          <Icon2 name="trash-2" size={16} color="#E53935" />
+                          <Trash2 size={16} color="#E53935" />
                           <Text style={[styles.actionButtonText, { color: "#E53935" }]}>Delete</Text>
                         </>
                       )}
@@ -648,7 +676,7 @@ export default function InventoryScreen() {
               style={styles.infoCard}
             >
               <View style={styles.infoCardHeader}>
-                <Icon2 name="info" size={24} color="#1976D2" />
+                <Info size={24} color="#1976D2" />
                 <Text style={styles.infoCardTitle}>How It Works</Text>
               </View>
               <Text style={styles.infoCardContent}>

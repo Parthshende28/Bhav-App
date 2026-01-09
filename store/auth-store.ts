@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from './api';
 import { userAPI, requestAPI, notificationAPI } from '@/services/api';
-import systemIP from '../services/ip.js';
 
 // Reserved admin username - this is the username that only admin can use
 export const ADMIN_USERNAME = "vipin_bullion";
@@ -200,6 +199,7 @@ export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   token: string | null;
+  hasSeenOnboarding: boolean;
   adminUsernameRegistered: boolean;
   users: MockUser[];
   notifications: Notification[];
@@ -215,6 +215,7 @@ export type AuthState = {
   buyRequestStatuses: BuyRequestStatus;
   selectedSeller?: User | null;
   setSelectedSeller: (seller: User | null) => void;
+  setHasSeenOnboarding: (seen: boolean) => void;
   setBuyRequests: (requests: BuyRequest[]) => void; // Added setter for buy requests
   setSellerReferrals: (referrals: SellerReferral[]) => void; // Added setter for seller referrals
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; token?: string; user?: User }>;
@@ -336,6 +337,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       token: null,
+      hasSeenOnboarding: false,
       adminUsernameRegistered: true, // Set to true since we now have a pre-defined admin
       users: initialMockUsers, // Initialize with mock users
       notifications: initialNotifications, // Initialize with mock notifications
@@ -351,6 +353,7 @@ export const useAuthStore = create<AuthState>()(
       buyRequestStatuses: {} as BuyRequestStatus,
       selectedSeller: null,
       setSelectedSeller: (seller: User | null) => set({ selectedSeller: seller }),
+      setHasSeenOnboarding: (seen: boolean) => set({ hasSeenOnboarding: seen }),
       setBuyRequests: (requests: BuyRequest[]) => set({ buyRequests: requests }),
 
       isAdminUsername: (username: string) => {
@@ -386,7 +389,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         try {
           // console.log("Login attempt for:", email);
-          const response = await fetch(`http://${systemIP}:5001/api/auth/login`, {
+          const response = await fetch('https://bhav-backend.onrender.com/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -394,35 +397,15 @@ export const useAuthStore = create<AuthState>()(
             body: JSON.stringify({ email, password }),
           });
 
-          const responseText = await response.text();
+          const data = await response.json();
 
           if (!response.ok) {
-            // If response is not ok, try to parse error message from response
-            let errorMessage = 'Login failed';
-            try {
-              const errorData = JSON.parse(responseText);
-              errorMessage = errorData?.message || errorMessage;
-            } catch (parseError) {
-              // If JSON parsing fails, use the raw text (might be HTML error page)
-              errorMessage = responseText || errorMessage;
-            }
-            
-            // Replace technical error messages with user-friendly ones
-            if (errorMessage.toLowerCase().includes('suspended') || 
-                errorMessage.toLowerCase().includes('service suspended')) {
-              errorMessage = 'Contact owner';
-            }
-            
-            // console.log("Login failed:", errorMessage);
+            // console.log("Login failed:", data?.message);
             return {
               success: false,
-              error: errorMessage,
+              error: data?.message || 'Login failed',
             };
           }
-
-          const data = JSON.parse(responseText);
-
-          // console.log("Login successful for user:", data.user?.id, data.user?.role);
 
           // console.log("Login successful for user:", data.user?.id, data.user?.role);
 
@@ -490,7 +473,7 @@ export const useAuthStore = create<AuthState>()(
       // signup from backend database
       signup: async (userData, password) => {
         try {
-          const response = await fetch(`http://${systemIP}:5001/api/auth/signup`, {
+          const response = await fetch('https://bhav-backend.onrender.com/api/auth/signup', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -7,7 +7,7 @@ import { StatusBar } from "expo-status-bar";
 
 export default function SplashScreen() {
   const router = useRouter();
-  const [authState, setAuthState] = useState<{ isAuthenticated: boolean; user: any } | null>(null);
+  const [authState, setAuthState] = useState<{ isAuthenticated: boolean; user: any; hasSeenOnboarding: boolean } | null>(null);
   const [hasNavigated, setHasNavigated] = useState(false);
 
   const scaleAnim = React.useRef(new Animated.Value(0.8)).current;
@@ -18,7 +18,8 @@ export default function SplashScreen() {
     const unsubscribe = useAuthStore.subscribe((state) => {
       setAuthState({
         isAuthenticated: state.isAuthenticated,
-        user: state.user
+        user: state.user,
+        hasSeenOnboarding: state.hasSeenOnboarding
       });
     });
 
@@ -26,7 +27,8 @@ export default function SplashScreen() {
     const initialState = useAuthStore.getState();
     setAuthState({
       isAuthenticated: initialState.isAuthenticated,
-      user: initialState.user
+      user: initialState.user,
+      hasSeenOnboarding: initialState.hasSeenOnboarding
     });
 
     return unsubscribe;
@@ -35,7 +37,7 @@ export default function SplashScreen() {
   useEffect(() => {
     if (authState === null || hasNavigated) return; // Wait for auth state to be loaded or prevent multiple navigations
 
-    console.log("Splash screen auth state:", authState.isAuthenticated, authState.user?.role);
+    console.log("Splash screen auth state:", authState.isAuthenticated, authState.user?.role, "hasSeenOnboarding:", authState.hasSeenOnboarding);
 
     // Animation sequence
     Animated.sequence([
@@ -61,12 +63,17 @@ export default function SplashScreen() {
         easing: Easing.in(Easing.ease),
       }),
     ]).start(() => {
-      // Navigate based on authentication status and user role
+      // Navigate based on authentication status, onboarding status, and user role
       if (authState?.user?.role) {
+        // User is authenticated, go to dashboard
         setHasNavigated(true);
         router.push("/(app)/(tabs)/dashboard");
+      } else if (!authState?.hasSeenOnboarding) {
+        // User hasn't seen onboarding, show onboarding screens
+        setHasNavigated(true);
+        router.push("/onboarding/welcome");
       } else {
-        // console.log("Navigating to signup for unauthenticated user");
+        // User has seen onboarding but not authenticated, go to login
         setHasNavigated(true);
         router.push("/auth/login");
       }
