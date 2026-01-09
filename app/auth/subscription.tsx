@@ -15,7 +15,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { useAuthStore } from "@/store/auth-store";
 
 // Define the type for subscription plan
@@ -26,7 +26,7 @@ type SubscriptionPlan = {
   period: string;
   features: string[];
   color: readonly [string, string]; // Fixed: Define as readonly tuple of strings
-  iconName: string; 
+  iconName: React.ComponentProps<typeof Icon>["name"];
   recommended?: boolean;
   superSeller?: boolean;
 };
@@ -36,7 +36,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "half-yearly",
     title: "Seller Lite",
-    price: "₹2999",
+    price: "₹999",
     period: "/ 6 months",
     features: [
       "Basic seller dashboard",
@@ -49,7 +49,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "yearly",
     title: "Seller Pro",
-    price: "₹4999",
+    price: "₹1999",
     period: "/ 12 months",
     features: [
       "Advanced seller dashboard",
@@ -64,7 +64,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "super-seller",
     title: "Super Seller",
-    price: "₹9999",
+    price: "₹4999",
     period: "/ 12 months",
     features: [
       "Advanced seller dashboard",
@@ -78,7 +78,7 @@ const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Unlimited messages",
     ],
     color: ["#F3B62B", "#F5D76E"] as const, // Fixed: Use 'as const' to make it a readonly tuple
-    iconName: "diamond-stone",
+    iconName: "diamond",
   },
 ];
 
@@ -245,7 +245,7 @@ export default function SubscriptionScreen() {
               This will be displayed to users when they view your listings
             </Text>
             <View style={styles.brandNameInputContainer}>
-              <Icon name="store" size={20} color="#F3B62B" style={styles.brandNameIcon} />
+              <Icon2 name="tag" size={20} color="#F3B62B" style={styles.brandNameIcon} />
               <TextInput
                 style={styles.brandNameInput}
                 placeholder="Enter your business or brand name"
@@ -302,7 +302,7 @@ export default function SubscriptionScreen() {
                 <View style={styles.planFeatures}>
                   {plan.features.map((feature, featureIndex) => (
                     <View key={featureIndex} style={styles.featureItem}>
-                      <Icon name="check" size={16} color="#43A047" style={styles.featureIcon} />
+                      <Icon2 name="check" size={16} color="#43A047" style={styles.featureIcon} />
                       <Text style={styles.featureText}>{feature}</Text>
                     </View>
                   ))}

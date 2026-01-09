@@ -82,6 +82,12 @@ export const userAPI = {
 
     getSellerById: (sellerId: string) =>
         API.get(`/users/seller/${sellerId}`),
+
+    deleteAccount: (userId: string) =>
+        API.delete('/users/delete-account', { data: { userId } }),
+
+    updateSubscriptionWithReferral: (referralCode: string) =>
+        API.post('/users/update-subscription-referral', { referralCode }),
 };
 
 // Inventory API
@@ -179,6 +185,9 @@ export const subscriptionAPI = {
 
     cancelSubscription: (subscriptionId: string, reason: string) =>
         API.patch(`/subscriptions/${subscriptionId}/cancel`, { reason }),
+
+    getSubscriptionDetails: () =>
+        API.get('/subscriptions/details'),
 
     // Admin routes
     getAllSubscriptions: (params?: any) =>

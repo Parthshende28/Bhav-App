@@ -47,8 +47,7 @@ export default function SellerProfileScreen() {
   const {
     user,
     getUserById,
-    getUsers,
-    fetchSellerData
+    getUsers
   } = useAuthStore();
 
   const [seller, setSeller] = useState<any>(null);
@@ -59,7 +58,7 @@ export default function SellerProfileScreen() {
   const [networkError, setNetworkError] = useState(false);
 
   // Enhanced fetch function with better error handling
-  const fetchSellerData = useCallback(async (showLoader = true) => {
+  const loadSellerData = useCallback(async (showLoader = true) => {
     if (!sellerId) return;
     
     try {
@@ -108,23 +107,23 @@ export default function SellerProfileScreen() {
 
   // Fetch seller details
   useEffect(() => {
-    fetchSellerData();
-  }, [fetchSellerData, retryCount]);
+    loadSellerData();
+  }, [loadSellerData, retryCount]);
 
   // Add focus effect to refresh when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       if (sellerId && seller) {
-        fetchSellerData(false);
+        loadSellerData(false);
       }
-    }, [sellerId, seller, fetchSellerData])
+    }, [sellerId, seller, loadSellerData])
   );
 
   // Pull to refresh handler
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchSellerData(false);
-  }, [fetchSellerData]);
+    loadSellerData(false);
+  }, [loadSellerData]);
 
 
   // Handle phone call
