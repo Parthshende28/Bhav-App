@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     agreeButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#FBD028',
     },
     agreeButtonText: {
         fontSize: 16,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     disabledButton: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#F3B62B',
     },
     disabledButtonText: {
         color: '#999',
