@@ -206,11 +206,6 @@ export default function InventoryScreen() {
     }
   };
 
-  const validatePremiumInput = (value: string): boolean => {
-    // Allow empty string, numbers, negative numbers, and decimal points
-    const regex = /^-?\d*\.?\d*$/;
-    return regex.test(value) || value === '' || value === '-';
-  };
 
   // Handle form submission
   const handleSubmit = async () => {
