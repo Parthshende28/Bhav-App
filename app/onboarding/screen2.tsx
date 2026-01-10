@@ -48,7 +48,7 @@ const OnboardingScreen2: React.FC<OnboardingScreenProps> = ({ onNext, onPrevious
             <Text style={styles.previousButtonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.nextButton} onPress={onNext}>
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text style={styles.nextButtonText}>Continue</Text>
           </TouchableOpacity>
         </View>
       </View>

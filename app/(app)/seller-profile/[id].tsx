@@ -44,11 +44,9 @@ export default function SellerProfileScreen() {
     );
   }
 
-  const {
-    user,
-    getUserById,
-    getUsers
-  } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const getUserById = useAuthStore((s) => s.getUserById);
+  const getUsers = useAuthStore((s) => s.getUsers);
 
   const [seller, setSeller] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -113,10 +111,10 @@ export default function SellerProfileScreen() {
   // Add focus effect to refresh when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (sellerId && seller) {
+      if (sellerId) {
         loadSellerData(false);
       }
-    }, [sellerId, seller, loadSellerData])
+    }, [sellerId, loadSellerData])
   );
 
   // Pull to refresh handler
@@ -263,9 +261,9 @@ Email: ${seller.email}`,
       >
         {/* Seller Header with Catalog Image */}
         <View style={styles.headerContainer}>
-          {seller.catalogImage ? (
-            <Image
-              source={{ uri: seller.catalogImage }}
+          {seller?.brandImage ? (
+              <Image
+              source={{ uri: seller.brandImage }}
               style={styles.catalogImage}
               resizeMode="cover"
             />
@@ -384,7 +382,7 @@ Email: ${seller.email}`,
         </View>
 
         {/* About Seller Section */}
-        {seller.about && (
+        {/* {seller.about && (
           <View style={styles.aboutContainer}>
             <View style={styles.sectionHeaderWithIcon}>
               <Icon2 name="info" size={20} color="#D4AF37" />
@@ -392,10 +390,10 @@ Email: ${seller.email}`,
             </View>
             <Text style={styles.aboutText}>{seller.about}</Text>
           </View>
-        )}
+        )} */}
 
         {/* Services & Specialties */}
-        <View style={styles.servicesContainer}>
+        {/* <View style={styles.servicesContainer}>
           <View style={styles.sectionHeaderWithIcon}>
             <Icon2 name="briefcase" size={20} color="#D4AF37" />
             <Text style={styles.sectionTitle}>Services & Specialties</Text>
@@ -409,7 +407,7 @@ Email: ${seller.email}`,
             </View>
             
             <View style={styles.serviceCard}>
-              <Icon2 name="shield-check" size={24} color="#2196F3" />
+              <Icon2 name="shield" size={24} color="#2196F3" />
               <Text style={styles.serviceTitle}>Quality Assured</Text>
               <Text style={styles.serviceDesc}>100% authentic products</Text>
             </View>
@@ -428,7 +426,7 @@ Email: ${seller.email}`,
           </View>
         </View>
         
-        {/* Benefits Section */}
+         Benefits Section 
         {seller.benefits && seller.benefits.length > 0 && (
           <View style={styles.benefitsContainer}>
             <View style={styles.sectionHeaderWithIcon}>
@@ -445,10 +443,10 @@ Email: ${seller.email}`,
               </View>
             ))}
           </View>
-        )}
+        )} */}
 
         {/* Contact Information Card */}
-        <View style={styles.contactCard}>
+         <View style={styles.contactCard}> 
           <View style={styles.sectionHeaderWithIcon}>
             <Icon2 name="phone" size={20} color="#D4AF37" />
             <Text style={styles.sectionTitle}>Contact Information</Text>
@@ -493,12 +491,12 @@ Email: ${seller.email}`,
               </View>
             )}
           </View>
-        </View>
+        </View> 
 
 
 
         {/* Main Contact Button */}
-        <View style={styles.mainContactContainer}>
+        {/* <View style={styles.mainContactContainer}>
           <TouchableOpacity
             style={styles.mainContactButton}
             onPress={handleContactSeller}
@@ -515,11 +513,11 @@ Email: ${seller.email}`,
               <Icon2 name="arrow-right" size={20} color="#ffffff" />
             </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView> 
   );
-}
+} 
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -606,16 +604,21 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     position: "relative",
-    height: 280,
+    height: 250,
+    borderRadius: 30,
+    overflow: "hidden",
+    backgroundColor: "#E0E0E0",
   },
   catalogImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 16,
   },
   catalogImagePlaceholder: {
     width: "100%",
     height: "100%",
     backgroundColor: "#1976D2",
+    borderRadius: 16,
   },
   headerGradient: {
     position: "absolute",
@@ -784,8 +787,8 @@ const styles = StyleSheet.create({
   },
   // Services Section
   servicesContainer: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
+    backgroundColor: "rgb(255, 255, 255)",
+    marginHorizontal: 12,
     marginTop: 16,
     borderRadius: 16,
     padding: 20,
