@@ -43,6 +43,7 @@ export interface User {
   referredBy?: string;
   referralCount: number;
   referralEarnings: number;
+  enteredSellerReferrals?: string[]; // Added to track connected sellers
   // Request tracking fields
   totalBuyRequests?: number;
   totalSellRequests?: number;
@@ -703,19 +704,40 @@ export const useAuthStore = create<AuthState>()(
             set({ users: updatedUsers });
 
             // Create notification about user deletion
-            await get().addNotification({
-              title: `User Deleted`,
-              message: `${userToDelete.fullName} (${userToDelete.role}) has been removed from the system.`,
-              type: 'user_deletion',
-              data: {
-                user: {
-                  id: userToDelete.id,
-                  name: userToDelete.fullName,
-                  email: userToDelete.email,
-                  role: userToDelete.role
-                }
+            if (userToDelete.role === 'customer' && userToDelete.enteredSellerReferrals && userToDelete.enteredSellerReferrals.length > 0) {
+              // If customer, only notify connected sellers
+              for (const sellerId of userToDelete.enteredSellerReferrals) {
+                await get().addNotification({
+                  recipientId: sellerId,
+                  title: `Customer Deleted`,
+                  message: `${userToDelete.fullName} has been removed from the system.`,
+                  type: 'user_deletion',
+                  data: {
+                    user: {
+                      id: userToDelete.id,
+                      name: userToDelete.fullName,
+                      email: userToDelete.email,
+                      role: userToDelete.role
+                    }
+                  }
+                });
               }
-            });
+            } else if (userToDelete.role !== 'customer') {
+              // For non-customers (sellers/admins), send global notification
+              await get().addNotification({
+                title: `User Deleted`,
+                message: `${userToDelete.fullName} (${userToDelete.role}) has been removed from the system.`,
+                type: 'user_deletion',
+                data: {
+                  user: {
+                    id: userToDelete.id,
+                    name: userToDelete.fullName,
+                    email: userToDelete.email,
+                    role: userToDelete.role
+                  }
+                }
+              });
+            }
 
             return { success: true };
           } else {
@@ -1722,6 +1744,7 @@ export const useAuthStore = create<AuthState>()(
             whatsappNumber: user.whatsappNumber,
             instagramHandle: user.instagramHandle,
             location: user.location,
+            enteredSellerReferrals: user.sellerReferrals || [],
             catalogueImages: user.catalogueImages || []
           }));
           set({ users: convertedUsers });
