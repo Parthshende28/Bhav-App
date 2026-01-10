@@ -451,7 +451,7 @@ export default function InventoryScreen() {
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Product Name</Text>
                 <View style={styles.inputContainer}>
-                  <Package size={20} color="#666666" style={styles.inputIcon} />
+                  <Icon2 name="package" size={20} color="#666666" style={styles.inputIcon} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter product name"
@@ -546,7 +546,7 @@ export default function InventoryScreen() {
                 </View>
                 {isSellPremiumEnabled && (
                   <View style={styles.inputContainer}>
-                    <Tag size={20} color="#666666" style={styles.inputIcon} />
+                    <Icon2 name="tag" size={20} color="#666666" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="Enter sell premium (can be negative)"
@@ -574,7 +574,7 @@ export default function InventoryScreen() {
                   <ActivityIndicator color="#ffffff" />
                 ) : (
                   <>
-                    <Save size={20} color="#ffffff" />
+                    <Icon2 name="save" size={20} color="#ffffff" />
                     <Text style={styles.submitButtonText}>
                       {editingItemId ? "Update Product" : "Add Product"}
                     </Text>
@@ -590,7 +590,7 @@ export default function InventoryScreen() {
 
             {inventoryItems.length === 0 ? (
               <View style={styles.emptyInventoryContainer}>
-                <ShoppingBag size={48} color="#e0e0e0" />
+                <Icon2 name="shopping-bag" size={48} color="#e0e0e0" />
                 <Text style={styles.emptyInventoryText}>
                   You haven't added any products yet
                 </Text>
@@ -647,12 +647,12 @@ export default function InventoryScreen() {
                     >
                       {item.isVisible ? (
                         <>
-                          <EyeOff size={16} color="#666666" />
+                          <Icon2 name="eye-off" size={16} color="#666666" />
                           <Text style={styles.actionButtonText}>Hide</Text>
                         </>
                       ) : (
                         <>
-                          <Eye size={16} color="#1976D2" />
+                          <Icon2 name="eye" size={16} color="#1976D2" />
                           <Text style={[styles.actionButtonText, { color: "#1976D2" }]}>Show</Text>
                         </>
                       )}
@@ -675,7 +675,7 @@ export default function InventoryScreen() {
                         <ActivityIndicator size="small" color="#E53935" />
                       ) : (
                         <>
-                          <Trash2 size={16} color="#E53935" />
+                          <Icon2 name="trash-2" size={16} color="#E53935" />
                           <Text style={[styles.actionButtonText, { color: "#E53935" }]}>Delete</Text>
                         </>
                       )}
