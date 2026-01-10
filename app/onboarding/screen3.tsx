@@ -44,8 +44,8 @@ const OnboardingScreen3: React.FC<OnboardingScreenProps> = ({ onPrevious, onGetS
 
         {/* Navigation Buttons */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.previousButton} onPress={onPrevious}>
-            <Text style={styles.previousButtonText}>Back</Text>
+          <TouchableOpacity style={styles.previousButton} onPress={onSkip}>
+            <Text style={styles.previousButtonText}>Log in</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.getStartedButton} onPress={onGetStarted}>
             <Text style={styles.getStartedButtonText}>Get Started</Text>

@@ -61,7 +61,7 @@ export default function OnboardingWelcome() {
 
   function handleSkip() {
     setHasSeenOnboarding(true);
-    router.replace('/auth/signup');
+    router.replace('/auth/login');
   }
 
   function handleGetStarted() {
