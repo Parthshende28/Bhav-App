@@ -55,7 +55,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="splash" options={{ animation: "fade" }} />
+      {/* <Stack.Screen name="splash" options={{ animation: "fade" }} /> */}
       <Stack.Screen name="auth" options={{ animation: "fade" }} />
       <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
       <Stack.Screen name="(app)" options={{ animation: "fade" }} />
