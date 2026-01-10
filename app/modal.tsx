@@ -132,9 +132,9 @@ export default function ModalScreen() {
     // Cleanup function to prevent memory leaks
     return () => {
       // Reset state when component unmounts
-      setItem(null);
-      setIsLoading(false);
-      setIsUpdating(false);
+      // setItem(null);
+      // setIsLoading(false);
+      // setIsUpdating(false);
     };
   }, [itemId, user?.id, user?._id, user?.role, selectedSeller?.id, selectedSeller?._id]);
 
@@ -290,6 +290,8 @@ export default function ModalScreen() {
     );
   }
 
+
+
   return (
     <>
       {isSeller && (
@@ -323,25 +325,38 @@ export default function ModalScreen() {
               </Text>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Buy Premium (₹)</Text>
-              <TextInput
-                style={styles.input}
-                value={editBuyPremium}
-                onChangeText={setEditBuyPremium}
-                keyboardType="default"
-                placeholder="Enter buy premium"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Sell Premium (₹)</Text>
-              <TextInput
-                style={styles.input}
-                value={editSellPremium}
-                onChangeText={setEditSellPremium}
-                keyboardType="default"
-                placeholder="Enter sell premium"
-              />
-            </View>
+                <Text style={styles.inputLabel}>Buy Premium (₹)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editBuyPremium}
+                  keyboardType="numeric"
+                  placeholder="Enter buy premium"
+                  maxLength={5}
+                  onChangeText={(text) => {
+                    const numericValue = text.replace(/[^0-9]/g, '');
+                    if (Number(numericValue) <= 99999) {
+                      setEditBuyPremium(numericValue);
+                    }
+                  }}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Sell Premium (₹)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editSellPremium}
+                  keyboardType="numeric"
+                  placeholder="Enter sell premium"
+                  maxLength={5}
+                  onChangeText={(text) => {
+                    const numericValue = text.replace(/[^0-9]/g, '');
+                    if (Number(numericValue) <= 99999) {
+                      setEditSellPremium(numericValue);
+                    }
+                  }}
+                />
+              </View>
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={[styles.button, styles.hideButton]}

@@ -411,7 +411,7 @@ export default function InventoryScreen() {
             onPress={handleShowAddForm}
             disabled={showAddForm}
           >
-            <Plus size={24} color="#ffffff" />
+            <Icon2 name="plus" size={24} color="#ffffff" />
             <Text style={styles.addButtonText}>Add New Product</Text>
           </TouchableOpacity>
 
