@@ -379,6 +379,28 @@ export default function InventoryScreen() {
     );
   }
 
+  const validatePremiumInput = (text) => {
+    // Allow empty input
+    if (text === '') return true;
+  
+    // Allow only "-" while typing
+    if (text === '-') return true;
+  
+    // Regex: optional "-" + digits only
+    const regex = /^-?\d+$/;
+    if (!regex.test(text)) return false;
+  
+    // Check max 5 digits (ignore "-")
+    const numericPart = text.replace('-', '');
+    if (numericPart.length > 5) return false;
+  
+    // Check value range
+    const value = Number(text);
+    if (Math.abs(value) > 99999) return false;
+  
+    return true;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style="dark" />
@@ -499,18 +521,19 @@ export default function InventoryScreen() {
                 {isBuyPremiumEnabled && (
                   <View style={styles.inputContainer}>
                     <IndianRupee size={20} color="#666666" style={styles.inputIcon} />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Enter buy premium (can be negative)"
-                      placeholderTextColor="#9e9e9e"
-                      keyboardType="default"
-                      value={buyPremium}
-                      onChangeText={(text) => {
-                        if (validatePremiumInput(text)) {
-                          setBuyPremium(text);
-                        }
-                      }}
-                    />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Enter buy premium (can be negative)"
+                          placeholderTextColor="#9e9e9e"
+                          keyboardType="numeric"
+                          value={buyPremium}
+                          maxLength={6} // 5 digits + optional "-"
+                          onChangeText={(text) => {
+                            if (validatePremiumInput(text)) {
+                              setBuyPremium(text);
+                            }
+                          }}
+                        />
                   </View>
                 )}
               </View>
@@ -533,8 +556,9 @@ export default function InventoryScreen() {
                       style={styles.input}
                       placeholder="Enter sell premium (can be negative)"
                       placeholderTextColor="#9e9e9e"
-                      keyboardType="default"
+                      keyboardType="numeric"
                       value={sellPremium}
+                      maxLength={6} // 5 digits + optional "-"
                       onChangeText={(text) => {
                         if (validatePremiumInput(text)) {
                           setSellPremium(text);
