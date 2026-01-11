@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl, Linking } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Platform, Alert, RefreshControl, Linking, Animated } from "react-native";
 import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { Swipeable, GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuthStore, Notification, BuyRequest } from "@/store/auth-store";
 
 interface NotificationBellProps {
@@ -24,7 +25,8 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     // getInventoryItemsForSeller,
     getBuyRequestStatus, // Add this
     setBuyRequestStatus,  // Add this
-    refreshNotifications
+    refreshNotifications,
+    deleteNotification
   } = useAuthStore();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -267,6 +269,29 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     }
   };
 
+  const handleDeleteNotification = (id: string) => {
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    deleteNotification(id);
+  };
+
+  const renderLeftActions = (progress: any, dragX: any, id: string) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 80],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+    return (
+      <View style={styles.deleteActionContainer}>
+        <Animated.View style={[styles.deleteActionContent, { transform: [{ scale }] }]}>
+          <Icon name="trash-can-outline" size={30} color="#fff" />
+          <Text style={styles.deleteActionText}>Delete</Text>
+        </Animated.View>
+      </View>
+    );
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -288,180 +313,271 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
         animationType="slide"
         onRequestClose={() => setShowNotifications(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.notificationContainer}>
-            <View style={styles.notificationHeader}>
-              <Text style={styles.notificationHeaderTitle}>Notifications</Text>
-              <TouchableOpacity
-                onPress={() => setShowNotifications(false)}
-                style={styles.closeButton}
-              >
-                <Icon name="close" size={24} color="#333333" />
-              </TouchableOpacity>
-            </View>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.notificationContainer}>
+              <View style={styles.notificationHeader}>
+                <Text style={styles.notificationHeaderTitle}>Notifications</Text>
+                <TouchableOpacity
+                  onPress={() => setShowNotifications(false)}
+                  style={styles.closeButton}
+                >
+                  <Icon name="close" size={24} color="#333333" />
+                </TouchableOpacity>
+              </View>
 
-            {userNotifications.length > 0 ? (
-              <>
-                <View style={styles.notificationActions}>
-                  <TouchableOpacity
-                    style={styles.markAllReadButton}
-                    onPress={handleMarkAllAsRead}
-                  >
-                    <Icon name="check" size={16} color="#1976D2" />
-                    <Text style={styles.markAllReadText}>Mark all as read</Text>
-                  </TouchableOpacity>
-                </View>
-
-                <FlatList
-                  data={userNotifications}
-                  keyExtractor={(item) => item.id}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                      colors={["#1976D2"]}
-                      tintColor="#1976D2"
-                    />
-                  }
-                  renderItem={({ item }) => (
+              {userNotifications.length > 0 ? (
+                <>
+                  <View style={styles.notificationActions}>
                     <TouchableOpacity
-                      style={[
-                        styles.notificationItem,
-                        !item.read && styles.notificationItemUnread
-                      ]}
-                      onPress={() => handleNotificationPress(item.id)}
+                      style={styles.markAllReadButton}
+                      onPress={handleMarkAllAsRead}
                     >
-                      {item.type === 'contact_request' ? (
-                        <View style={styles.contactRequestNotification}>
-                          <View style={styles.contactRequestHeader}>
-                            <Icon name="account" size={24} color="#1976D2" style={styles.contactRequestIcon} />
-                            <View style={styles.contactRequestTitleContainer}>
-                              <Text style={styles.contactRequestTitle}>{item.title}</Text>
-                              <Text style={styles.contactRequestTime}>{formatTimestamp(item.timestamp)}</Text>
-                            </View>
-                            {!item.read && <View style={styles.unreadIndicator} />}
-                          </View>
+                      <Icon name="check" size={16} color="#1976D2" />
+                      <Text style={styles.markAllReadText}>Mark all as read</Text>
+                    </TouchableOpacity>
+                  </View>
 
-                          <Text style={styles.contactRequestMessage}>{item.message}</Text>
-
-                          {item.data?.customer && (
-                            <View style={styles.customerDetailsContainer}>
-                              <Text style={styles.customerDetailsTitle}>Customer Details:</Text>
-
-                              <View style={styles.customerDetailRow}>
-                                <Icon name="account" size={16} color="#666666" style={styles.customerDetailIcon} />
-                                <Text style={styles.customerDetailText}>{item.data.customer.name}</Text>
+                  <FlatList
+                    data={userNotifications}
+                    keyExtractor={(item) => item.id}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={["#1976D2"]}
+                        tintColor="#1976D2"
+                      />
+                    }
+                    renderItem={({ item }) => (
+                      <Swipeable
+                        renderLeftActions={(progress, dragX) => renderLeftActions(progress, dragX, item.id)}
+                        onSwipeableLeftOpen={() => handleDeleteNotification(item.id)}
+                      >
+                        <TouchableOpacity
+                          style={[
+                            styles.notificationItem,
+                            !item.read && styles.notificationItemUnread
+                          ]}
+                          onPress={() => handleNotificationPress(item.id)}
+                          activeOpacity={0.7}
+                        >
+                          {item.type === 'contact_request' ? (
+                            <View style={styles.contactRequestNotification}>
+                              <View style={styles.contactRequestHeader}>
+                                <Icon name="account" size={24} color="#1976D2" style={styles.contactRequestIcon} />
+                                <View style={styles.contactRequestTitleContainer}>
+                                  <Text style={styles.contactRequestTitle}>{item.title}</Text>
+                                  <Text style={styles.contactRequestTime}>{formatTimestamp(item.timestamp)}</Text>
+                                </View>
+                                {!item.read && <View style={styles.unreadIndicator} />}
                               </View>
 
-                              <View style={styles.customerDetailRow}>
-                                <Icon name="email" size={16} color="#666666" style={styles.customerDetailIcon} />
-                                <Text style={styles.customerDetailText}>{item.data.customer.email}</Text>
-                              </View>
+                              <Text style={styles.contactRequestMessage}>{item.message}</Text>
 
-                              {item.data.customer.phone && (
-                                <View style={styles.customerDetailRow}>
-                                  <Icon name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
-                                  <Text style={styles.customerDetailText}>{item.data.customer.phone}</Text>
+                              {item.data?.customer && (
+                                <View style={styles.customerDetailsContainer}>
+                                  <Text style={styles.customerDetailsTitle}>Customer Details:</Text>
+
+                                  <View style={styles.customerDetailRow}>
+                                    <Icon name="account" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                    <Text style={styles.customerDetailText}>{item.data.customer.name}</Text>
+                                  </View>
+
+                                  <View style={styles.customerDetailRow}>
+                                    <Icon name="email" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                    <Text style={styles.customerDetailText}>{item.data.customer.email}</Text>
+                                  </View>
+
+                                  {item.data.customer.phone && (
+                                    <View style={styles.customerDetailRow}>
+                                      <Icon name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                      <Text style={styles.customerDetailText}>{item.data.customer.phone}</Text>
+                                    </View>
+                                  )}
+
+                                  {item.data.customer.city && (
+                                    <View style={styles.customerDetailRow}>
+                                      <Icon name="map-marker" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                      <Text style={styles.customerDetailText}>
+                                        {item.data.customer.city}
+                                        {item.data.customer.state ? `, ${item.data.customer.state}` : ""}
+                                      </Text>
+                                    </View>
+                                  )}
                                 </View>
                               )}
 
-                              {item.data.customer.city && (
-                                <View style={styles.customerDetailRow}>
-                                  <Icon name="map-marker" size={16} color="#666666" style={styles.customerDetailIcon} />
-                                  <Text style={styles.customerDetailText}>
-                                    {item.data.customer.city}
-                                    {item.data.customer.state ? `, ${item.data.customer.state}` : ""}
+                              <View style={styles.contactRequestActions}>
+                                <TouchableOpacity style={styles.contactRequestActionButton}>
+                                  <Icon2 name="phone" size={16} color="#ffffff" />
+                                  <Text style={styles.contactRequestActionText}>Call</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.contactRequestActionButton}>
+                                  <Icon name="email" size={16} color="#ffffff" />
+                                  <Text style={styles.contactRequestActionText}>Email</Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          ) : item.type === 'buy_request' ? (
+                            <View style={styles.buyRequestNotification}>
+                              <View style={styles.buyRequestHeader}>
+                                <Icon name="shopping" size={24} color="#F3B62B" style={styles.buyRequestIcon} />
+                                <View style={styles.buyRequestTitleContainer}>
+                                  <Text style={styles.buyRequestTitle}>{item.title}</Text>
+                                  <Text style={styles.buyRequestTime}>{formatTimestamp(item.timestamp)}</Text>
+                                </View>
+                                {!item.read && <View style={styles.unreadIndicator} />}
+                              </View>
+
+                              <Text style={styles.buyRequestMessage}>{item.message}</Text>
+
+                              {/* Buy Request Details */}
+                              {item.data && (
+                                <View style={styles.buyRequestDetails}>
+                                  {item.data.quantity && (
+                                    <View style={styles.detailRow}>
+                                      <Text style={styles.detailLabel}>Quantity:</Text>
+                                      <Text style={styles.detailValue}>{item.data.quantity}</Text>
+                                    </View>
+                                  )}
+                                  {item.data.metalType && (
+                                    <View style={styles.detailRow}>
+                                      <Text style={styles.detailLabel}>Type:</Text>
+                                      <Text style={styles.detailValue}>{item.data.metalType}</Text>
+                                    </View>
+                                  )}
+                                  {item.data.capturedAmount && (
+                                    <View style={styles.detailRow}>
+                                      <Text style={styles.detailLabel}>Amount:</Text>
+                                      <Text style={styles.detailValue}>₹{item.data.capturedAmount.toLocaleString()}</Text>
+                                    </View>
+                                  )}
+                                </View>
+                              )}
+
+                              {/* Customer Details */}
+                              {item.data?.customer && (
+                                <View style={styles.customerDetailsContainer}>
+                                  <Text style={styles.customerDetailsTitle}>Customer Details:</Text>
+                                  <View style={styles.customerDetailRow}>
+                                    <Icon name="account" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                    <Text style={styles.customerDetailText}>{item.data.customer.name}</Text>
+                                  </View>
+                                  <View style={styles.customerDetailRow}>
+                                    <Icon name="email" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                    <Text style={styles.customerDetailText}>{item.data.customer.email}</Text>
+                                  </View>
+                                  {item.data.customer.phone && (
+                                    <View style={styles.customerDetailRow}>
+                                      <Icon name="phone" size={16} color="#666666" style={styles.customerDetailIcon} />
+                                      <Text style={styles.customerDetailText}>{item.data.customer.phone}</Text>
+                                    </View>
+                                  )}
+                                </View>
+                              )}
+
+                              {/* Action Buttons */}
+                              {/* 
+                              {!getBuyRequestStatus(item.data?.requestId || item.id) && !processedRequests[item.data?.requestId || item.id] ? (
+                                <View style={styles.buyRequestActions}>
+                                  <TouchableOpacity
+                                    style={[styles.actionButton, styles.declineButton]}
+                                    onPress={() => handleDeclineBuyRequest(item.data?.requestId || item.id)}
+                                    disabled={isProcessing}
+                                  >
+                                    <Icon name="close" size={20} color="#E53935" />
+                                    <Text style={styles.declineButtonText}>Decline</Text>
+                                  </TouchableOpacity>
+
+                                  <TouchableOpacity
+                                    style={[styles.actionButton, styles.acceptButton]}
+                                    onPress={() => handleAcceptBuyRequest(item.data?.requestId || item.id)}
+                                    disabled={isProcessing}
+                                  >
+                                    <Icon name="check" size={20} color="#43A047" />
+                                    <Text style={styles.acceptButtonText}>Accept</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              ) : (
+                                <View style={[
+                                  styles.statusBadge,
+                                  (getBuyRequestStatus(item.data?.requestId || item.id) === 'accepted' || processedRequests[item.data?.requestId || item.id] === 'accepted')
+                                    ? styles.statusAccepted
+                                    : styles.statusDeclined
+                                ]}>
+                                  <Icon
+                                    name={(getBuyRequestStatus(item.data?.requestId || item.id) === 'accepted' || processedRequests[item.data?.requestId || item.id] === 'accepted') ? "check-circle" : "close-circle"}
+                                    size={16}
+                                    color="#fff"
+                                  />
+                                  <Text style={styles.statusText}>
+                                    {(getBuyRequestStatus(item.data?.requestId || item.id) === 'accepted' || processedRequests[item.data?.requestId || item.id] === 'accepted')
+                                      ? "Request Accepted"
+                                      : "Request Declined"}
                                   </Text>
                                 </View>
                               )}
+                              */}
+                            </View>
+                          ) : (
+                            // Default notification render
+                            <View style={styles.notificationContent}>
+                              <View style={styles.notificationIconContainer}>
+                                {getNotificationIcon(item.type)}
+                                {!item.read && <View style={styles.unreadDot} />}
+                              </View>
+                              <View style={styles.notificationTextContainer}>
+                                <Text style={[
+                                  styles.notificationTitle,
+                                  !item.read && styles.notificationTitleUnread
+                                ]}>
+                                  {item.title}
+                                </Text>
+                                <Text style={styles.notificationMessage} numberOfLines={3}>
+                                  {item.message}
+                                </Text>
+                                <Text style={styles.notificationTime}>
+                                  {formatTimestamp(item.timestamp)}
+                                </Text>
+
+                                {/* Additional data rendering if needed */}
+                                {item.type === 'buy_request_accepted' && item.data?.sellerPhone && (
+                                  <View style={styles.buyResponseDetailsContainer}>
+                                    <Text style={styles.sellerDetailsTitle}>Seller Contact:</Text>
+                                    <View style={styles.sellerDetailRow}>
+                                      <Icon name="phone" size={16} color="#666666" style={styles.sellerDetailIcon} />
+                                      <Text style={styles.sellerDetailValue}>{item.data.sellerPhone}</Text>
+                                    </View>
+                                    <TouchableOpacity
+                                      style={styles.contactSellerButton}
+                                      onPress={() => handleContactSeller(item)}
+                                    >
+                                      <Icon name="phone" size={16} color="#ffffff" />
+                                      <Text style={styles.contactSellerText}>Call Seller</Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                )}
+                              </View>
                             </View>
                           )}
-
-                          <View style={styles.contactRequestActions}>
-                            <TouchableOpacity style={styles.contactRequestActionButton}>
-                              <Icon2 name="phone" size={16} color="#ffffff" />
-                              <Text style={styles.contactRequestActionText}>Call</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.contactRequestActionButton}>
-                              <Icon name="email" size={16} color="#ffffff" />
-                              <Text style={styles.contactRequestActionText}>Email</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      ) : item.type === 'buy_request' ? (
-                        <View style={styles.buyRequestNotification}>
-                          <View style={styles.buyRequestHeader}>
-                            <Icon name="shopping" size={24} color="#F3B62B" style={styles.buyRequestIcon} />
-                            <View style={styles.buyRequestTitleContainer}>
-                              <Text style={styles.buyRequestTitle}>{item.title}</Text>
-                              <Text style={styles.buyRequestTime}>{formatTimestamp(item.timestamp)}</Text>
-                            </View>
-                            {!item.read && <View style={styles.unreadIndicator} />}
-                          </View>
-
-                          <Text style={styles.buyRequestMessage}>{item.message}</Text>
-                        </View>
-                      ) : item.type === 'buy_request_accepted' || item.type === 'buy_request_declined' ? (
-                        <View style={styles.buyResponseNotification}>
-                          <View style={styles.buyResponseHeader}>
-                            {item.type === 'buy_request_accepted' ? (
-                              <Icon name="thumb-up" size={24} color="#4CAF50" style={styles.buyResponseIcon} />
-                            ) : (
-                              <Icon name="thumb-down" size={24} color="#E53935" style={styles.buyResponseIcon} />
-                            )}
-                            <View style={styles.buyResponseTitleContainer}>
-                              <Text style={styles.buyResponseTitle}>{item.title}</Text>
-                              <Text style={styles.buyResponseTime}>{formatTimestamp(item.timestamp)}</Text>
-                            </View>
-                            {!item.read && <View style={styles.unreadIndicator} />}
-                          </View>
-
-                          <Text style={styles.buyResponseMessage}>{item.message}</Text>
-
-
-
-                          {item.type === 'buy_request_accepted' && (
-                            <View style={styles.buyResponseActions}>
-                              <TouchableOpacity
-                                style={styles.contactSellerButton}
-                                onPress={() => handleContactSeller(item)}
-                              >
-                                <Icon2 name="phone" size={16} color="#ffffff" />
-                                <Text style={styles.contactSellerText}>Contact Seller</Text>
-                              </TouchableOpacity>
-                            </View>
-                          )}
-                        </View>
-                      ) : (
-                        <>
-                          <View style={styles.notificationIconContainer}>
-                            {getNotificationIcon(item.type)}
-                          </View>
-                          <View style={styles.notificationContent}>
-                            <Text style={styles.notificationTitle}>{item.title}</Text>
-                            <Text style={styles.notificationMessage}>{item.message}</Text>
-                            <Text style={styles.notificationTime}>
-                              {formatTimestamp(item.timestamp)}
-                            </Text>
-                          </View>
-                          {!item.read && <View style={styles.unreadIndicator} />}
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  )}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={styles.notificationsList}
-                />
-              </>
-            ) : (
-              <View style={styles.emptyNotifications}>
-                <Icon name="bell" size={48} color="#e0e0e0" />
-                <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
-              </View>
-            )}
+                        </TouchableOpacity>
+                      </Swipeable>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.notificationsList}
+                  />
+                </>
+              ) : (
+                <View style={styles.emptyNotifications}>
+                  <Icon name="bell" size={48} color="#e0e0e0" />
+                  <Text style={styles.emptyNotificationsText}>No notifications yet</Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        </GestureHandlerRootView>
       </Modal>
     </View>
   );
@@ -869,5 +985,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginLeft: 8,
+  },
+  deleteActionContainer: {
+    backgroundColor: '#E53935',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 12,
+    marginTop: 0,
+    borderRadius: 12,
+    flex: 1,
+  },
+  deleteActionContent: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  deleteActionText: {
+    color: '#fff',
+    fontWeight: '600',
+    marginTop: 4,
+    fontSize: 12,
   },
 });

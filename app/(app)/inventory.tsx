@@ -515,7 +515,7 @@ export default function InventoryScreen() {
                 </View>
                 {isBuyPremiumEnabled && (
                   <View style={styles.inputContainer}>
-                    <IndianRupee size={20} color="#666666" style={styles.inputIcon} />
+                    <Icon name="currency-inr"size={20} color="#666666" style={styles.inputIcon} />
                         <TextInput
                           style={styles.input}
                           placeholder="Enter buy premium (can be negative)"
@@ -600,7 +600,7 @@ export default function InventoryScreen() {
                 <View key={item._id || item.id} style={styles.productCard}>
                   <View style={styles.productCardHeader}>
                     <View style={styles.productNameContainer}>
-                      <Package size={20} color="#1976D2" style={styles.productIcon} />
+                      <Icon2 name="package" size={20} color="#1976D2" style={styles.productIcon} />
                       <Text style={styles.productName}>{item.productName}</Text>
                     </View>
                     <View style={styles.visibilityBadge}>
@@ -662,7 +662,7 @@ export default function InventoryScreen() {
                       style={[styles.actionButton, styles.editButton]}
                       onPress={() => handleEditItem(item)}
                     >
-                      <Edit size={16} color="#4CAF50" />
+                      <Icon2 name="edit" size={16} color="#4CAF50" />
                       <Text style={[styles.actionButtonText, { color: "#4CAF50" }]}>Update</Text>
                     </TouchableOpacity>
 
@@ -695,7 +695,7 @@ export default function InventoryScreen() {
               style={styles.infoCard}
             >
               <View style={styles.infoCardHeader}>
-                <Info size={24} color="#1976D2" />
+                <Icon2 name="info" size={24} color="#1976D2" />
                 <Text style={styles.infoCardTitle}>How It Works</Text>
               </View>
               <Text style={styles.infoCardContent}>

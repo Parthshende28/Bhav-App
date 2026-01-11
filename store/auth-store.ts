@@ -229,7 +229,7 @@ export type AuthState = {
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => Promise<void>;
   markNotificationAsRead: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
-  deleteNotification: (id: string) => void;
+  deleteNotification: (id: string) => Promise<void>;
   clearAllNotifications: () => void;
   getUserByEmail: (email: string) => MockUser | undefined;
   getUserById: (id: string) => User | undefined;
@@ -891,23 +891,48 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      deleteNotification: (id) => {
-        set((state) => {
-          const updatedNotifications = state.notifications.filter(
-            notification => notification.id !== id
-          );
+      deleteNotification: async (id) => {
+        try {
+          // Call backend API to delete notification
+          await notificationAPI.deleteNotification(id);
+          
+          set((state) => {
+            const updatedNotifications = state.notifications.filter(
+              notification => notification.id !== id
+            );
 
-          // Recalculate unread count for current user
-          const unreadCount = updatedNotifications.filter(n =>
-            !n.read &&
-            (!n.recipientId || (state.user && n.recipientId === state.user.id))
-          ).length;
+            // Recalculate unread count for current user
+            const unreadCount = updatedNotifications.filter(n =>
+              !n.read &&
+              (!n.recipientId || (state.user && n.recipientId === state.user.id))
+            ).length;
 
-          return {
-            notifications: updatedNotifications,
-            unreadNotificationsCount: unreadCount
-          };
-        });
+            return {
+              notifications: updatedNotifications,
+              unreadNotificationsCount: unreadCount
+            };
+          });
+        } catch (error) {
+          console.error('Error deleting notification:', error);
+          // Optimistically update local state or show error? 
+          // Let's optimistic update to keep UI responsive, but maybe we should revert on error?
+          // For now, let's just update local state anyway as per previous implementation logic
+          set((state) => {
+            const updatedNotifications = state.notifications.filter(
+              notification => notification.id !== id
+            );
+
+            const unreadCount = updatedNotifications.filter(n =>
+              !n.read &&
+              (!n.recipientId || (state.user && n.recipientId === state.user.id))
+            ).length;
+
+            return {
+              notifications: updatedNotifications,
+              unreadNotificationsCount: unreadCount
+            };
+          });
+        }
       },
 
       clearAllNotifications: () => {
