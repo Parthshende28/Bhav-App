@@ -1688,11 +1688,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     paddingVertical: 10,
+    alignItems:"flex-start",
   },
   welcomeText: {
-    margin: 0,
+    margin: 2,
     fontSize: 16,
     color: "#666666",
   },
@@ -1700,7 +1701,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#1976D2",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   brandName: {
     fontSize: 50,

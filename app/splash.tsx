@@ -7,7 +7,7 @@ import { StatusBar } from "expo-status-bar";
 
 export default function SplashScreen() {
   const router = useRouter();
-  const [authState, setAuthState] = useState<{ isAuthenticated: boolean; user: any; hasSeenOnboarding: boolean } | null>(null);
+  const [authState, setAuthState] = useState<{ isAuthenticated: boolean; user: any; hasSeenOnboarding: boolean; isInitializing: boolean } | null>(null);
   const [hasNavigated, setHasNavigated] = useState(false);
 
   const scaleAnim = React.useRef(new Animated.Value(0.8)).current;
@@ -19,7 +19,8 @@ export default function SplashScreen() {
       setAuthState({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
-        hasSeenOnboarding: state.hasSeenOnboarding
+        hasSeenOnboarding: state.hasSeenOnboarding,
+        isInitializing: state.isInitializing
       });
     });
 
@@ -28,14 +29,15 @@ export default function SplashScreen() {
     setAuthState({
       isAuthenticated: initialState.isAuthenticated,
       user: initialState.user,
-      hasSeenOnboarding: initialState.hasSeenOnboarding
+      hasSeenOnboarding: initialState.hasSeenOnboarding,
+      isInitializing: initialState.isInitializing
     });
 
     return unsubscribe;
   }, []);
 
   useEffect(() => {
-    if (authState === null || hasNavigated) return; // Wait for auth state to be loaded or prevent multiple navigations
+    if (authState === null || authState.isInitializing || hasNavigated) return; // Wait for auth state to be loaded or prevent multiple navigations
 
     console.log("Splash screen auth state:", authState.isAuthenticated, authState.user?.role, "hasSeenOnboarding:", authState.hasSeenOnboarding);
 
