@@ -2,12 +2,12 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import systemIP from '../services/ip.js';
 
-export const API_BASE_URL = `http://${systemIP}:5001/api`; // your backend
-// export const API_BASE_URL = "https://bhav-backend.onrender.com"; // your backend
+//export const API_BASE_URL = `http://${systemIP}:5001/api`; // your backend
+export const API_BASE_URL = "https://bhav-backend-0b70.onrender.com"; // your backend
 
 const API = axios.create({
-    // baseURL: "https://bhav-backend.onrender.com/api || http://localhost:5001/api",
-    baseURL: `http://${systemIP}:5001/api`,
+    baseURL: "https://bhav-backend-0b70.onrender.com/api",
+    //baseURL: `http://${systemIP}:5001/api`,
     headers: {
         "Content-Type": "application/json",
     },

@@ -307,8 +307,8 @@ export default function ProfileScreen() {
 
                       // Call backend API to delete account
                       console.log("Attempting to delete account for user:", user?.id);
-                      console.log("Using API base URL:", 'https://bhav-backend.onrender.com/api');
-                      console.log("Full endpoint:", 'https://bhav-backend.onrender.com/api/users/delete-account');
+                      console.log("Using API base URL:", 'https://bhav-backend-0b70.onrender.com/api');
+                      console.log("Full endpoint:", 'https://bhav-backend-0b70.onrender.com/api/users/delete-account');
 
                       const result = await userAPI.deleteAccount(user?.id || '');
 
@@ -395,7 +395,7 @@ export default function ProfileScreen() {
   // Check if backend is reachable
   const checkBackendConnection = async () => {
     try {
-      const response = await fetch('https://bhav-backend.onrender.com/');
+      const response = await fetch('https://bhav-backend-0b70.onrender.com/');
       return response.ok;
     } catch (error) {
       console.error("Backend connection check failed:", error);
