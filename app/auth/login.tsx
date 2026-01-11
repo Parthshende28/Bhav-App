@@ -9,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
@@ -82,100 +83,111 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style="dark" />
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={images.logo}
-            style={styles.logo}
-            contentFit="contain"
-          />
-          <Text style={styles.logoText}>Bhav App</Text>
-        </View>
-
-        <Text style={styles.welcomeText}>Welcome Back</Text>
-        <Text style={styles.subtitle}>
-          Sign in to continue trading bullion
-        </Text>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <View style={[styles.inputContainer, focusedField === "email" && styles.inputContainerFocused]}>
-          <Icon2 name ="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Email Address"
-            placeholderTextColor="#9e9e9e"
-            value={email}
-            onChangeText={setEmail}
-            onFocus={() => setFocusedField("email")}
-            onBlur={() => setFocusedField(null)}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        </View>
-
-        <View style={[styles.inputContainer,
-        focusedField === "password" && styles.inputContainerFocused,
-        ]}>
-          <Icon2 name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#9e9e9e"
-            value={password}
-            onChangeText={setPassword}
-            onFocus={() => setFocusedField("password")}
-            onBlur={() => setFocusedField(null)}
-            secureTextEntry={!showPassword}
-            keyboardType="default"
-            autoCapitalize="none"
-          />
-          <TouchableOpacity
-            onPress={togglePasswordVisibility}
-            style={styles.eyeIcon}
-          >
-            {showPassword ? (
-              <Icon2 name="eye-off" size={20} color="#9e9e9e" />
-            ) : (
-              <Icon2 name="eye" size={20} color="#9e9e9e" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.forgotPasswordRow}>
-          <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => router.push("/auth/forgotpassword")}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleLogin}
-          disabled={isLoading}
-          style={styles.buttonContainer}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.keyboardAvoid}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <LinearGradient
-            colors={["#F3B62B", "#F5D76E"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.button}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#ffffff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
-            )}
-          </LinearGradient>
-        </TouchableOpacity>
+          <View style={styles.container}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={images.logo}
+                style={styles.logo}
+                contentFit="contain"
+              />
+              <Text style={styles.logoText}>Bhav App</Text>
+            </View>
 
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Don't have an account? </Text>
-          <Link href="/auth/signup" asChild>
-            <TouchableOpacity>
-              <Text style={styles.signupLink}>Sign Up</Text>
+            <Text style={styles.welcomeText}>Welcome Back</Text>
+            <Text style={styles.subtitle}>
+              Sign in to continue trading bullion
+            </Text>
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <View style={[styles.inputContainer, focusedField === "email" && styles.inputContainerFocused]}>
+              <Icon2 name ="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email Address"
+                placeholderTextColor="#9e9e9e"
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => setFocusedField("email")}
+                onBlur={() => setFocusedField(null)}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={[styles.inputContainer,
+            focusedField === "password" && styles.inputContainerFocused,
+            ]}>
+              <Icon2 name="lock" size={20} color="#F3B62B" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#9e9e9e"
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => setFocusedField("password")}
+                onBlur={() => setFocusedField(null)}
+                secureTextEntry={!showPassword}
+                keyboardType="default"
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                onPress={togglePasswordVisibility}
+                style={styles.eyeIcon}
+              >
+                {showPassword ? (
+                  <Icon2 name="eye-off" size={20} color="#9e9e9e" />
+                ) : (
+                  <Icon2 name="eye" size={20} color="#9e9e9e" />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.forgotPasswordRow}>
+              <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => router.push("/auth/forgotpassword")}>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              onPress={handleLogin}
+              disabled={isLoading}
+              style={styles.buttonContainer}
+            >
+              <LinearGradient
+                colors={["#F3B62B", "#F5D76E"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.button}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Text style={styles.buttonText}>Sign In</Text>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
-          </Link>
-        </View>
-      </View>
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <Link href="/auth/signup" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.signupLink}>Sign Up</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -188,11 +200,13 @@ const styles = StyleSheet.create({
   keyboardAvoid: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
   container: {
-    flex: 1,
     padding: 24,
     backgroundColor: "#ffffff",
-    justifyContent: "center",
   },
   logoContainer: {
     alignItems: "center",
