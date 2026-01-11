@@ -1,5 +1,6 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import systemIP from '../services/ip.js';
 
 //export const API_BASE_URL = `http://${systemIP}:5001/api`; // your backend
@@ -17,15 +18,13 @@ const API = axios.create({
 API.interceptors.request.use(
     async (config) => {
         try {
-            const token = await AsyncStorage.getItem('auth-storage');
+            // Read token from secure storage (expo-secure-store)
+            const token = await SecureStore.getItemAsync('auth_token');
             if (token) {
-                const parsedToken = JSON.parse(token);
-                if (parsedToken.state?.token) {
-                    config.headers.Authorization = `Bearer ${parsedToken.state.token}`;
-                }
+                config.headers.Authorization = `Bearer ${token}`;
             }
         } catch (error) {
-            console.error('Error getting auth token:', error);
+            console.error('Error getting auth token from SecureStore:', error);
         }
         return config;
     },

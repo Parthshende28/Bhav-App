@@ -247,25 +247,4 @@ export default {
     notification: notificationAPI,
     subscription: subscriptionAPI,
     utils: apiUtils,
-};
-
-API.interceptors.request.use(
-    async (config) => {
-        try {
-            const token = await AsyncStorage.getItem('auth-storage');
-            // console.log('Token from AsyncStorage:', token);
-            if (token) {
-                const parsedToken = JSON.parse(token);
-                if (parsedToken.state?.token) {
-                    config.headers.Authorization = `Bearer ${parsedToken.state.token}`;
-                }
-            }
-        } catch (error) {
-            console.error('Error getting auth token:', error);
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-); 
+}; 

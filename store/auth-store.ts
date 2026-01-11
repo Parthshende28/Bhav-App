@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import API from './api';
 import { userAPI, requestAPI, notificationAPI } from '@/services/api';
 import systemIP from '../services/ip.js';
@@ -200,6 +201,7 @@ export interface BuyRequestStatus {
 export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   token: string | null;
   hasSeenOnboarding: boolean;
   adminUsernameRegistered: boolean;
@@ -222,10 +224,12 @@ export type AuthState = {
   setSellerReferrals: (referrals: SellerReferral[]) => void; // Added setter for seller referrals
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; token?: string; user?: User }>;
   signup: (userData: Partial<User>, password: string) => Promise<{ success: boolean; error?: string; userId?: string; message?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<{ success: boolean; error?: string }>;
   deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
   isAdminUsername: (username: string) => boolean;
+  setToken: (token: string | null) => Promise<void>;
+  initAuth: () => Promise<void>; // Load token from secure storage on startup
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => Promise<void>;
   markNotificationAsRead: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
@@ -288,7 +292,6 @@ export type AuthState = {
   setInventoryItems: (items: InventoryItem[]) => void;
 
   setUser: (user: User | null) => void;
-  setToken: (token: string | null) => void;
   refreshUserProfile: () => Promise<void>;
   refreshNotifications: () => Promise<void>;
   fetchSellerData: (sellerId: string) => Promise<{ success: boolean; seller?: User; error?: string }>;
@@ -338,6 +341,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
+      isInitializing: true,
       token: null,
       hasSeenOnboarding: false,
       adminUsernameRegistered: true, // Set to true since we now have a pre-defined admin
@@ -443,15 +447,10 @@ export const useAuthStore = create<AuthState>()(
             isPremiumUser: !!data.user?.isPremium,
           });
 
-          // --- Save token to AsyncStorage for axios interceptor ---
+          // Save token securely and update store
           if (data.token) {
-            await AsyncStorage.setItem(
-              'auth-storage',
-              JSON.stringify({ state: { token: data.token } })
-            );
-            // console.log('Saved token to AsyncStorage:', data.token);
+            await get().setToken(data.token);
           }
-          // --------------------------------------------------------
 
           // Fetch notifications from backend after successful login
           try {
@@ -526,8 +525,14 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      logout: () => {
+      logout: async () => {
         console.log("Logout called");
+        try {
+          await SecureStore.deleteItemAsync('auth_token');
+        } catch (e) {
+          console.error('Failed to remove auth token from secure store', e);
+        }
+
         set({
           user: null,
           isAuthenticated: false,
@@ -536,6 +541,42 @@ export const useAuthStore = create<AuthState>()(
           contactedDealers: [], // Reset contacted dealers on logout
           contactedSellerDetails: [], // Reset contacted seller details on logout
         });
+      },
+
+      // Set token and persist securely (secure storage). Token is not saved to AsyncStorage persistence.
+      setToken: async (token) => {
+        set({ token });
+        try {
+          if (token) {
+            await SecureStore.setItemAsync('auth_token', token);
+          } else {
+            await SecureStore.deleteItemAsync('auth_token');
+          }
+        } catch (e) {
+          console.error('Failed to set auth token in secure store', e);
+        }
+      },
+
+      // Initialize auth state from secure storage on app startup
+      initAuth: async () => {
+        set({ isInitializing: true });
+        try {
+          const token = await SecureStore.getItemAsync('auth_token');
+          if (token) {
+            // Set token in memory and mark authenticated
+            set({ token, isAuthenticated: true });
+            // Try to refresh user profile using existing token
+            await get().refreshUserProfile();
+            await get().refreshNotifications();
+          } else {
+            // No token found, ensure we are not marked as authenticated
+            set({ isAuthenticated: false, user: null });
+          }
+        } catch (e) {
+          console.error('Failed to initialize auth from secure store', e);
+        } finally {
+          set({ isInitializing: false });
+        }
       },
 
       updateUser: async (userData: Partial<User>) => {
@@ -2130,18 +2171,30 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setUser: (user) => set({ user }),
-      setToken: (token) => set({ token }),
       refreshUserProfile: async () => {
         try {
           const res = await userAPI.getProfile();
           if (res.data?.user) {
-            set({ user: res.data.user, isAuthenticated: true });
+            const userData = res.data.user;
+            set({
+              user: {
+                ...userData,
+                id: userData._id || userData.id,
+                _id: userData._id || userData.id,
+              },
+              isAuthenticated: true,
+              isPremiumUser: !!userData.isPremium,
+            });
 
             // Also refresh notifications
             await get().refreshNotifications();
           }
-        } catch (e) {
-          set({ user: null, isAuthenticated: false });
+        } catch (e: any) {
+          console.error('Error refreshing user profile:', e);
+          // Only log out if it's an authentication error (401)
+          if (e.response?.status === 401) {
+            await get().logout();
+          }
         }
       },
       refreshNotifications: async () => {
@@ -2197,6 +2250,12 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      // Do not persist sensitive token into AsyncStorage. Token is stored in SecureStore.
+      // Also don't persist isInitializing as it should always start as true.
+      partialize: (state) => {
+        const { token, isInitializing, ...rest } = state as any;
+        return rest;
+      },
       storage: {
         getItem: async (name) => {
           const item = await AsyncStorage.getItem(name);
