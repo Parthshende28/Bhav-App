@@ -194,15 +194,15 @@ export default function DrawerScreen() {
                     <Text style={styles.menuText}>Live Rates</Text>
                   </TouchableOpacity>
 
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     style={styles.menuItem}
-                    onPress={() => handleNavigation("/(app)/transaction")}
+                    onPress={() => handleNavigation("/(app)/connect_to_seller")}
                   >
                     <View style={styles.menuIconContainer}>
-                      <CreditCard size={22} color="#333333" />
+                      <Icon2 name="users" size={22} color="#333333" />
                     </View>
-                    <Text style={styles.menuText}>Transaction</Text>
-                  </TouchableOpacity> */}
+                    <Text style={styles.menuText}>Connect to Seller</Text>
+                  </TouchableOpacity>
 
                   {/* <TouchableOpacity
                     style={styles.menuItem}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,8 @@ import {
   Share,
   Modal,
   Image,
-  Linking
+  Linking,
+  Animated
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -29,6 +30,14 @@ import { notificationAPI } from '@/services/api';
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 40); // Adjust this value as needed for your layout
+
+// Helper function to get time-based greeting
+const getTimeBasedGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return { greeting: 'Good Morning', emoji: '🌅', colors: ['#FF6B6B', '#FFE66D'] };
+  if (hour < 17) return { greeting: 'Good Afternoon', emoji: '☀️', colors: ['#4ECDC4', '#44A08D'] };
+  return { greeting: 'Good Evening', emoji: '🌙', colors: ['#667EEA', '#764BA2'] };
+};
 
 export default function SellerDashboardScreen() {
   const {
@@ -54,10 +63,38 @@ export default function SellerDashboardScreen() {
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  
+  // Animation refs
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(-20)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   // States for async data fetching
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [requestDetails, setRequestDetails] = useState<{ [key: string]: { product: any, customer: any } }>({});
+  const [timeGreeting, setTimeGreeting] = useState({ greeting: 'Welcome', emoji: '👋', colors: ['#667EEA', '#764BA2'] });
+  
+  // Initialize animations on component mount
+  useEffect(() => {
+    setTimeGreeting(getTimeBasedGreeting());
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 700,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // Calculate inventory count from global state
   const inventoryCount = user?.role === 'seller'
@@ -825,10 +862,37 @@ export default function SellerDashboardScreen() {
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeText}>Welcome Admin,</Text>
-              <Text style={styles.adminName}>{user?.fullName || user?.name}</Text>
-            </View>
+            <Animated.View 
+              style={[
+                styles.welcomeContainer,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }]
+                }
+              ]}
+            >
+              <LinearGradient
+                colors={timeGreeting.colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.welcomeGradientCard}
+              >
+                <View style={styles.welcomeCardContent}>
+                  <Animated.Text 
+                    style={[
+                      styles.welcomeEmoji,
+                      { transform: [{ scale: scaleAnim }] }
+                    ]}
+                  >
+                    {timeGreeting.emoji}
+                  </Animated.Text>
+                  <View style={styles.welcomeTextContainer}>
+                    <Text style={styles.welcomeGreeting}>{timeGreeting.greeting}</Text>
+                    <Text style={styles.adminName}>{user?.fullName || user?.name}</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </Animated.View>
 
             {/* Stats Cards */}
             <View style={styles.statsContainer}>
@@ -1294,12 +1358,37 @@ export default function SellerDashboardScreen() {
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeText}>Welcome,</Text>
-              <Text style={styles.sellerName}>{user?.fullName || user?.name}</Text>
-            </View>
-
-            {/* Referral Code Section */}
+            <Animated.View 
+              style={[
+                styles.welcomeContainer,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }]
+                }
+              ]}
+            >
+              <LinearGradient
+                colors={timeGreeting.colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.welcomeGradientCard}
+              >
+                <View style={styles.welcomeCardContent}>
+                  <Animated.Text 
+                    style={[
+                      styles.welcomeEmoji,
+                      { transform: [{ scale: scaleAnim }] }
+                    ]}
+                  >
+                    {timeGreeting.emoji}
+                  </Animated.Text>
+                  <View style={styles.welcomeTextContainer}>
+                    <Text style={styles.welcomeGreeting}>{timeGreeting.greeting}</Text>
+                    <Text style={styles.sellerName}>{user?.fullName || user?.name}</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </Animated.View>
             <View style={styles.referralCodeContainer}>
               <View style={styles.referralCodeHeader}>
                 <Text style={styles.referralCodeTitle}>Your Referral Code</Text>
@@ -1450,10 +1539,37 @@ export default function SellerDashboardScreen() {
             showsVerticalScrollIndicator={false}>
 
 
-            <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeText}>Welcome,</Text>
-              <Text style={styles.sellerName}>{user?.fullName || user?.name}</Text>
-            </View>
+            <Animated.View 
+              style={[
+                styles.welcomeContainer,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }]
+                }
+              ]}
+            >
+              <LinearGradient
+                colors={timeGreeting.colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.welcomeGradientCard}
+              >
+                <View style={styles.welcomeCardContent}>
+                  <Animated.Text 
+                    style={[
+                      styles.welcomeEmoji,
+                      { transform: [{ scale: scaleAnim }] }
+                    ]}
+                  >
+                    {timeGreeting.emoji}
+                  </Animated.Text>
+                  <View style={styles.welcomeTextContainer}>
+                    <Text style={styles.welcomeGreeting}>{timeGreeting.greeting}</Text>
+                    <Text style={styles.sellerName}>{user?.fullName || user?.name}</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </Animated.View>
 
             {/* Brand/logo section */}
             {(isCustomer) ? (
@@ -1475,105 +1591,158 @@ export default function SellerDashboardScreen() {
             {selectedSeller ? (
               <>
                 <View style={styles.sellerContainer}>
-                  <View style={styles.sellerHeader}>
-                    <Text style={styles.sellerInfo}>Store</Text>
-                    <Text style={styles.sellerDetails}>{selectedSeller.brandName}</Text>
+                  {/* Store Header Card */}
+                  <LinearGradient
+                    colors={["#1976D2", "#1565C0"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.sellerHeaderCard}
+                  >
+                    <View style={styles.sellerHeaderContent}>
+                      <View style={styles.sellerStoreIcon}>
+                        <Icon2 name="shopping-bag" size={28} color="#ffffff" />
+                      </View>
+                      <View style={styles.sellerHeaderText}>
+                        <Text style={styles.sellerInfoLabel}>Store Name</Text>
+                        <Text style={styles.sellerStoreName}>{selectedSeller.brandName}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.sellerBadge}>
+                      <Icon2 name="check-circle" size={20} color="#4CAF50" />
+                    </View>
+                  </LinearGradient>
+
+                  {/* Owner Card */}
+                  <View style={styles.sellerInfoCard}>
+                    <View style={styles.sellerInfoCardRow}>
+                      <View style={[styles.sellerIconCircle, { backgroundColor: "#E8F5E9" }]}>
+                        <Icon2 name="user" size={24} color="#43A047" />
+                      </View>
+                      <View style={styles.sellerInfoContent}>
+                        <Text style={styles.sellerInfoLabel1}>Owner</Text>
+                        <Text style={styles.sellerInfoValue}>{selectedSeller.fullName}</Text>
+                      </View>
+                    </View>
                   </View>
 
-                  <View style={styles.sellerHeader}>
-                    <Text style={styles.sellerInfo}>Owner</Text>
-                    <Text style={styles.sellerDetails}>{selectedSeller.fullName}</Text>
+                  {/* About Card */}
+                  <View style={styles.sellerAboutCard}>
+                    <View style={styles.aboutHeader}>
+                      <View style={[styles.sellerIconCircle, { backgroundColor: "#E3F2FD" }]}>
+                        <Icon2 name="info" size={24} color="#1976D2" />
+                      </View>
+                      <Text style={styles.aboutTitle}>About</Text>
+                    </View>
+                    <Text style={styles.aboutContent}>
+                      {selectedSeller.about || "No information available"}
+                    </Text>
                   </View>
 
-                  <View style={styles.sellerHeader}>
-                    <Text style={styles.sellerInfo}>About</Text>
-                    <Text style={styles.sellerDetails}>{selectedSeller.about || "No information available"}</Text>
-                  </View>
-
-                  <View style={styles.sellerHeader}>
-                    <Text style={styles.sellerInfo}>Catalogue</Text>
+                  {/* Catalogue Section */}
+                  <View style={styles.catalogueSection}>
+                    <View style={styles.catalogueHeader}>
+                      <View style={[styles.sellerIconCircle, { backgroundColor: "#FFF8E1" }]}>
+                        <Icon2 name="image" size={24} color="#F3B62B" />
+                      </View>
+                      <Text style={styles.catalogueTitle}>Catalogue</Text>
+                      {selectedSeller.catalogueImages && selectedSeller.catalogueImages.length > 0 && (
+                        <View style={styles.imageBadge}>
+                          <Text style={styles.imageBadgeText}>{selectedSeller.catalogueImages.length}</Text>
+                        </View>
+                      )}
+                    </View>
                     {selectedSeller.catalogueImages && selectedSeller.catalogueImages.length > 0 ? (
-                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <View style={styles.catalogueContainer}>
+                      <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.catalogueScroll}
+                      >
+                        <View style={styles.catalogueImageContainer}>
                           {selectedSeller.catalogueImages.map((image, index) => (
-                            <Image
-                              key={index}
-                              source={{ uri: image }}
-                              style={styles.catalogueImage}
-                            />
+                            <View key={index} style={styles.catalogueImageWrapper}>
+                              <Image
+                                source={{ uri: image }}
+                                style={styles.catalogueImageEnhanced}
+                              />
+                            </View>
                           ))}
                         </View>
                       </ScrollView>
                     ) : (
-                      <Text style={styles.sellerDetails}>No catalogue images available</Text>
+                      <View style={styles.catalogueEmpty}>
+                        <Icon2 name="image" size={32} color="#cccccc" />
+                        <Text style={styles.catalogueEmptyText}>No catalogue images</Text>
+                      </View>
                     )}
                   </View>
 
-                  <View style={styles.sellerHeader}>
-                    <Text style={styles.sellerInfo}>Contact</Text>
-                    <View style={styles.sellerContactIcons}>
-                      <TouchableOpacity onPress={handlePhoneClick}>
-                        <FontAwesome
-                          name="phone"
-                          size={30}
-                          color="#fff"
-                          style={{
-                            borderWidth: 2,
-                            borderColor: "#1F7D53",
-                            backgroundColor: "#1F7D53",
-                            borderRadius: 100,
-                            paddingVertical: 2,
-                            paddingHorizontal: 5,
-                          }}
-                        />
+                  {/* Contact Section */}
+                  <View style={styles.contactSection}>
+                    <View style={styles.contactHeader}>
+                      <View style={[styles.sellerIconCircle, { backgroundColor: "#FFE0E6" }]}>
+                        <Icon2 name="phone" size={24} color="#E91E63" />
+                      </View>
+                      <Text style={styles.contactTitle}>Connect with Store</Text>
+                    </View>
+                    <View style={styles.sellerContactIconsEnhanced}>
+                      <TouchableOpacity 
+                        onPress={handlePhoneClick}
+                        style={styles.contactIconButton}
+                      >
+                        <LinearGradient
+                          colors={["#1F7D53", "#165C3D"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.contactIconGradient}
+                        >
+                          <FontAwesome name="phone" size={24} color="#fff" />
+                        </LinearGradient>
+                        <Text style={styles.contactIconLabel}>Call</Text>
                       </TouchableOpacity>
 
-                      <TouchableOpacity onPress={handleLocationClick}>
-                        <FontAwesome
-                          name="map-marker"
-                          size={30}
-                          color="#fff"
-                          style={{
-                            borderWidth: 2,
-                            borderColor: "#1976D2",
-                            backgroundColor: "#1976D2",
-                            borderRadius: 100,
-                            paddingVertical: 2,
-                            paddingHorizontal: 8,
-                          }}
-                        />
+                      <TouchableOpacity 
+                        onPress={handleLocationClick}
+                        style={styles.contactIconButton}
+                      >
+                        <LinearGradient
+                          colors={["#1976D2", "#1565C0"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.contactIconGradient}
+                        >
+                          <FontAwesome name="map-marker" size={24} color="#fff" />
+                        </LinearGradient>
+                        <Text style={styles.contactIconLabel}>Map</Text>
                       </TouchableOpacity>
 
-                      <TouchableOpacity onPress={handleWhatsAppClick}>
-                        <FontAwesome
-                          name="whatsapp"
-                          size={30}
-                          color="#fff"
-                          style={{
-                            borderWidth: 2,
-                            borderColor: "#25D366",
-                            backgroundColor: "#25D366",
-                            borderRadius: 100,
-                            paddingVertical: 2,
-                            paddingHorizontal: 4,
-                          }}
-                        />
+                      <TouchableOpacity 
+                        onPress={handleWhatsAppClick}
+                        style={styles.contactIconButton}
+                      >
+                        <LinearGradient
+                          colors={["#25D366", "#1CA853"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.contactIconGradient}
+                        >
+                          <FontAwesome name="whatsapp" size={24} color="#fff" />
+                        </LinearGradient>
+                        <Text style={styles.contactIconLabel}>WhatsApp</Text>
                       </TouchableOpacity>
 
-                      <TouchableOpacity onPress={handleInstagramClick}>
-                        <FontAwesome
-                          name="instagram"
-                          size={30}
-                          color="#fff"
-                          style={{
-                            borderWidth: 2,
-                            borderColor: "#E4405F",
-                            backgroundColor: "#E4405F",
-                            borderRadius: 100,
-                            paddingVertical: 2,
-                            paddingHorizontal: 4,
-                          }}
-                        />
+                      <TouchableOpacity 
+                        onPress={handleInstagramClick}
+                        style={styles.contactIconButton}
+                      >
+                        <LinearGradient
+                          colors={["#E4405F", "#C13584"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.contactIconGradient}
+                        >
+                          <FontAwesome name="instagram" size={24} color="#fff" />
+                        </LinearGradient>
+                        <Text style={styles.contactIconLabel}>Instagram</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -1690,7 +1859,36 @@ const styles = StyleSheet.create({
   welcomeContainer: {
     paddingHorizontal: 18,
     paddingVertical: 10,
-    alignItems:"flex-start",
+    alignItems: "flex-start",
+  },
+  welcomeGradientCard: {
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    width: "100%",
+  },
+  welcomeCardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  welcomeEmoji: {
+    fontSize: 56,
+  },
+  welcomeTextContainer: {
+    flex: 1,
+  },
+  welcomeGreeting: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#ffffff",
+    opacity: 0.9,
+    marginBottom: 4,
   },
   welcomeText: {
     margin: 2,
@@ -1698,10 +1896,18 @@ const styles = StyleSheet.create({
     color: "#666666",
   },
   sellerName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1976D2",
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#ffffff",
     marginBottom: 2,
+    letterSpacing: 0.3,
+  },
+  adminName: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginBottom: 2,
+    letterSpacing: 0.3,
   },
   brandName: {
     fontSize: 50,
@@ -2567,38 +2773,242 @@ const styles = StyleSheet.create({
   // seller
   sellerContainer: {
     marginHorizontal: 20,
-    marginBottom: 5,
+    marginBottom: 20,
+    paddingBottom: 15,
+
   },
-  sellerHeader: {
-    marginBottom: 14,
+  sellerHeaderCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  sellerInfo: {
+  sellerHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  sellerStoreIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  sellerHeaderText: {
+    flex: 1,
+  },
+  sellerInfoLabel: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.75)",
+    fontWeight: "500",
+    letterSpacing: 0.5,
+  },
+  sellerInfoLabel1: {
     fontSize: 14,
-    color: "#333",
+    color: "rgba(12, 12, 12, 0.75)",
+    fontWeight: "500",
+    letterSpacing: 0.5,
   },
-  sellerDetails: {
+  sellerStoreName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginTop: 4,
+  },
+  sellerBadge: {
+    padding: 6,
+  },
+  sellerInfoCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    borderLeftWidth: 4,
+    borderLeftColor: "#43A047",
+  },
+  sellerInfoCardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  sellerIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  sellerInfoContent: {
+    flex: 1,
+  },
+  sellerInfoValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
+    color: "#333333",
+    marginTop: 4,
   },
-  sellerContactIcons: {
+  sellerAboutCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    borderLeftWidth: 4,
+    borderLeftColor: "#1976D2",
+  },
+  aboutHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  aboutTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333333",
+    marginLeft: 8,
+    marginBottom: 8,
+  },
+  aboutContent: {
+    fontSize: 14,
+    color: "#666666",
+    lineHeight: 16,
+    paddingLeft: 62,
+    marginBottom:6,
+  },
+  catalogueSection: {
+    marginBottom: 12,
+  },
+  catalogueHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  catalogueTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333333",
+    marginLeft: 12,
     flex: 1,
-    flexDirection: "row",
-    gap: 15,
-    paddingBottom: 12,
-    paddingTop: 5,
-    borderBottomWidth: 2,
-    borderBottomColor: "#f0f0f0",
   },
-  catalogueContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 10,
+  imageBadge: {
+    backgroundColor: "#F3B62B",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
-  catalogueImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
+  imageBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  catalogueScroll: {
+    marginHorizontal: -16,
+    paddingHorizontal: 16,
+  },
+  catalogueImageContainer: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  catalogueImageWrapper: {
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  catalogueImageEnhanced: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+  },
+  catalogueEmpty: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  catalogueEmptyText: {
+    fontSize: 14,
+    color: "#9e9e9e",
+    marginTop: 12,
+  },
+  contactSection: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  contactHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  contactTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333333",
+    marginLeft: 12,
+  },
+  sellerContactIconsEnhanced: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  contactIconButton: {
+    flex: 1,
+    alignItems: "center",
+  },
+  contactIconGradient: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  contactIconLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#666666",
+    marginTop: 8,
+    textAlign: "center",
   },
 });
