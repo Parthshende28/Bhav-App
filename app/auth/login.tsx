@@ -20,6 +20,7 @@ import * as Haptics from "expo-haptics";
 import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { images } from "@/constants/images";
 import { useAuthStore } from '@/store/auth-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function LoginScreen() {
@@ -32,8 +33,35 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
+  useEffect(() => {
+    // Load saved credentials
+    const loadCredentials = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem('saved_email');
+        const savedPassword = await AsyncStorage.getItem('saved_password');
+        const isManuallyLoggedOut = await AsyncStorage.getItem('is_manually_logged_out');
+
+        if (savedEmail) setEmail(savedEmail);
+        if (savedPassword) setPassword(savedPassword);
+
+        // Auto-login if we have credentials and user wasn't manually logged out
+        if (savedEmail && savedPassword && isManuallyLoggedOut !== 'true') {
+          console.log("Attempting auto-login with saved credentials...");
+          // We pass arguments because state updates (setEmail/setPassword) might not be applied yet
+          handleLogin(savedEmail, savedPassword);
+        }
+      } catch (e) {
+        console.error("Failed to load saved credentials", e);
+      }
+    };
+    loadCredentials();
+  }, []);
+
+  const handleLogin = async (autoEmail?: string, autoPassword?: string) => {
+    const emailToUse = autoEmail || email;
+    const passwordToUse = autoPassword || password;
+
+    if (!emailToUse || !passwordToUse) {
       setError("Please enter both email and password");
       return;
     }
@@ -42,11 +70,21 @@ export default function LoginScreen() {
     setIsLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(emailToUse, passwordToUse);
 
       if (result.success) {
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+
+        // Save credentials on successful login
+        try {
+          await AsyncStorage.setItem('saved_email', emailToUse);
+          await AsyncStorage.setItem('saved_password', passwordToUse);
+          // Ensure manual logout flag is cleared (also handled in store)
+          await AsyncStorage.setItem('is_manually_logged_out', 'false');
+        } catch (e) {
+          console.error("Failed to save credentials", e);
         }
 
         // ✅ Navigate based on role if available, otherwise just go to customer dashboard

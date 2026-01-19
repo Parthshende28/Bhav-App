@@ -450,6 +450,11 @@ export const useAuthStore = create<AuthState>()(
           // Save token securely and update store
           if (data.token) {
             await get().setToken(data.token);
+            try {
+              await AsyncStorage.setItem('is_manually_logged_out', 'false');
+            } catch (e) {
+              console.error('Failed to update manual logout status', e);
+            }
           }
 
           // Fetch notifications from backend after successful login
@@ -529,6 +534,7 @@ export const useAuthStore = create<AuthState>()(
         console.log("Logout called");
         try {
           await SecureStore.deleteItemAsync('auth_token');
+          await AsyncStorage.setItem('is_manually_logged_out', 'true');
         } catch (e) {
           console.error('Failed to remove auth token from secure store', e);
         }
@@ -2253,7 +2259,7 @@ export const useAuthStore = create<AuthState>()(
       // Do not persist sensitive token into AsyncStorage. Token is stored in SecureStore.
       // Also don't persist isInitializing as it should always start as true.
       partialize: (state) => {
-        const { token, isInitializing, ...rest } = state as any;
+        const { token, isInitializing, isAuthenticated, ...rest } = state as any;
         return rest;
       },
       storage: {
