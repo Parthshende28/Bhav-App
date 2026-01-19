@@ -245,7 +245,22 @@ Email: ${seller.email}`,
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
+
+      <View style={styles.navigationHeader}>
+        <TouchableOpacity 
+          style={styles.navigationBackButton} 
+          onPress={() => {
+            if (Platform.OS !== "web") {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+            router.back();
+          }}
+        >
+          <Icon2 name="arrow-left" size={24} color="#333" />
+        </TouchableOpacity>
+        <Text style={styles.navigationTitle}>Profile</Text>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -927,5 +942,26 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 18,
     fontWeight: "700",
+  },
+  navigationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#ffffff',
+  },
+  navigationBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  navigationTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#333333',
   },
 });
