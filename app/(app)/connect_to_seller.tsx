@@ -395,6 +395,8 @@ export default function RatesScreen() {
           }
         };
         fetchSelectedSellerInventory();
+      } else {
+        setInventoryItems([]);
       }
     }, [user, selectedSeller])
   );
