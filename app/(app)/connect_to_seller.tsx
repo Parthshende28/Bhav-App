@@ -274,6 +274,7 @@ export default function RatesScreen() {
   const [isBuyLoading, setIsBuyLoading] = useState(false);
 
   const [sellerProducts, setSellerProducts] = useState<{ [key: string]: InventoryItem[] }>({});
+  const [otherSellerInventory, setOtherSellerInventory] = useState<InventoryItem[]>([]);
 
   const [activeTab, setActiveTab] = useState<TabType>("all");
 
@@ -325,17 +326,30 @@ export default function RatesScreen() {
             productsRes = await inventoryAPI.getPublicInventoryForSeller(sellerId);
           }
           const products = productsRes.data?.items?.filter((item: InventoryItem) => item.isVisible) || [];
-          // Update global state instead of local state
-          setInventoryItems(products);
+          
+          if (user?.role === 'seller') {
+            setOtherSellerInventory(products);
+          } else {
+            // Update global state instead of local state
+            setInventoryItems(products);
+          }
         } catch (err) {
           console.error('Error fetching seller products:', err);
-          setInventoryItems([]);
+          if (user?.role === 'seller') {
+            setOtherSellerInventory([]);
+          } else {
+            setInventoryItems([]);
+          }
         } finally {
           setIsLoadingInventory(false);
         }
       } else {
         // console.log('No seller ID available for inventory fetch');
-        setInventoryItems([]);
+        if (user?.role === 'seller') {
+          setOtherSellerInventory([]);
+        } else {
+          setInventoryItems([]);
+        }
         setIsLoadingInventory(false);
       }
     }
@@ -819,8 +833,8 @@ export default function RatesScreen() {
                     <ActivityIndicator size="large" color="#F3B62B" />
                     <Text style={styles.loadingText}>Loading inventory...</Text>
                   </View>
-                ) : inventoryItems.length > 0 ? (
-                  inventoryItems.map((item, index) => (
+                ) : otherSellerInventory.length > 0 ? (
+                  otherSellerInventory.map((item, index) => (
                     <TouchableOpacity onPress={() => openModal(String(item._id ?? item.id))} key={String(item._id ?? item.id ?? index)}>
                       <View style={[styles.inventoryCard, item.productType === "Gold" ? styles.goldInventoryCard : item.productType === "Silver" ? styles.silverInventoryCard : null]}>
                         <View style={styles.inventoryCardHeader}>
