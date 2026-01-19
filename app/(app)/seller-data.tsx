@@ -202,7 +202,7 @@ const SellerData = () => {
               text: 'OK',
               onPress: () => {
                 // Navigate back to rates screen to show the updated seller list
-                router.push('/(app)/(tabs)/rates');
+                router.push('/(app)/connect_to_seller');
               }
             }
           ]
@@ -291,7 +291,7 @@ const SellerData = () => {
                       text: 'OK',
                       onPress: () => {
                         // Navigate back to rates screen to show the updated seller list
-                        router.push('/(app)/(tabs)/rates');
+                        router.push('/(app)/connect_to_seller');
                       }
                     }
                   ]
