@@ -61,6 +61,20 @@ export default function AppLayout() {
             },
           }}
         />
+
+        {/* changes made for connect to different sellers */}
+        <Stack.Screen
+          name="connect_to_seller"
+          options={{
+            headerTitle: "Connect to Seller",
+            headerShown: false,
+            headerTintColor: "#333333",
+            headerStyle: {
+              backgroundColor: "#ffffff",
+            },
+          }}
+        />
+
         {/* <Stack.Screen
           name="transaction"
           options={{

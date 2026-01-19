@@ -22,7 +22,7 @@ import { Platform } from "react-native";
 import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window'); 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function SellerProfileScreen() {
   const { id } = useLocalSearchParams();
@@ -58,7 +58,7 @@ export default function SellerProfileScreen() {
   // Enhanced fetch function with better error handling
   const loadSellerData = useCallback(async (showLoader = true) => {
     if (!sellerId) return;
-    
+
     try {
       if (showLoader) {
         setIsLoading(true);
@@ -72,7 +72,7 @@ export default function SellerProfileScreen() {
       // If not found locally, fetch from backend
       if (!sellerData) {
         console.log('Seller not found in local store, fetching from backend...');
-        
+
         try {
           await getUsers();
           sellerData = getUserById(sellerId);
@@ -201,10 +201,10 @@ Email: ${seller.email}`,
     return (
       <SafeAreaView style={styles.errorContainer}>
         <View style={styles.errorIconContainer}>
-          <Icon2 
-            name={networkError ? "wifi-off" : "user-x"} 
-            size={64} 
-            color="#E53935" 
+          <Icon2
+            name={networkError ? "wifi-off" : "user-x"}
+            size={64}
+            color="#E53935"
           />
         </View>
         <Text style={styles.errorTitle}>
@@ -247,8 +247,8 @@ Email: ${seller.email}`,
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style="light" />
 
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -262,7 +262,7 @@ Email: ${seller.email}`,
         {/* Seller Header with Catalog Image */}
         <View style={styles.headerContainer}>
           {seller?.brandImage ? (
-              <Image
+            <Image
               source={{ uri: seller.brandImage }}
               style={styles.catalogImage}
               resizeMode="cover"
@@ -275,7 +275,7 @@ Email: ${seller.email}`,
           )}
 
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.7)"]}
+            colors={["transparent", "rgba(0,0,0,0)"]}
             style={styles.headerGradient}
           >
             <View style={styles.headerContent}>
@@ -333,7 +333,7 @@ Email: ${seller.email}`,
         {/* Quick Actions */}
         <View style={styles.quickActionsContainer}>
           {seller.phone && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.actionButton}
               onPress={() => handlePhoneCall(seller.phone)}
               activeOpacity={0.8}
@@ -347,9 +347,9 @@ Email: ${seller.email}`,
               </LinearGradient>
             </TouchableOpacity>
           )}
-          
+
           {seller.phone && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.actionButton}
               onPress={() => handleWhatsApp(seller.phone)}
               activeOpacity={0.8}
@@ -363,9 +363,9 @@ Email: ${seller.email}`,
               </LinearGradient>
             </TouchableOpacity>
           )}
-          
+
           {seller.email && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.actionButton}
               onPress={() => handleEmail(seller.email)}
               activeOpacity={0.8}
@@ -446,12 +446,12 @@ Email: ${seller.email}`,
         )} */}
 
         {/* Contact Information Card */}
-         <View style={styles.contactCard}> 
+        <View style={styles.contactCard}>
           <View style={styles.sectionHeaderWithIcon}>
             <Icon2 name="phone" size={20} color="#D4AF37" />
             <Text style={styles.sectionTitle}>Contact Information</Text>
           </View>
-          
+
           <View style={styles.contactDetails}>
             {seller.phone && (
               <View style={styles.contactDetailItem}>
@@ -464,7 +464,7 @@ Email: ${seller.email}`,
                 </View>
               </View>
             )}
-            
+
             {seller.email && (
               <View style={styles.contactDetailItem}>
                 <View style={styles.contactDetailIcon}>
@@ -476,7 +476,7 @@ Email: ${seller.email}`,
                 </View>
               </View>
             )}
-            
+
             {seller.city && (
               <View style={styles.contactDetailItem}>
                 <View style={styles.contactDetailIcon}>
@@ -491,7 +491,7 @@ Email: ${seller.email}`,
               </View>
             )}
           </View>
-        </View> 
+        </View>
 
 
 
@@ -515,9 +515,9 @@ Email: ${seller.email}`,
           </TouchableOpacity>
         </View> */}
       </ScrollView>
-    </SafeAreaView> 
+    </SafeAreaView>
   );
-} 
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -603,11 +603,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    position: "relative",
-    height: 250,
-    borderRadius: 30,
+    padding: 16,
+    paddingBottom: 0,
+    height: 225,
+    borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#fff",
   },
   catalogImage: {
     width: "100%",
@@ -632,6 +633,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     width: "100%",
+    marginLeft: 10,
   },
   brandName: {
     fontSize: 28,

@@ -122,15 +122,15 @@ export default function OnboardingWelcome() {
         onScrollToIndexFailed={(info) => {
           const wait = new Promise(resolve => setTimeout(resolve, 500));
           wait.then(() => {
-            flatListRef.current?.scrollToIndex({ 
-              index: info.index, 
-              animated: true 
+            flatListRef.current?.scrollToIndex({
+              index: info.index,
+              animated: true
             });
           });
         }}
       />
-      
-      {renderPageIndicator()}
+
+
     </View>
   );
 }

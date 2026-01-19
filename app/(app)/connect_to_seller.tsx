@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import "../../../assets/fonts/LavishlyYours-Regular.ttf"
+import "../../assets/fonts/LavishlyYours-Regular.ttf"
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Platform, Dimensions } from "react-native";
 import * as Font from "expo-font";
@@ -263,9 +263,9 @@ export default function RatesScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Modal for detailed rates when a card is tapped
-  const [metalModal, setMetalModal] = useState<null | { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }>(null);
+  const [metalModal, setMetalModal] = useState<null | { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold' | 'Silver' | 'Neutral' }>(null);
 
-  const openMetalDetail = (payload: { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }) => {
+  const openMetalDetail = (payload: { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold' | 'Silver' | 'Neutral' }) => {
     setMetalModal(payload);
   };
 
@@ -302,7 +302,7 @@ export default function RatesScreen() {
 
   useEffect(() => {
     Font.loadAsync({
-      'LavishlyYours-Regular': require('../../../assets/fonts/LavishlyYours-Regular.ttf'),
+      'LavishlyYours-Regular': require('../../assets/fonts/LavishlyYours-Regular.ttf'),
     }).then(() => setFontsLoaded(true));
   }, []);
 
@@ -531,7 +531,7 @@ export default function RatesScreen() {
           <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>Live Rates</Text>
+          <Text style={styles.headerTitle}>Other Seller</Text>
         </View>
       </View>
 
@@ -554,59 +554,86 @@ export default function RatesScreen() {
           </View>
         )}
 
-        {/* Brand/logo section */}
-        {isSeller && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigateToSellerProfile(String(user?.id ?? user?._id ?? ''))}
-          >
-            <View style={styles.top}>
-              {user?.brandImage ? (
-                <Image
-                  source={{ uri: user.brandImage }}
-                  style={styles.brandCoverImage}
-                />
-              ) : user?.brandName ? (
-                <Text style={styles.brandName}>{user.brandName}</Text>
-              ) : (
-                <Image
-                  source={images.bhavLogo}
-                  style={styles.logo}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {(isCustomer || isAdmin) && (
-          <>
-            {selectedSeller ? (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => navigateToSellerProfile(String(selectedSeller.id ?? selectedSeller._id ?? ''))}
-              >
-                <View style={styles.top}>
-                  {selectedSeller.brandImage ? (
-                    <Image source={{ uri: selectedSeller.brandImage }} style={styles.brandCoverImage} />
-                  ) : selectedSeller.brandName ? (
-                    <Text style={styles.brandName}>{selectedSeller.brandName}</Text>
-                  ) : (
-                    <Image source={images.bhavLogo} style={styles.logo} />
-                  )}
-                </View>
-              </TouchableOpacity>
-            ) : (
+        {/* Brand/logo section
+          {isSeller && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigateToSellerProfile(String(user?.id ?? user?._id ?? ''))}
+            >
               <View style={styles.top}>
-                <Image source={images.bhavLogo} style={styles.logo} />
+                {user?.brandImage ? (
+                  <Image
+                    source={{ uri: user.brandImage }}
+                    style={styles.brandCoverImage}
+                  />
+                ) : user?.brandName ? (
+                  <Text style={styles.brandName}>{user.brandName}</Text>
+                ) : (
+                  <Image
+                    source={images.bhavLogo}
+                    style={styles.logo}
+                  />
+                )}
               </View>
-            )}
-          </>
-        )}
+            </TouchableOpacity>
+          )}
+       */}
+
+        <>
+          {selectedSeller ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigateToSellerProfile(String(selectedSeller.id ?? selectedSeller._id ?? ''))}
+            >
+              <View style={styles.top}>
+                {selectedSeller.brandImage ? (
+                  <Image source={{ uri: selectedSeller.brandImage }} style={styles.brandCoverImage} />
+                ) : selectedSeller.brandName ? (
+                  <Text style={styles.brandName}>{selectedSeller.brandName}</Text>
+                ) : (
+                  <Image source={images.bhavLogo} style={styles.logo} />
+                )}
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.top}>
+              <Image source={images.bhavLogo} style={styles.logo} />
+            </View>
+          )}
+        </>
 
 
         {/* Top row */}
         <>
           <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 5 }}>
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="Gold $"
+                subtitle="Spot"
+                value={prices.spotGold?.spot || "Loading"}
+                low={prices.spotGold?.low}
+                high={prices.spotGold?.high}
+                metal="Gold"
+                compact
+                unit="$"
+                onPress={() => openMetalDetail({ title: 'Gold $', left: String(prices.spotGold?.spot || 'Loading'), low: prices.spotGold?.low, high: prices.spotGold?.high, metal: 'Gold' })}
+              />
+            </View>
+
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="USD/INR"
+                subtitle="USD to INR"
+                value={prices.usdinr?.comex || "Loading"}
+                low={prices.spotSilver?.low}
+                high={prices.spotSilver?.high}
+                metal="Neutral"
+                compact
+                unit="INR"
+                onPress={() => openMetalDetail({ title: 'USD/INR', left: String(prices.usdinr?.comex || 'Loading'), metal: 'Neutral' })}
+              />
+            </View>
+
             <View style={{ flex: 1, marginHorizontal: 5 }}>
               <MetalRateCard
                 title="Silver $"
@@ -620,35 +647,8 @@ export default function RatesScreen() {
                 onPress={() => openMetalDetail({ title: 'Silver $', left: String(prices.spotSilver?.comex || 'Loading'), low: prices.spotSilver?.low, high: prices.spotSilver?.high, metal: 'Silver' })}
               />
             </View>
-
-            <View style={{ flex: 1, marginHorizontal: 5 }}>
-              <MetalRateCard
-                title="USD/INR"
-                subtitle="USD to INR"
-                value={prices.usdinr?.comex || "Loading"}
-                metal="Neutral"
-                compact
-                unit="INR"
-                onPress={() => openMetalDetail({ title: 'USD/INR', left: String(prices.usdinr?.comex || 'Loading'), metal: 'Neutral' })}
-              />
-            </View>
-
-            <View style={{ flex: 1, marginHorizontal: 5 }}>
-              <MetalRateCard
-                title="Gold $"
-                subtitle="Spot"
-                value={prices.spotGold?.spot || "Loading"}
-                low={prices.spotGold?.low}
-                high={prices.spotGold?.high}
-                metal="Gold"
-                compact
-                unit="$"
-                onPress={() => openMetalDetail({ title: 'Gold $', left: String(prices.spotGold?.spot || 'Loading'), low: prices.spotGold?.low, high: prices.spotGold?.high, metal: 'Gold' })}
-              />
-            </View> 
           </View>
         </>
-
 
         {/* Bottom row */}
         <>
@@ -683,7 +683,7 @@ export default function RatesScreen() {
                 unit="₹"
                 onPress={() => openMetalDetail({ title: 'Silver MCX', left: String(silverBuy), right: String(silverSell), low: prices.silver?.low, high: prices.silver?.high, metal: 'Silver' })}
               />
-            </View> 
+            </View>
           </View>
         </>
 
@@ -713,9 +713,8 @@ export default function RatesScreen() {
             {/* manage inventory seller */}
 
             <View style={styles.alertsHeader}>
-              <Text style={styles.sectionTitle}>Seller's Inventory</Text>
+              <Text style={styles.sectionTitle}>Your Inventory</Text>
               <TouchableOpacity onPress={editInventory}>
-                <Icon2 name="plus" size={24} color="#333333" />
                 <Icon2 name="edit" size={24} color="#333333" />
               </TouchableOpacity>
             </View>
@@ -795,13 +794,13 @@ export default function RatesScreen() {
           </>
         )}
 
-
+        <View style={styles.horizontalRow} />
 
         {/* Live Inventory Section */}
-        {(isCustomer || isAdmin) && (
+        {isSeller && (
           <>
             <View style={styles.alertsHeader}>
-              <Text style={styles.sectionTitle}>Live Inventory</Text>
+              <Text style={styles.sectionTitle}>Seller's Inventory</Text>
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: 150 }}>
                 <Text style={styles.selectSeller} onPress={openSellerSelection}>
                   {selectedSeller ? "Change Seller" : "Select Seller"}

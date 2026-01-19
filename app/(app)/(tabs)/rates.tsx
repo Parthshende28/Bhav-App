@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Platform, Dimensions } from "react-native";
 import * as Font from "expo-font";
@@ -262,9 +262,9 @@ export default function RatesScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Modal for detailed rates when a card is tapped
-  const [metalModal, setMetalModal] = useState<null | { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }>(null);
+  const [metalModal, setMetalModal] = useState<null | { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold' | 'Silver' | 'Neutral' }>(null);
 
-  const openMetalDetail = (payload: { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold'|'Silver'|'Neutral' }) => {
+  const openMetalDetail = (payload: { title: string; left?: string; right?: string; low?: string | number; high?: string | number; metal?: 'Gold' | 'Silver' | 'Neutral' }) => {
     setMetalModal(payload);
   };
 
@@ -608,6 +608,35 @@ export default function RatesScreen() {
           <View style={{ flexDirection: "row", justifyContent: "center", marginBottom: 5 }}>
             <View style={{ flex: 1, marginHorizontal: 5 }}>
               <MetalRateCard
+                title="Gold $"
+                subtitle="Spot"
+                value={prices.spotGold?.spot || "Loading"}
+                low={prices.spotGold?.low}
+                high={prices.spotGold?.high}
+                metal="Gold"
+                compact
+                unit="$"
+                onPress={() => openMetalDetail({ title: 'Gold $', left: String(prices.spotGold?.spot || 'Loading'), low: prices.spotGold?.low, high: prices.spotGold?.high, metal: 'Gold' })}
+              />
+            </View>
+
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+              <MetalRateCard
+                title="USD/INR"
+                subtitle="USD to INR"
+                value={prices.usdinr?.comex || "Loading"}
+                low={prices.usdinr?.low}
+                high={prices.usdinr?.high}
+                metal="Neutral"
+                compact
+                unit="INR"
+                onPress={() => openMetalDetail({ title: 'USD/INR', left: String(prices.usdinr?.comex || 'Loading'), metal: 'Neutral' })}
+              />
+            </View>
+
+            <View style={{ flex: 1, marginHorizontal: 5 }}>
+
+              <MetalRateCard
                 title="Silver $"
                 subtitle="COMEX"
                 value={prices.spotSilver?.comex || "Loading"}
@@ -619,32 +648,6 @@ export default function RatesScreen() {
                 onPress={() => openMetalDetail({ title: 'Silver $', left: String(prices.spotSilver?.comex || 'Loading'), low: prices.spotSilver?.low, high: prices.spotSilver?.high, metal: 'Silver' })}
               />
             </View>
-
-            <View style={{ flex: 1, marginHorizontal: 5 }}>
-              <MetalRateCard
-                title="USD/INR"
-                subtitle="USD to INR"
-                value={prices.usdinr?.comex || "Loading"}
-                metal="Neutral"
-                compact
-                unit="INR"
-                onPress={() => openMetalDetail({ title: 'USD/INR', left: String(prices.usdinr?.comex || 'Loading'), metal: 'Neutral' })}
-              />
-            </View>
-
-            <View style={{ flex: 1, marginHorizontal: 5 }}>
-              <MetalRateCard
-                title="Gold $"
-                subtitle="Spot"
-                value={prices.spotGold?.spot || "Loading"}
-                low={prices.spotGold?.low}
-                high={prices.spotGold?.high}
-                metal="Gold"
-                compact
-                unit="$"
-                onPress={() => openMetalDetail({ title: 'Gold $', left: String(prices.spotGold?.spot || 'Loading'), low: prices.spotGold?.low, high: prices.spotGold?.high, metal: 'Gold' })}
-              />
-            </View> 
           </View>
         </>
 
@@ -682,7 +685,7 @@ export default function RatesScreen() {
                 unit="₹"
                 onPress={() => openMetalDetail({ title: 'Silver MCX', left: String(silverBuy), right: String(silverSell), low: prices.silver?.low, high: prices.silver?.high, metal: 'Silver' })}
               />
-            </View> 
+            </View>
           </View>
         </>
 

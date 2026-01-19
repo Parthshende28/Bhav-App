@@ -72,8 +72,8 @@ export const MetalRateCard: React.FC<MetalRateCardProps> = ({
   const gradientColors = isGold
     ? (["#FFF8E1", "#FFF3CD"] as const)
     : isSilver
-    ? (["#F5F7FA", "#EEF1F5"] as const)
-    : (["#FFFFFF", "#FAFAFA"] as const);
+      ? (["#F5F7FA", "#EEF1F5"] as const)
+      : (["#FFFFFF", "#FAFAFA"] as const);
 
   const accent = isGold ? "#F3B62B" : isSilver ? "#BDBDBD" : "#194215ff";
 
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     backgroundColor: "transparent",
     borderWidth: Platform.OS === "web" ? 1 : 1,
-    borderColor: "#020202ff",
-    borderStyle:"dashed"
+    borderColor: "#001502ff",
+    borderStyle: "solid"
   },
   pressed: {
     opacity: 0.9,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   splitRow: {
     flexDirection: "row",
-    justifyContent:"center",
+    justifyContent: "center",
     width: "100%",
   },
   splitCol: {
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   splitValue: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "900",
   },
   unitText: {
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     color: "#666",
-    fontSize: 9.2,
+    fontSize: 8,
     textAlign: "center",
     lineHeight: 12,
     fontWeight: "600",
