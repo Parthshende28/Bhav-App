@@ -290,7 +290,7 @@ const SellerData = () => {
                     {
                       text: 'OK',
                       onPress: () => {
-                        // Navigate back to rates screen to show the updated seller list
+                        // Navigate back to connect to seller's screen to show the updated seller list
                         router.push('/(app)/connect_to_seller');
                       }
                     }

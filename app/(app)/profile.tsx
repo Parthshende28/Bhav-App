@@ -17,6 +17,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
+import * as Font from "expo-font";
 import { MaterialCommunityIcons as Icon, Feather as Icon2 } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { images } from "@/constants/images";
@@ -49,6 +50,13 @@ export default function ProfileScreen() {
   // Referral code activation state
   const [referralCode, setReferralCode] = useState("M@uryanJēwels24");
   const [isActivating, setIsActivating] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    Font.loadAsync({
+      'LavishlyYours-Regular': require('../../assets/fonts/LavishlyYours-Regular.ttf'),
+    }).then(() => setFontsLoaded(true));
+  }, []);
 
   // Update form when user data changes
   useEffect(() => {
@@ -449,7 +457,7 @@ export default function ProfileScreen() {
                 ) : (
                   /* Default brand name display when no image */
                   user?.brandName && (
-                    <Text style={styles.brandName}>{user.brandName}</Text>
+                    <Text style={styles.brandNameText}>{user.brandName}</Text>
                   )
                 )}
 
@@ -460,6 +468,21 @@ export default function ProfileScreen() {
                 >
                   <Icon2 name="camera" size={16} color="#ffffff" />
                 </TouchableOpacity>
+
+                {/* Delete button - only visible if brand image exists */}
+                {brandImage && (
+                  <TouchableOpacity
+                    style={styles.brandDeleteButton}
+                    onPress={() => {
+                      if (Platform.OS !== "web") {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      }
+                      setBrandImage(null);
+                    }}
+                  >
+                    <Icon2 name="trash-2" size={16} color="#ffffff" />
+                  </TouchableOpacity>
+                )}
               </View>
             )}
 
@@ -922,6 +945,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  brandDeleteButton: {
+    position: "absolute",
+    top: 8,
+    right: 52,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(244, 67, 54, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   brandNameOverlay: {
     position: "absolute",
     bottom: 0,
@@ -934,14 +968,15 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 16,
   },
   brandNameText: {
-    color: "#F5D76E", // Golden color like "Sarth Jewels"
-    fontSize: 18,
-    fontWeight: "700",
+    color: "#F3B62B", // Golden color like "Sarth Jewels"
+    fontSize: 50,
+    fontWeight: "500",
     textAlign: "center",
-    fontFamily: Platform.OS === 'ios' ? 'Brush Script MT' : 'cursive', // Elegant script font
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    fontFamily: 'LavishlyYours-Regular', // Elegant script font
+    // textShadowColor: "rgba(0, 0, 0, 0.5)",
+    // textShadowOffset: { width: 1, height: 1 },
+    // textShadowRadius: 2,
+    marginTop: -30,
   },
   profileImageWrapper: {
     width: 120,
