@@ -420,7 +420,7 @@ export default function ProfileScreen() {
         <TouchableOpacity
           onPress={openDrawer}
         >
-          <Icon2 name ="menu" size={24} color="#333333" />
+          <Icon2 name="menu" size={24} color="#333333" />
         </TouchableOpacity>
         {/* <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>My Profile</Text>
@@ -468,21 +468,6 @@ export default function ProfileScreen() {
                 >
                   <Icon2 name="camera" size={16} color="#ffffff" />
                 </TouchableOpacity>
-
-                {/* Delete button - only visible if brand image exists */}
-                {brandImage && (
-                  <TouchableOpacity
-                    style={styles.brandDeleteButton}
-                    onPress={() => {
-                      if (Platform.OS !== "web") {
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                      }
-                      setBrandImage(null);
-                    }}
-                  >
-                    <Icon2 name="trash-2" size={16} color="#ffffff" />
-                  </TouchableOpacity>
-                )}
               </View>
             )}
 
@@ -638,7 +623,7 @@ export default function ProfileScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Full Name</Text>
               <View style={styles.inputContainer}>
-                <Icon2 name = "user" size={20} color="#F3B62B" style={styles.inputIcon} />
+                <Icon2 name="user" size={20} color="#F3B62B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your full name"

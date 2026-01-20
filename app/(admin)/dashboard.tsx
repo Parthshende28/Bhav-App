@@ -483,7 +483,7 @@ export default function AdminDashboardScreen() {
                       ) : item.type === 'payment_success' ? (
                         <View style={styles.paymentSuccessNotification}>
                           <View style={styles.notificationIconContainer}>
-                            <Icon2 name="check"Circle size={20} color="#43A047" />
+                            <Icon2 name="check" Circle size={20} color="#43A047" />
                           </View>
                           <View style={styles.notificationContent}>
                             <Text style={styles.notificationTitle}>{item.title}</Text>
