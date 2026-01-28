@@ -62,7 +62,7 @@ export default function LoginScreen() {
     const passwordToUse = autoPassword || password;
 
     if (!emailToUse || !passwordToUse) {
-      setError("Please enter both email and password");
+      setError("Please enter email/phone and password");
       return;
     }
 
@@ -95,7 +95,7 @@ export default function LoginScreen() {
           router.replace("/(app)/(tabs)/rates");
         }
       } else {
-        setError(result.error || "Invalid email or password");
+        setError(result.error || "Invalid email/phone or password");
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
@@ -148,10 +148,10 @@ export default function LoginScreen() {
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <View style={[styles.inputContainer, focusedField === "email" && styles.inputContainerFocused]}>
-              <Icon2 name ="mail" size={20} color="#F3B62B" style={styles.inputIcon} />
+              <Icon2 name ="user" size={20} color="#F3B62B" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email Address"
+                placeholder="Email or Phone Number"
                 placeholderTextColor="#9e9e9e"
                 value={email}
                 onChangeText={setEmail}
