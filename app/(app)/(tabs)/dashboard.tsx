@@ -872,7 +872,7 @@ export default function SellerDashboardScreen() {
               ]}
             >
               <LinearGradient
-                colors={timeGreeting.colors}
+                colors={timeGreeting.colors as [string, string]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.welcomeGradientCard}
@@ -903,7 +903,7 @@ export default function SellerDashboardScreen() {
                 style={styles.singleStatCard}
               >
                 <View style={styles.statIconContainerAdmin}>
-                  <Icon2 name="user"sIcon size={24} color="#ffffff" />
+                  <Icon2 name="user" size={24} color="#ffffff" />
                 </View>
                 <Text style={styles.statValueAdmin}>{users.length}</Text>
                 <Text style={styles.statLabelAdmin}>Total Users</Text>
@@ -961,7 +961,7 @@ export default function SellerDashboardScreen() {
                   onPress={() => router.push("/(admin)/users")}
                 >
                   <View style={[styles.quickActionIcon, { backgroundColor: "#E3F2FD" }]}>
-                    <Icon2 name="user"sIcon size={24} color="#1976D2" />
+                    <Icon2 name="user" size={24} color="#1976D2" />
                   </View>
                   <Text style={styles.quickActionText}>Manage Users</Text>
                 </TouchableOpacity>
@@ -1368,7 +1368,7 @@ export default function SellerDashboardScreen() {
               ]}
             >
               <LinearGradient
-                colors={timeGreeting.colors}
+                colors={timeGreeting.colors as [string, string]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.welcomeGradientCard}
@@ -1549,7 +1549,7 @@ export default function SellerDashboardScreen() {
               ]}
             >
               <LinearGradient
-                colors={timeGreeting.colors}
+                colors={timeGreeting.colors as [string, string]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.welcomeGradientCard}
@@ -2354,11 +2354,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 12,
     fontWeight: "bold",
-  },
-  adminName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1976D2",
   },
   singleStatCard: {
     width: CARD_WIDTH,
