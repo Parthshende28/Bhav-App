@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bhav Neo",
     "slug": "bhav-neo",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/logo.jpg",
     "scheme": "myapp",
